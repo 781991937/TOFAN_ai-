@@ -5,11 +5,14 @@ import 'package:uuid/uuid.dart';
 import '../database/app_database.dart';
 import '../models/chat_message.dart';
 import '../models/conversation.dart';
+import '../services/ai/ai_manager.dart';
+import '../services/ai/ai_models.dart';
+import '../services/ai/ai_provider.dart';
 import '../services/gemini_service.dart';
 import '../services/openai_service.dart';
-import '../utils/constants.dart';
-import 'settings_provider.dart';
 
+// Kept for image generation (see ImagesScreen), which still talks to the
+// OpenAI Images API directly rather than through the AIManager.
 final openAiServiceProvider = Provider<OpenAiService>((ref) => OpenAiService());
 final geminiServiceProvider = Provider<GeminiService>((ref) => GeminiService());
 
@@ -53,8 +56,8 @@ class ChatMessagesNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> 
   Future<void> sendMessage(String content) async {
     final db = _ref.read(appDatabaseProvider);
     final conversationId = _ref.read(activeConversationIdProvider);
-    final storage = _ref.read(secureStorageServiceProvider);
-    final provider = _ref.read(aiProviderNotifierProvider);
+    final aiManager = _ref.read(aiManagerProvider);
+    final manualOverride = _ref.read(aiManualOverrideProvider);
 
     final now = DateTime.now();
     await db.upsertConversation(Conversation(
@@ -75,27 +78,23 @@ class ChatMessagesNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> 
 
     try {
       final history = await db.getMessages(conversationId);
-      final formatted = history
-          .map((m) => {
-                'role': m.role == MessageRole.user ? 'user' : 'assistant',
-                'content': m.content,
-              })
+      // Exclude the message we just inserted; AIManager appends the
+      // current prompt itself.
+      final priorMessages = history.length > 1
+          ? history.sublist(0, history.length - 1)
+          : <ChatMessage>[];
+      final formattedHistory = priorMessages
+          .map((m) => AIChatMessage(
+                role: m.role == MessageRole.user ? 'user' : 'assistant',
+                content: m.content,
+              ))
           .toList();
 
-      String reply;
-      if (provider == AiProvider.openAi) {
-        final apiKey = await storage.getOpenAiApiKey();
-        reply = await _ref.read(openAiServiceProvider).sendChatMessage(
-              apiKey: apiKey ?? '',
-              messages: formatted,
-            );
-      } else {
-        final apiKey = await storage.getGeminiApiKey();
-        reply = await _ref.read(geminiServiceProvider).sendChatMessage(
-              apiKey: apiKey ?? '',
-              messages: formatted,
-            );
-      }
+      final reply = await aiManager.sendPrompt(
+        content,
+        history: formattedHistory,
+        override: manualOverride ?? AIProvider.auto,
+      );
 
       final assistantMessage = ChatMessage(
         conversationId: conversationId,
