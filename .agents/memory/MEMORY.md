@@ -1,0 +1,2 @@
+- [Flutter on Replit setup](flutter-on-replit.md) — install via installSystemDependencies(["flutter"]); run web preview on port 5000 with `flutter run -d web-server --web-hostname 0.0.0.0 --web-port 5000`.
+- [Riverpod 3.x legacy APIs](riverpod-3-legacy-apis.md) — StateProvider/StateNotifierProvider/StateNotifier moved to `package:flutter_riverpod/legacy.dart` in Riverpod 3.x.
