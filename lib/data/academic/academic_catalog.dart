@@ -41,6 +41,7 @@ class AcademicCatalog {
                         AcademicCourse(
                           id: 'python',
                           name: 'أساسيات البرمجة — Python',
+                          knowledgeAreaIds: ['SDF','FPL'],
                           lessons: [
                             AcademicLesson(
                               id: 'python-1',
@@ -182,6 +183,7 @@ skillEvidence: ['يبني برنامجًا تفاعليًا بسيطًا.', 'ي�
                         AcademicCourse(
                           id: 'discrete-math',
                           name: 'الرياضيات المتقطعة',
+                          knowledgeAreaIds: ['MSF','AL'],
                           lessons: [
                             AcademicLesson(
                               id: 'sets',
@@ -278,6 +280,7 @@ skillEvidence: ['يمثل علاقة صحيحة.', 'يفسر كل زوج مرت�
                         AcademicCourse(
                           id: 'ai-intro',
                           name: 'مقدمة في الذكاء الاصطناعي',
+                          knowledgeAreaIds: ['AI','MSF'],
                           lessons: [
                             AcademicLesson(
                               id: 'ai-foundations',
@@ -379,6 +382,7 @@ skillEvidence: ['يحدد مكونات نموذج وكيل.', 'يربط المل
                         AcademicCourse(
                           id: 'data-structures',
                           name: 'هياكل البيانات',
+                          knowledgeAreaIds: ['AL','SDF'],
                           lessons: [
                             AcademicLesson(
                               id: 'arrays',
@@ -508,6 +512,34 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
     );
   }
 
+  static List<String> _knowledgeAreasFor(String courseName) {
+    final n = courseName.toLowerCase();
+    final areas = <String>{};
+
+    void add(String id) => areas.add(id);
+
+    if (n.contains('خوارزم') || n.contains('هياكل البيانات') || n.contains('algorithms') || n.contains('data structure')) add('AL');
+    if (n.contains('معمار') || n.contains('منطق رقمي') || n.contains('architecture') || n.contains('processor')) add('AR');
+    if (n.contains('ذكاء اصطناعي') || n.contains('تعلم الآلة') || n.contains('رؤية حاسوبية') || n.contains('معالجة اللغة') || n.contains('agents') || n.contains('ai')) add('AI');
+    if (n.contains('قواعد البيانات') || n.contains('هندسة البيانات') || n.contains('data management') || n.contains('نمذجة البيانات')) add('DM');
+    if (n.contains('لغات البرمجة') || n.contains('مترجمات') || n.contains('programming language') || n.contains('compiler')) add('FPL');
+    if (n.contains('رسوميات') || n.contains('graphics') || n.contains('واقع افتراضي') || n.contains('واقع معزز')) add('GIT');
+    if (n.contains('تفاعل') || n.contains('hci') || n.contains('تجربة المستخدم') || n.contains('قابلية الاستخدام')) add('HCI');
+    if (n.contains('رياضيات') || n.contains('إحصاء') || n.contains('احتمال') || n.contains('math') || n.contains('statistics')) add('MSF');
+    if (n.contains('شبك') || n.contains('network') || n.contains('اتصال')) add('NC');
+    if (n.contains('نظم التشغيل') || n.contains('أنظمة التشغيل') || n.contains('operating system')) add('OS');
+    if (n.contains('متواز') || n.contains('موزع') || n.contains('parallel') || n.contains('distributed')) add('PDC');
+    if (n.contains('أمن') || n.contains('تشفير') || n.contains('security') || n.contains('cyber')) add('SEC');
+    if (n.contains('أخلاقيات') || n.contains('المهنة') || n.contains('المجتمع') || n.contains('ethics') || n.contains('profession')) add('SEP');
+    if (n.contains('برمجة') || n.contains('python') || n.contains('تطوير') || n.contains('programming')) add('SDF');
+    if (n.contains('هندسة البرمجيات') || n.contains('software engineering') || n.contains('devops') || n.contains('اختبار البرمجيات')) add('SE');
+    if (n.contains('مضمن') || n.contains('إنترنت الأشياء') || n.contains('embedded') || n.contains('mobile') || n.contains('متنقل')) add('SPD');
+    if (n.contains('أساسيات الحوسبة') || n.contains('أنظمة الحاسوب') || n.contains('systems fundamentals')) add('SF');
+
+    if (areas.isEmpty) add('SDF');
+    return areas.toList(growable: false);
+  }
+
   static AcademicCourse _course(String specializationId, int year, int semester, String name) {
     final courseId = '${specializationId}-y$year-s$semester-${name.toLowerCase().replaceAll(' ', '-')}'
         .replaceAll('—', '-');
@@ -522,6 +554,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
       name: name,
       lessons: lessons,
       prerequisiteCourseIds: const [],
+      knowledgeAreaIds: _knowledgeAreasFor(name),
       units: [
         AcademicUnit(id: '$courseId-unit-1', title: 'الوحدة الأولى: المدخل والمفاهيم الأساسية', lessons: [lessons[0]]),
         AcademicUnit(id: '$courseId-unit-2', title: 'الوحدة الثانية: المفاهيم والمكونات', lessons: [lessons[1]]),
