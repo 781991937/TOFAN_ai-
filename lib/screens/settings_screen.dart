@@ -12,45 +12,12 @@ class SettingsScreen extends ConsumerStatefulWidget {
   ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  final _openAiController = TextEditingController();
-  final _geminiController = TextEditingController();
+class _SettingsScreenState extends ConsumerWidget {
+  const _SettingsScreenState();
 
   @override
-  void dispose() {
-    _openAiController.dispose();
-    _geminiController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _saveOpenAiKey() async {
-    final storage = ref.read(secureStorageServiceProvider);
-    await storage.saveOpenAiApiKey(_openAiController.text.trim());
-    ref.invalidate(openAiKeyConfiguredProvider);
-    _openAiController.clear();
-    if (mounted) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('OpenAI API key saved')));
-    }
-  }
-
-  Future<void> _saveGeminiKey() async {
-    final storage = ref.read(secureStorageServiceProvider);
-    await storage.saveGeminiApiKey(_geminiController.text.trim());
-    ref.invalidate(geminiKeyConfiguredProvider);
-    _geminiController.clear();
-    if (mounted) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Gemini API key saved')));
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
-    final aiProvider = ref.watch(aiProviderNotifierProvider);
-    final openAiConfigured = ref.watch(openAiKeyConfiguredProvider);
-    final geminiConfigured = ref.watch(geminiKeyConfiguredProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
@@ -99,44 +66,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              'Local هو الوضع الافتراضي ولا يحتاج إلى مفتاح API.',
+              'Local هو الوضع الافتراضي. مفاتيح مزودي الذكاء الاصطناعي لا تُدخل داخل تطبيق الطالب؛ الاتصال الخارجي يمر عبر البوابة الآمنة.',
               style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: 24),
-            Text('Default AI provider', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            SegmentedButton<AiProvider>(
-              segments: const [
-                ButtonSegment(value: AiProvider.openAi, label: Text('OpenAI')),
-                ButtonSegment(value: AiProvider.gemini, label: Text('Gemini')),
-              ],
-              selected: {aiProvider},
-              onSelectionChanged: (selection) =>
-                  ref.read(aiProviderNotifierProvider.notifier).setProvider(selection.first),
-            ),
-            const SizedBox(height: 24),
-            Text('API keys', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            openAiConfigured.when(
-              data: (configured) => _ApiKeyTile(
-                label: 'OpenAI API key',
-                configured: configured,
-                controller: _openAiController,
-                onSave: _saveOpenAiKey,
-              ),
-              loading: () => const LinearProgressIndicator(),
-              error: (_, __) => const SizedBox.shrink(),
-            ),
-            const SizedBox(height: 16),
-            geminiConfigured.when(
-              data: (configured) => _ApiKeyTile(
-                label: 'Google Gemini API key',
-                configured: configured,
-                controller: _geminiController,
-                onSave: _saveGeminiKey,
-              ),
-              loading: () => const LinearProgressIndicator(),
-              error: (_, __) => const SizedBox.shrink(),
             ),
           ],
         ),
