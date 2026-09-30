@@ -102,6 +102,16 @@ class LearningSessionController extends Notifier<LearningSession?> {
     );
   }
 
+  void retryAssessment() {
+    final session = state;
+    if (session == null || session.stage != LearningStage.analysis) return;
+    state = LearningSession(
+      lessonId: session.lessonId,
+      stage: LearningStage.practice,
+      startedAt: session.startedAt,
+    );
+  }
+
   void completeAnalysis() {
     final session = state;
     if (session == null || session.stage != LearningStage.analysis) return;
