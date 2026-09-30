@@ -5,6 +5,42 @@ import '../../data/academic/academic_catalog.dart';
 import '../../domain/learning/learning_models.dart';
 import '../student/student_state.dart';
 
+final learningSessionProvider =
+    NotifierProvider<LearningSessionController, LearningSession?>(
+  LearningSessionController.new,
+);
+
+class LearningSessionController extends Notifier<LearningSession?> {
+  @override
+  LearningSession? build() => null;
+
+  void startLesson(String lessonId) {
+    state = LearningSession(
+      lessonId: lessonId,
+      stage: LearningStage.study,
+      startedAt: DateTime.now(),
+    );
+  }
+
+  void completeStudy() {
+    final session = state;
+    if (session == null || session.isCompleted) return;
+    state = LearningSession(
+      lessonId: session.lessonId,
+      stage: LearningStage.practice,
+      startedAt: session.startedAt,
+      completedAt: DateTime.now(),
+    );
+    ref.read(smartStudentProvider.notifier).recordLearning(
+      knowledgeDelta: 2,
+      skillDelta: 1,
+      capabilityDelta: 1,
+    );
+  }
+
+  void clear() => state = null;
+}
+
 final learningPlanProvider =
     NotifierProvider<LearningPlanController, LearningPlan?>(
   LearningPlanController.new,
