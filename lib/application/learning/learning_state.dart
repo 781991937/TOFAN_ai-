@@ -3,7 +3,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../data/academic/academic_catalog.dart';
 import '../../domain/learning/learning_models.dart';
-import '../student/student_state.dart';
+import 'skill_update_state.dart';
 
 final learningSessionProvider =
     NotifierProvider<LearningSessionController, LearningSession?>(
@@ -31,7 +31,9 @@ class LearningSessionController extends Notifier<LearningSession?> {
       startedAt: session.startedAt,
       completedAt: DateTime.now(),
     );
-    ref.read(smartStudentProvider.notifier).recordLearning(
+    ref.read(skillUpdateHistoryProvider.notifier).apply(
+      sourceId: session.lessonId,
+      sourceType: 'study',
       knowledgeDelta: 2,
       skillDelta: 1,
       capabilityDelta: 1,
