@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/learning/analysis_models.dart';
 import '../../domain/learning/learning_models.dart';
-import '../student/student_state.dart';
+import 'skill_update_state.dart';
 
 final assessmentResultProvider =
     NotifierProvider<AssessmentController, AssessmentResult?>(
@@ -33,7 +33,9 @@ class AssessmentController extends Notifier<AssessmentResult?> {
 
     final analysis = ref.read(learningAnalysisProvider.notifier).analyze(result);
     if (result.passed) {
-      ref.read(smartStudentProvider.notifier).recordLearning(
+      ref.read(skillUpdateHistoryProvider.notifier).apply(
+        sourceId: result.assessmentId,
+        sourceType: 'assessment',
         knowledgeDelta: analysis.knowledgeDelta,
         skillDelta: analysis.skillDelta,
         capabilityDelta: analysis.capabilityDelta,
