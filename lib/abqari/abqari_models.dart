@@ -7,10 +7,11 @@ class AbqariKnowledgeItem {
     this.terms = const [],
     this.conceptIds = const [],
     this.skillIds = const [],
-    this.knowledgeAreaIds = const []});
+    this.knowledgeAreaIds = const [],
+    this.knowledgeUnitIds = const []});
   final String id, title, sourcePath, content;
   final String definition;
-  final List<String> applications, learningOutcomes, terms, conceptIds, skillIds, knowledgeAreaIds;
+  final List<String> applications, learningOutcomes, terms, conceptIds, skillIds, knowledgeAreaIds, knowledgeUnitIds;
 }
 class AbqariProjectRequest {
   const AbqariProjectRequest({required this.idea});
