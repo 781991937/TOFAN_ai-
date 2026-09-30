@@ -165,3 +165,18 @@ class AcademicProject {
   final List<String> skillIds;
   final List<String> conceptIds;
 }
+
+
+class AcademicKnowledgeArea {
+  const AcademicKnowledgeArea({
+    required this.id,
+    required this.name,
+    required this.arabicName,
+    required this.units,
+  });
+
+  final String id;
+  final String name;
+  final String arabicName;
+  final List<String> units;
+}
