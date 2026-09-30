@@ -3,9 +3,8 @@ import '../data/academic/academic_library_security_catalog.dart';
 import 'tofan_owner_command_authority.dart';
 
 class LibraryAuthorizationGateway {
-  const LibraryAuthorizationGateway({
-    this.policy = AcademicLibrarySecurityCatalog.policy,
-  });
+  LibraryAuthorizationGateway({LibrarySecurityPolicy? policy})
+      : policy = policy ?? AcademicLibrarySecurityCatalog.policy;
 
   final LibrarySecurityPolicy policy;
 
