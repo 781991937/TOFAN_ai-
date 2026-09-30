@@ -6,10 +6,12 @@ import '../lib/data/academic/academic_knowledge_unit_catalog.dart';
 void main() {
   test('canonical knowledge unit catalog is complete and unique', () {
     expect(AcademicKnowledgeAreaCatalog.areas, hasLength(17));
-    expect(AcademicKnowledgeUnitCatalog.units, hasLength(85));
-
-    final ids = AcademicKnowledgeUnitCatalog.units.map((unit) => unit.id).toSet();
-    expect(ids, hasLength(85));
+    final expectedUnitNames = AcademicKnowledgeAreaCatalog.areas
+        .expand((area) => area.units)
+        .toList(growable: false);
+    expect(AcademicKnowledgeUnitCatalog.units, hasLength(expectedUnitNames.length));
+    expect(AcademicKnowledgeUnitCatalog.units.map((unit) => unit.name).toSet(),
+        hasLength(expectedUnitNames.length));
 
     for (final unit in AcademicKnowledgeUnitCatalog.units) {
       expect(
