@@ -2,10 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../application/learning/assessment_state.dart';
+import '../application/learning/learning_state.dart';
 import '../domain/learning/analysis_models.dart';
 
 class AssessmentResultScreen extends ConsumerWidget {
   const AssessmentResultScreen({super.key});
+
+  void _continueLifecycle(BuildContext context, WidgetRef ref) {
+    final controller = ref.read(learningSessionProvider.notifier);
+    controller.completeAnalysis();
+    controller.completeSkillUpdate();
+    Navigator.pop(context);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -74,9 +82,10 @@ class AssessmentResultScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 20),
-            FilledButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('العودة إلى الدرس'),
+            FilledButton.icon(
+              onPressed: () => _continueLifecycle(context, ref),
+              icon: const Icon(Icons.arrow_back),
+              label: const Text('متابعة إلى مرحلة المشروع'),
             ),
           ],
         ),
