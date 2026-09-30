@@ -57,7 +57,7 @@ class AcademicKnowledgeEngine {
       item.knowledgeAreaIds.join(' '),
     ].join(' ').toLowerCase();
     var score = tokens.where(haystack.contains).length;
-    score += tokens.where(item.title.toLowerCase().contains).length;
+    score += tokens.where((token) => item.title.toLowerCase().contains(token)).length;
     return score;
   }
 }
