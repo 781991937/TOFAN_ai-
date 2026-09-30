@@ -47,9 +47,6 @@ class ChatMessagesNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> 
   Future<void> sendMessage(String content) async {
     final db = _ref.read(appDatabaseProvider);
     final conversationId = _ref.read(activeConversationIdProvider);
-    final aiManager = _ref.read(aiManagerProvider);
-    final manualOverride = _ref.read(aiManualOverrideProvider);
-
     final now = DateTime.now();
     await db.upsertConversation(Conversation(
       id: conversationId,
