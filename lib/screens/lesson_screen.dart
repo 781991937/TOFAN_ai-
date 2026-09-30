@@ -36,6 +36,8 @@ class LessonScreen extends ConsumerWidget {
     final practiceReady = active && session!.stage == LearningStage.practice;
     final assessmentReady = active && session!.stage == LearningStage.assessment;
     final projectReady = active && session!.stage == LearningStage.project;
+    final studyReady = active && session!.stage == LearningStage.study;
+    final lifecycleInProgress = active && !planReady && !studyReady && !practiceReady && !assessmentReady && !projectReady;
     final theme = Theme.of(context);
 
     return Directionality(
@@ -147,12 +149,15 @@ class LessonScreen extends ConsumerWidget {
                           style: const TextStyle(fontWeight: FontWeight.w800)),
                       subtitle: Text(project.description),
                       trailing: const Icon(Icons.chevron_left),
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ProjectScreen(project: project),
-                        ),
-                      ),
+                      onTap: () {
+                        ref.read(learningSessionProvider.notifier).enterProject();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ProjectScreen(project: project),
+                          ),
+                        );
+                      },
                     ),
                   ),
               ],
