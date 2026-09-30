@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../application/learning/assessment_state.dart';
+import '../application/learning/learning_state.dart';
 import '../domain/academic/academic_models.dart';
 import 'assessment_result_screen.dart';
 
@@ -91,6 +92,7 @@ class _AssessmentScreenState extends ConsumerState<AssessmentScreen> {
       score: score,
       total: widget.assessment.questions.length,
     );
+    ref.read(learningSessionProvider.notifier).completeAssessment();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const AssessmentResultScreen()),
