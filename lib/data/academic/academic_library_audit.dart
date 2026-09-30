@@ -18,6 +18,11 @@ class AcademicLibraryAudit {
     final conceptIds = <String>{};
     final skillIds = <String>{};
     final allCourses = <AcademicCourse>[];
+    final knowledgeAreas = <String>{};
+    const knownKnowledgeAreas = <String>{
+      'AI', 'AL', 'AR', 'DM', 'FPL', 'GIT', 'HCI', 'MSF', 'NC',
+      'OS', 'PDC', 'SEC', 'SEP', 'SDF', 'SE', 'SPD', 'SF',
+    };
 
     for (final field in AcademicCatalog.fields) {
       fields++;
@@ -49,6 +54,15 @@ class AcademicLibraryAudit {
                 for (final course in semester.courses) {
                   courses++;
                   allCourses.add(course);
+                  if (course.knowledgeAreaIds.isEmpty) {
+                    issues.add('المقرر ${course.name} بلا تصنيف معرفي CS2023.');
+                  }
+                  for (final area in course.knowledgeAreaIds) {
+                    knowledgeAreas.add(area);
+                    if (!knownKnowledgeAreas.contains(area)) {
+                      issues.add('المقرر ${course.name} يستخدم مجالًا معرفيًا غير معروف: ${area}.');
+                    }
+                  }
                   if (!courseIds.add(course.id)) issues.add('معرف المقرر مكرر: ${course.id}.');
                   if (course.lessons.isEmpty) issues.add('المقرر ${course.name} بلا دروس.');
                   if (course.normalizedUnits.isEmpty) issues.add('المقرر ${course.name} بلا وحدات قابلة للتنفيذ.');
@@ -90,6 +104,10 @@ class AcademicLibraryAudit {
     }
 
     _checkPrerequisites(issues, allCourses);
+    final missingAreas = knownKnowledgeAreas.difference(knowledgeAreas);
+    if (missingAreas.isNotEmpty) {
+      issues.add('مجالات CS2023 غير المغطاة في المكتبة: ${missingAreas.join(', ')}.');
+    }
     return AcademicLibraryAuditReport(
       fields: fields,
       universities: universities,
