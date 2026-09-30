@@ -6,6 +6,7 @@ import '../screens/files_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/settings_screen.dart';
+import '../screens/smart_student_screen.dart';
 import '../screens/voice_screen.dart';
 
 class MainNavigation extends StatefulWidget {
@@ -21,6 +22,7 @@ class _MainNavigationState extends State<MainNavigation> {
   static const _screens = [
     HomeScreen(),
     AcademyScreen(),
+    SmartStudentScreen(),
     ChatScreen(),
     VoiceScreen(),
     FilesScreen(),
