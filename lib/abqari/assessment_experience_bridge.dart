@@ -1,3 +1,4 @@
+import '../application/learning/assessment_analysis_engine.dart';
 import '../data/academic/academic_catalog.dart';
 import '../domain/learning/analysis_models.dart';
 import '../domain/learning/learning_models.dart';
