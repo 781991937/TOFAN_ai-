@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../application/learning/learning_state.dart';
 import '../domain/academic/academic_models.dart';
 import 'assessment_screen.dart';
+import 'practice_screen.dart';
 
 class LessonScreen extends ConsumerWidget {
   const LessonScreen({super.key, required this.course, required this.lesson});
@@ -82,6 +83,31 @@ class LessonScreen extends ConsumerWidget {
                 ),
               ),
             ),
+            if (completed && lesson.practices.isNotEmpty)
+              ...[
+                const SizedBox(height: 18),
+                Text('التطبيق العملي',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w900)),
+                const SizedBox(height: 8),
+                for (final practice in lesson.practices)
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.code_rounded,
+                          color: theme.colorScheme.primary),
+                      title: Text(practice.title,
+                          style: const TextStyle(fontWeight: FontWeight.w800)),
+                      subtitle: Text('${practice.tasks.length} مهام'),
+                      trailing: const Icon(Icons.chevron_left),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PracticeScreen(practice: practice),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             if (completed && lesson.assessments.isNotEmpty)
               ...[
                 const SizedBox(height: 18),
