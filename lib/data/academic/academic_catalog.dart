@@ -599,7 +599,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
     required String topic,
     required String content,
   }) {
-    final firstSentence = content.split('。').first.trim();
+    final firstSentence = content.split(RegExp(r'[.!؟]')).first.trim();
     if (firstSentence.isNotEmpty) return '$firstSentence.';
     return 'يقصد بـ«$topic» المفهوم الذي يدرسه هذا الدرس ويستخدمه الطالب في التحليل والتطبيق.';
   }
