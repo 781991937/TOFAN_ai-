@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../application/learning/learning_state.dart';
+import '../domain/learning/learning_models.dart';
 import '../domain/academic/academic_models.dart';
 import 'assessment_screen.dart';
 import 'practice_screen.dart';
@@ -17,7 +18,9 @@ class LessonScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(learningSessionProvider);
     final active = session?.lessonId == lesson.id;
-    final completed = active && session!.isCompleted;
+    final completed = active && session!.stage != LearningStage.study;
+    final practiceReady = active && session!.stage == LearningStage.practice;
+    final assessmentReady = active && session!.stage == LearningStage.assessment;
     final theme = Theme.of(context);
 
     return Directionality(
@@ -84,7 +87,7 @@ class LessonScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            if (completed && lesson.practices.isNotEmpty)
+            if (practiceReady && lesson.practices.isNotEmpty)
               ...[
                 const SizedBox(height: 18),
                 Text('التطبيق العملي',
@@ -109,7 +112,7 @@ class LessonScreen extends ConsumerWidget {
                     ),
                   ),
               ],
-            if (completed && lesson.projects.isNotEmpty)
+            if (assessmentReady && lesson.projects.isNotEmpty)
               ...[
                 const SizedBox(height: 18),
                 Text('المشروع',
@@ -134,7 +137,7 @@ class LessonScreen extends ConsumerWidget {
                     ),
                   ),
               ],
-            if (completed && lesson.assessments.isNotEmpty)
+            if (assessmentReady && lesson.assessments.isNotEmpty)
               ...[
                 const SizedBox(height: 18),
                 Text('التقييم', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
