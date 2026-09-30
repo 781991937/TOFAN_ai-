@@ -12,7 +12,7 @@ void main() {
     await tester.pumpWidget(const ProviderScope(child: TofanAiApp()));
     await tester.pumpAndSettle();
 
-    expect(find.text('Home'), findsWidgets);
-    expect(find.text('Welcome to TOFAN AI'), findsOneWidget);
+    expect(find.text('الرئيسية'), findsWidgets);
+    expect(find.text('TOFAN AI STUDENT'), findsOneWidget);
   });
 }
