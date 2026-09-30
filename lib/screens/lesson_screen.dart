@@ -5,6 +5,7 @@ import '../application/learning/learning_state.dart';
 import '../domain/academic/academic_models.dart';
 import 'assessment_screen.dart';
 import 'practice_screen.dart';
+import 'project_screen.dart';
 
 class LessonScreen extends ConsumerWidget {
   const LessonScreen({super.key, required this.course, required this.lesson});
@@ -103,6 +104,31 @@ class LessonScreen extends ConsumerWidget {
                         context,
                         MaterialPageRoute(
                           builder: (_) => PracticeScreen(practice: practice),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            if (completed && lesson.projects.isNotEmpty)
+              ...[
+                const SizedBox(height: 18),
+                Text('المشروع',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w900)),
+                const SizedBox(height: 8),
+                for (final project in lesson.projects)
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.rocket_launch_outlined,
+                          color: theme.colorScheme.primary),
+                      title: Text(project.title,
+                          style: const TextStyle(fontWeight: FontWeight.w800)),
+                      subtitle: Text(project.description),
+                      trailing: const Icon(Icons.chevron_left),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ProjectScreen(project: project),
                         ),
                       ),
                     ),
