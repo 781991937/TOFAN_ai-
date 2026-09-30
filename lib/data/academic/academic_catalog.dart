@@ -7,7 +7,7 @@ import '../../domain/academic/academic_models.dart';
 class AcademicCatalog {
   const AcademicCatalog._();
 
-  static const universities = <AcademicUniversity>[
+  static final universities = <AcademicUniversity>[
     AcademicUniversity(
       id: 'sanaa',
       name: 'جامعة صنعاء',
@@ -409,7 +409,7 @@ class AcademicCatalog {
   /// Global top-level academic fields. The current reference catalog is
   /// grouped under computing and information technology and can expand without
   /// changing the lower academic hierarchy.
-  static const fields = <AcademicField>[
+  static final fields = <AcademicField>[
     AcademicField(
       id: 'computing-it',
       name: 'علوم الحاسوب وتكنولوجيا المعلومات',
