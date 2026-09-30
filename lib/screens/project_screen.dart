@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../application/learning/learning_state.dart';
 import '../domain/academic/academic_models.dart';
 
-class ProjectScreen extends StatelessWidget {
+class ProjectScreen extends ConsumerWidget {
   const ProjectScreen({super.key, required this.project});
   final AcademicProject project;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -48,9 +50,12 @@ class ProjectScreen extends StatelessWidget {
             ),
             const SizedBox(height: 18),
             FilledButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.play_arrow),
-              label: const Text('بدء المشروع'),
+              onPressed: () {
+                ref.read(learningSessionProvider.notifier).completeProject();
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.check_circle_outline),
+              label: const Text('إكمال المشروع وتسجيل التقدم'),
             ),
           ],
         ),
