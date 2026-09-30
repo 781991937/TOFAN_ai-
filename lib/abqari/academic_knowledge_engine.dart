@@ -1,4 +1,5 @@
 import '../data/academic/academic_catalog.dart';
+import '../data/academic/academic_knowledge_unit_catalog.dart';
 import 'abqari_models.dart';
 
 class AcademicKnowledgeEngine {
@@ -16,7 +17,9 @@ class AcademicKnowledgeEngine {
                 for (final course in semester.courses) {
                   for (final unit in course.normalizedUnits) {
                     for (final lesson in unit.lessons) {
-                      final haystack = <String>[field.name, university.name, college.name, specialization.name, course.name, unit.title, lesson.title, lesson.definition, lesson.content, ...lesson.applications, ...lesson.keyTerms, ...lesson.learningOutcomes].join(' ').toLowerCase();
+                      final canonicalUnits = AcademicKnowledgeUnitCatalog.forCourse(course);
+                      final canonicalUnitText = canonicalUnits.map((item) => '${item.name} ${item.arabicName} ${item.description}').join(' ');
+                      final haystack = <String>[field.name, university.name, college.name, specialization.name, course.name, unit.title, canonicalUnitText, lesson.title, lesson.definition, lesson.content, ...lesson.applications, ...lesson.keyTerms, ...lesson.learningOutcomes].join(' ').toLowerCase();
                       if (tokens.any(haystack.contains)) {
                         results.add(AbqariKnowledgeItem(
                           id: lesson.id,
@@ -30,6 +33,7 @@ class AcademicKnowledgeEngine {
                           conceptIds: lesson.conceptIds,
                           skillIds: lesson.skillIds,
                           knowledgeAreaIds: course.knowledgeAreaIds,
+                          knowledgeUnitIds: course.knowledgeUnitIds,
                         ));
                       }
                     }
@@ -55,6 +59,7 @@ class AcademicKnowledgeEngine {
       item.learningOutcomes.join(' '),
       item.terms.join(' '),
       item.knowledgeAreaIds.join(' '),
+      item.knowledgeUnitIds.join(' '),
     ].join(' ').toLowerCase();
     var score = tokens.where(haystack.contains).length;
     score += tokens.where((token) => item.title.toLowerCase().contains(token)).length;
