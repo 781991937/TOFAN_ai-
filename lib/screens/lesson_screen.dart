@@ -14,6 +14,19 @@ class LessonScreen extends ConsumerWidget {
   final AcademicCourse course;
   final AcademicLesson lesson;
 
+  String _stageLabel(LearningStage stage) {
+    switch (stage) {
+      case LearningStage.diagnostic: return 'التشخيص';
+      case LearningStage.learningPlan: return 'خطة التعلم';
+      case LearningStage.study: return 'الدراسة';
+      case LearningStage.practice: return 'التطبيق العملي';
+      case LearningStage.assessment: return 'التقييم';
+      case LearningStage.analysis: return 'التحليل';
+      case LearningStage.skillUpdate: return 'تحديث المهارات';
+      case LearningStage.project: return 'المشروع';
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(learningSessionProvider);
@@ -162,7 +175,7 @@ class LessonScreen extends ConsumerWidget {
                   ),
               ],
             const SizedBox(height: 18),
-            if (!completed)
+            if (!completed && !lifecycleInProgress)
               FilledButton.icon(
                 onPressed: lesson.isFree
                     ? () {
@@ -171,7 +184,7 @@ class LessonScreen extends ConsumerWidget {
                           controller.startLesson(lesson.id);
                         } else if (planReady) {
                           controller.beginStudy();
-                        } else {
+                        } else if (studyReady) {
                           controller.completeStudy();
                         }
                       }
@@ -188,7 +201,17 @@ class LessonScreen extends ConsumerWidget {
                       ? 'ابدأ خطة التعلم'
                       : planReady
                           ? 'ابدأ الدراسة'
-                          : 'أنهي دراسة الدرس',
+                          : 'أنهي الدراسة',
+                ),
+              )
+            else if (lifecycleInProgress)
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    'الجلسة انتقلت إلى مرحلة ' + _stageLabel(session!.stage) + '. تابع من شاشة هذه المرحلة.',
+                    style: theme.textTheme.bodyMedium,
+                  ),
                 ),
               )
             else
