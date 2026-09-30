@@ -1,25 +1,26 @@
-/// App-wide constants for TOFAN AI.
+/// Product-wide constants for TOFAN SMART ACADEMY.
 class AppConstants {
   AppConstants._();
 
-  static const String appName = 'TOFAN AI';
+  static const String appName = 'TOFAN SMART ACADEMY';
+  static const String aiName = 'TOFAN AI';
+  static const String productName = 'TOFAN AI STUDENT';
 
-  // Secure storage keys
+  // Temporary local storage keys. Production AI credentials belong on the
+  // backend and will be removed from the student client.
   static const String openAiApiKeyStorageKey = 'openai_api_key';
   static const String geminiApiKeyStorageKey = 'gemini_api_key';
 
-  // Shared preferences keys
   static const String themeModeKey = 'theme_mode';
   static const String selectedAiProviderKey = 'selected_ai_provider';
 
-  // Database
   static const String databaseName = 'tofan_ai.db';
   static const int databaseVersion = 1;
   static const String chatMessagesTable = 'chat_messages';
   static const String conversationsTable = 'conversations';
 }
 
-/// Supported AI providers for TOFAN AI.
+/// Supported AI providers during the current migration stage.
 enum AiProvider { openAi, gemini }
 
 extension AiProviderX on AiProvider {
