@@ -5,6 +5,7 @@ export 'learning_gap_engine.dart';
 export 'project_engine.dart';
 export 'cyber_command_engine.dart';
 export 'abqari_agent.dart';
+export 'security_lab.dart';
 
 class TofanAbqari {
   const TofanAbqari({
