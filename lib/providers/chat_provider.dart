@@ -8,13 +8,6 @@ import '../models/conversation.dart';
 import '../services/ai/ai_manager.dart';
 import '../services/ai/ai_models.dart';
 import '../services/ai/ai_provider.dart';
-import '../services/gemini_service.dart';
-import '../services/openai_service.dart';
-
-// Kept for image generation (see ImagesScreen), which still talks to the
-// OpenAI Images API directly rather than through the AIManager.
-final openAiServiceProvider = Provider<OpenAiService>((ref) => OpenAiService());
-final geminiServiceProvider = Provider<GeminiService>((ref) => GeminiService());
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) => AppDatabase.instance);
 
@@ -78,8 +71,6 @@ class ChatMessagesNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> 
 
     try {
       final history = await db.getMessages(conversationId);
-      // Exclude the message we just inserted; AIManager appends the
-      // current prompt itself.
       final priorMessages = history.length > 1
           ? history.sublist(0, history.length - 1)
           : <ChatMessage>[];
