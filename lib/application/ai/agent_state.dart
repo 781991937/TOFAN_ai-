@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../ai/ai_core.dart';
 import '../../ai/unconfigured_ai_core.dart';
+import 'student_ai_context.dart';
 
 enum AiAgentRole {
   mainManager,
@@ -60,7 +61,10 @@ class MainManagerAgent implements AiAgent {
         systemInstruction:
             'أنت مدير النواة الذكية TOFAN AI. نسّق الطلب ضمن نطاقه الأكاديمي وحدد الوكيل المتخصص المناسب، ولا تنفذ وظيفة وكيل متخصص بنفسك.',
         userMessage: request.request,
-        context: request.context,
+        context: {
+          ...ref.read(studentAiContextProvider).toMap(),
+          ...request.context,
+        },
       ),
     );
     return AiAgentResponse(role: role, text: response.text);
