@@ -4,6 +4,7 @@ import 'academic_knowledge_engine.dart';
 import 'abqari_models.dart';
 import 'cyber_command_engine.dart';
 import 'project_engine.dart';
+import 'planning_engine.dart';
 import 'security_lab.dart';
 
 enum AbqariTaskKind { academic, project, cybersecurity, securityLab, programming, personalSafety, translation, general }
@@ -36,12 +37,22 @@ class TofanAbqariAgent {
     this.projectEngine = const AbqariProjectEngine(),
     this.cyberEngine = const AbqariCyberCommandEngine(),
     this.securityLab = const SmartSecurityLabEngine(),
+    this.planningEngine = const AbqariPlanningEngine(),
   });
 
   final AcademicKnowledgeEngine knowledgeEngine;
   final AbqariProjectEngine projectEngine;
   final AbqariCyberCommandEngine cyberEngine;
   final SmartSecurityLabEngine securityLab;
+  final AbqariPlanningEngine planningEngine;
+
+  AbqariActionPlan plan(String request) {
+    final task = classify(request);
+    return planningEngine.plan(
+      request: request,
+      requiresApproval: task.requiresApproval,
+    );
+  }
 
   AbqariTask classify(String request) {
     final text = request.trim().toLowerCase();
