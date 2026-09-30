@@ -438,51 +438,181 @@ class AcademicCatalog {
         'مثال مفاهيمي: حدّد «$topic» في موقف عملي، ثم اشرح سبب تحديدك له.',
         'مثال تطبيقي: قارن حالتين مرتبطتين بـ«$topic» وحدد أثر اختلاف المدخلات أو القيود على النتيجة.',
       ],
-      practices: [
+      practices: _practicesFor(
+        lessonId: lessonId,
+        courseName: courseName,
+        topic: topic,
+      ),
+      assessments: _assessmentsFor(
+        lessonId: lessonId,
+        courseName: courseName,
+        title: title,
+        topic: topic,
+      ),
+      projects: _projectsFor(
+        lessonId: lessonId,
+        courseName: courseName,
+        topic: topic,
+      ),
+    );
+  }
+
+  static List<LessonPractice> _practicesFor({
+    required String lessonId,
+    required String courseName,
+    required String topic,
+  }) {
+    final n = courseName.toLowerCase();
+    if (n.contains('أخلاقيات') || n.contains('المهنة') || n.contains('المجتمع') || n.contains('ethics') || n.contains('profession')) {
+      return [
         LessonPractice(
           id: '$lessonId-practice',
-          title: 'تدريب متدرج: $topic',
+          title: 'تدريب متدرج: التحليل الأخلاقي',
           tasks: [
-            PracticeTask(id: '$lessonId-p1', instruction: 'اكتب تعريفًا مختصرًا لـ«$topic» ثم حدد مكوناته الأساسية في مثال من مقرر $courseName.'),
-            PracticeTask(id: '$lessonId-p2', instruction: 'طبّق «$topic» على مسألة صغيرة، وسجّل خطواتك والنتيجة والسبب الذي يدعمها.'),
-            PracticeTask(id: '$lessonId-p3', instruction: 'أنشئ مثالًا جديدًا من عندك، ثم اشرح كيف تعرف أن التطبيق صحيح.'),
+            PracticeTask(id: '$lessonId-p1', instruction: 'حدد أصحاب المصلحة في موقف تقني مرتبط بـ«$topic»، ثم اذكر فائدة ومخاطرة محتملتين لكل طرف.'),
+            PracticeTask(id: '$lessonId-p2', instruction: 'حلل موقفًا قصيرًا: حدد الوقائع والافتراضات والقيم المتعارضة، ثم قارن بديلين واذكر سبب اختيارك.'),
+            PracticeTask(id: '$lessonId-p3', instruction: 'اكتب توصية مهنية قابلة للمراجعة تتضمن الخصوصية أو الملكية الفكرية أو الإتاحة أو الاستدامة بحسب الحالة، واذكر الدليل الذي تستند إليه.'),
           ],
         ),
-      ],
-      assessments: [
+      ];
+    }
+    if (n.contains('python')) {
+      return [
+        LessonPractice(id: '$lessonId-practice', title: 'تدريب متدرج: $topic', tasks: [
+          PracticeTask(id: '$lessonId-p1', instruction: 'اكتب برنامجًا صغيرًا يستخدم مفهوم «$topic» مع مدخل واحد، ثم اشرح وظيفة كل سطر.'),
+          PracticeTask(id: '$lessonId-p2', instruction: 'اختبر البرنامج بثلاث حالات مختلفة، وسجل المدخلات والمخرجات وأي خطأ ظهر وكيف عالجته.'),
+          PracticeTask(id: '$lessonId-p3', instruction: 'عدّل البرنامج ليعالج حالة حدية جديدة، ثم برر أن التعديل لا يكسر السلوك السابق.'),
+        ]),
+      ];
+    }
+    if (n.contains('رياضيات') || n.contains('mathemat')) {
+      return [
+        LessonPractice(id: '$lessonId-practice', title: 'تدريب متدرج: $topic', tasks: [
+          PracticeTask(id: '$lessonId-p1', instruction: 'اكتب التعريفات والرموز اللازمة لمسألة عن «$topic»، ثم حدد المعطيات والمطلوب.'),
+          PracticeTask(id: '$lessonId-p2', instruction: 'حل المسألة خطوة بخطوة، واكتب القاعدة التي تبرر كل انتقال مهم في الحل.'),
+          PracticeTask(id: '$lessonId-p3', instruction: 'أنشئ مثالًا مضادًا أو حالة حدية إن أمكن، ثم تحقق هل ما توصلت إليه صحيح دائمًا أم تحت شروط محددة.'),
+        ]),
+      ];
+    }
+    if (n.contains('ذكاء اصطناعي') || n.contains('ai')) {
+      return [
+        LessonPractice(id: '$lessonId-practice', title: 'تدريب متدرج: $topic', tasks: [
+          PracticeTask(id: '$lessonId-p1', instruction: 'حدد المدخلات والمخرجات والهدف والقيود في مسألة ذكاء اصطناعي مرتبطة بـ«$topic».'),
+          PracticeTask(id: '$lessonId-p2', instruction: 'اختر تمثيلًا أو خوارزمية مناسبة للمسألة، ثم اشرح سبب الاختيار وما الافتراضات التي تعتمد عليها.'),
+          PracticeTask(id: '$lessonId-p3', instruction: 'اقترح طريقة تقييم للنتيجة، وحدد خطأً أو تحيزًا محتملًا وكيف يمكن اكتشافه.'),
+        ]),
+      ];
+    }
+    return [
+      LessonPractice(
+        id: '$lessonId-practice',
+        title: 'تدريب متدرج: $topic',
+        tasks: [
+          PracticeTask(id: '$lessonId-p1', instruction: 'عرّف «$topic» وحدد عناصره الأساسية داخل مثال من مقرر «$courseName».'),
+          PracticeTask(id: '$lessonId-p2', instruction: 'طبّق «$topic» على حالة صغيرة، وسجل خطوات الحل والافتراضات والنتيجة.'),
+          PracticeTask(id: '$lessonId-p3', instruction: 'غيّر أحد المدخلات أو القيود، ثم حلل كيف ولماذا تغيرت النتيجة.'),
+        ],
+      ),
+    ];
+  }
+
+  static List<LessonAssessment> _assessmentsFor({
+    required String lessonId,
+    required String courseName,
+    required String title,
+    required String topic,
+  }) {
+    final n = courseName.toLowerCase();
+    if (n.contains('أخلاقيات') || n.contains('المهنة') || n.contains('المجتمع') || n.contains('ethics') || n.contains('profession')) {
+      return [
         LessonAssessment(
           id: '$lessonId-assessment',
           title: 'تقييم: $title',
           questions: [
-            AssessmentQuestion(
-              id: '$lessonId-q1',
-              text: 'ما أفضل وصف للموضوع الرئيس «$topic»؟',
-              options: ['فهم الموضوع وتطبيقه وتحليل نتائجه', 'حفظ الاسم دون فهم', 'تجاهل الأمثلة والقيود', 'نسخ النتيجة دون تحقق'],
-              correctIndex: 0,
-            ),
-            AssessmentQuestion(
-              id: '$lessonId-q2',
-              text: 'ما الخطوة التي تدل على فهم تطبيقي للموضوع؟',
-              options: ['تطبيقه على حالة وتفسير النتيجة', 'حفظ اسم الموضوع فقط', 'نسخ تعريف دون فهم', 'تجاهل القيود والافتراضات'],
-              correctIndex: 0,
-            ),
-            AssessmentQuestion(
-              id: '$lessonId-q3',
-              text: 'ماذا ينبغي أن يفعل الطالب عند ظهور نتيجة غير متوقعة؟',
-              options: ['يفحص الافتراضات والخطوات والبيانات ثم يفسر السبب', 'يغيّر النتيجة دون فحص', 'يحذف المسألة', 'يتوقف عن التقييم'],
-              correctIndex: 0,
-            ),
+            AssessmentQuestion(id: '$lessonId-q1', text: 'في تحليل موقف تقني، ما البداية الأكثر فائدة؟', options: ['تحديد الوقائع وأصحاب المصلحة', 'اختيار الحل قبل فهم المشكلة', 'تجاهل الأطراف المتأثرة', 'الاعتماد على الانطباع الشخصي فقط'], correctIndex: 0),
+            AssessmentQuestion(id: '$lessonId-q2', text: 'ما الذي يجعل التوصية المهنية قابلة للدفاع عنها؟', options: ['ربطها بالأدلة والقيم والالتزامات والآثار', 'كونها أسرع حل فقط', 'إخفاء القيود والمخاطر', 'تجنب توثيق القرار'], correctIndex: 0),
+            AssessmentQuestion(id: '$lessonId-q3', text: 'أي موقف يمثل ممارسة مسؤولة؟', options: ['حماية البيانات واحترام الحقوق وتوثيق المخاطر', 'جمع كل البيانات بلا حاجة', 'تجاهل الترخيص', 'إخفاء مشكلة تؤثر في المستخدمين'], correctIndex: 0),
           ],
         ),
-      ],
-      projects: [
-        AcademicProject(
-          id: '$lessonId-project',
-          title: 'مشروع مصغر: $topic',
-          description: 'أنجز تطبيقًا أو دراسة حالة صغيرة في «$courseName» تركز على «$topic». وثّق المشكلة، المفاهيم المستخدمة، خطوات التنفيذ، النتيجة، الأخطاء التي واجهتها، وكيف تحققت من صحة الحل.',
+      ];
+    }
+    if (n.contains('python')) {
+      return [
+        LessonAssessment(
+          id: '$lessonId-assessment',
+          title: 'تقييم تطبيقي: $title',
+          questions: [
+            AssessmentQuestion(id: '$lessonId-q1', text: 'أي خيار يوضح فهم «$topic» في Python؟', options: ['استخدامه في برنامج وشرح أثره على التنفيذ', 'حفظ اسم الدالة فقط', 'نسخ الكود دون تشغيله', 'تجاهل نوع البيانات'], correctIndex: 0),
+            AssessmentQuestion(id: '$lessonId-q2', text: 'عند ظهور مخرج غير متوقع، ما الإجراء الصحيح؟', options: ['فحص المدخلات والأنواع وخطوات التنفيذ', 'تغيير المخرج يدويًا', 'حذف الاختبار', 'افتراض أن البرنامج صحيح'], correctIndex: 0),
+            AssessmentQuestion(id: '$lessonId-q3', text: 'ما الاختبار الأفضل للتحقق من برنامج صغير؟', options: ['حالات عادية وحدية ومدخلات غير متوقعة', 'حالة واحدة فقط', 'عدم الاختبار', 'اختبار المخرجات دون المدخلات'], correctIndex: 0),
+          ],
         ),
-      ],
-    );
+      ];
+    }
+    if (n.contains('رياضيات') || n.contains('mathemat')) {
+      return [
+        LessonAssessment(
+          id: '$lessonId-assessment',
+          title: 'تقييم استدلالي: $title',
+          questions: [
+            AssessmentQuestion(id: '$lessonId-q1', text: 'ما الأساس الصحيح للحكم على حل مسألة «$topic»؟', options: ['التعريفات والشروط وخطوات الاستدلال', 'الشكل النهائي فقط', 'التخمين', 'حفظ مثال واحد'], correctIndex: 0),
+            AssessmentQuestion(id: '$lessonId-q2', text: 'متى تكون النتيجة الرياضية مقيدة؟', options: ['عندما تعتمد على شروط أو افتراضات محددة', 'عندما تكون مكتوبة بالأرقام فقط', 'عندما تكون طويلة', 'عندما لا يمكن التحقق منها'], correctIndex: 0),
+            AssessmentQuestion(id: '$lessonId-q3', text: 'ما أفضل طريقة لاختبار ادعاء عام؟', options: ['برهان مناسب أو مثال مضاد عند الحاجة', 'مثال واحد يؤيده فقط', 'تغيير التعريف', 'تجاهل الحالات الخاصة'], correctIndex: 0),
+          ],
+        ),
+      ];
+    }
+    if (n.contains('ذكاء اصطناعي') || n.contains('ai')) {
+      return [
+        LessonAssessment(
+          id: '$lessonId-assessment',
+          title: 'تقييم تحليلي: $title',
+          questions: [
+            AssessmentQuestion(id: '$lessonId-q1', text: 'ما العامل الذي يجب تحديده قبل اختيار طريقة حل لمشكلة «$topic»؟', options: ['الهدف والبيانات والقيود', 'اسم الخوارزمية فقط', 'حجم الكود فقط', 'النتيجة المرغوبة دون بيانات'], correctIndex: 0),
+            AssessmentQuestion(id: '$lessonId-q2', text: 'كيف نعرف أن نموذجًا أو خوارزمية مناسبة؟', options: ['بمقارنة أدائها بمقياس مناسب وعلى بيانات ملائمة', 'بمجرد تشغيلها مرة', 'لأنها الأكثر تعقيدًا', 'لأنها لا تحتاج اختبارًا'], correctIndex: 0),
+            AssessmentQuestion(id: '$lessonId-q3', text: 'ما خطر تجاهل تحيز البيانات؟', options: ['قد ينتج النظام أداءً غير عادل أو غير موثوق لبعض الحالات', 'يزيد دقة النظام دائمًا', 'يلغي الحاجة للتقييم', 'لا يؤثر في النتائج'], correctIndex: 0),
+          ],
+        ),
+      ];
+    }
+    return [
+      LessonAssessment(
+        id: '$lessonId-assessment',
+        title: 'تقييم تحليلي: $title',
+        questions: [
+          AssessmentQuestion(id: '$lessonId-q1', text: 'ما الخطوة التي تثبت فهم «$topic»؟', options: ['تطبيقه على حالة وتفسير النتيجة', 'حفظ المصطلح فقط', 'نسخ المثال', 'تجاهل القيود'], correctIndex: 0),
+          AssessmentQuestion(id: '$lessonId-q2', text: 'ما الذي يجب فحصه عند نتيجة غير متوقعة؟', options: ['المدخلات والافتراضات والخطوات والنتيجة', 'النتيجة فقط', 'اسم الموضوع', 'حذف الحالة'], correctIndex: 0),
+          AssessmentQuestion(id: '$lessonId-q3', text: 'كيف نتحقق من جودة الحل؟', options: ['باختبار مناسب وتفسير النتيجة ومراجعة القيود', 'بزيادة طول الحل', 'بعدم تغيير المدخلات', 'بالاعتماد على الانطباع'], correctIndex: 0),
+        ],
+      ),
+    ];
+  }
+
+  static List<AcademicProject> _projectsFor({
+    required String lessonId,
+    required String courseName,
+    required String topic,
+  }) {
+    final n = courseName.toLowerCase();
+    String description;
+    if (n.contains('أخلاقيات') || n.contains('المهنة') || n.contains('المجتمع') || n.contains('ethics') || n.contains('profession')) {
+      description = 'حلل حالة تقنية حقيقية أو افتراضية مرتبطة بـ«$topic». وثّق أصحاب المصلحة والوقائع والمخاطر والحقوق والبدائل، ثم قدم قرارًا مهنيًا مبررًا والضوابط المقترحة.';
+    } else if (n.contains('python')) {
+      description = 'ابنِ برنامج Python صغيرًا يطبق «$topic». وثّق المدخلات والمخرجات والخوارزمية والكود والاختبارات والأخطاء والتعديلات، ثم اشرح لماذا يعمل الحل.';
+    } else if (n.contains('رياضيات') || n.contains('mathemat')) {
+      description = 'أنجز دراسة أو نموذجًا رياضيًا صغيرًا حول «$topic». اذكر التعريفات والافتراضات والخطوات، ثم تحقق من النتيجة ببرهان أو أمثلة مناسبة.';
+    } else if (n.contains('ذكاء اصطناعي') || n.contains('ai')) {
+      description = 'صمّم تجربة صغيرة حول «$topic» في الذكاء الاصطناعي. حدد المشكلة والبيانات والطريقة ومقياس التقييم، ثم حلل النتائج والقيود والتحيزات المحتملة.';
+    } else {
+      description = 'أنجز مشروعًا مصغرًا في «$courseName» يطبق «$topic». وثّق المشكلة والمفاهيم والخطوات والنتيجة والاختبارات والأخطاء، ثم اشرح كيف تحققت من صحة الحل.';
+    }
+    return [
+      AcademicProject(
+        id: '$lessonId-project',
+        title: 'مشروع تطبيقي: $topic',
+        description: description,
+      ),
+    ];
   }
 
   static _LessonBlueprint _blueprintFor(String courseName) {
