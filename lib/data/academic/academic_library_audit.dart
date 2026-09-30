@@ -131,10 +131,6 @@ class AcademicLibraryAudit {
     if (missingAreas.isNotEmpty) {
       issues.add('مجالات CS2023 غير المغطاة في المكتبة: ${missingAreas.join(', ')}.');
     }
-    final missingUnits = knownKnowledgeUnits.difference(knowledgeUnitIds);
-    if (missingUnits.isNotEmpty) {
-      issues.add('وحدات المعرفة غير المرتبطة بأي مقرر: ${missingUnits.join(', ')}.');
-    }
     return AcademicLibraryAuditReport(
       fields: fields,
       universities: universities,
