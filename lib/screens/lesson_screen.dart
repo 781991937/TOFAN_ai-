@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../application/learning/learning_state.dart';
 import '../domain/academic/academic_models.dart';
+import 'assessment_screen.dart';
 
 class LessonScreen extends ConsumerWidget {
   const LessonScreen({super.key, required this.course, required this.lesson});
@@ -81,6 +82,24 @@ class LessonScreen extends ConsumerWidget {
                 ),
               ),
             ),
+            if (completed && lesson.assessments.isNotEmpty)
+              ...[
+                const SizedBox(height: 18),
+                Text('التقييم', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
+                const SizedBox(height: 8),
+                for (final assessment in lesson.assessments)
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.assignment_outlined, color: theme.colorScheme.primary),
+                      title: Text(assessment.title, style: const TextStyle(fontWeight: FontWeight.w800)),
+                      subtitle: Text(assessment.questions.length.toString() + ' أسئلة'),
+                      trailing: const Icon(Icons.chevron_left),
+                      onTap: () => Navigator.push(context, MaterialPageRoute(
+                        builder: (_) => AssessmentScreen(assessment: assessment),
+                      )),
+                    ),
+                  ),
+              ],
             const SizedBox(height: 18),
             if (!completed)
               FilledButton.icon(
