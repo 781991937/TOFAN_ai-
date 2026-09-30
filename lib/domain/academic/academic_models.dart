@@ -66,6 +66,9 @@ class AcademicLesson {
     required this.title,
     this.isFree = true,
     this.content = '',
+    this.definition = '',
+    this.applications = const [],
+    this.errorAnalysisGuidance = '',
     this.learningOutcomes = const [],
     this.keyTerms = const [],
     this.examples = const [],
@@ -74,12 +77,19 @@ class AcademicLesson {
     this.projects = const [],
     this.conceptIds = const [],
     this.skillIds = const [],
+    this.skillEvidence = const [],
   });
 
   final String id;
   final String title;
   final bool isFree;
   final String content;
+  /// The primary definition that should precede dependent explanation.
+  final String definition;
+  /// Concrete application contexts that connect the lesson to practice.
+  final List<String> applications;
+  /// Guidance used by the analysis stage to explain and correct common errors.
+  final String errorAnalysisGuidance;
   final List<String> learningOutcomes;
   final List<String> keyTerms;
   final List<String> examples;
@@ -90,6 +100,8 @@ class AcademicLesson {
   final List<String> conceptIds;
   /// Stable skill identifiers that the lesson is expected to develop.
   final List<String> skillIds;
+  /// Observable evidence the learner should produce to demonstrate the skill.
+  final List<String> skillEvidence;
 }
 
 class LessonAssessment {
@@ -100,11 +112,25 @@ class LessonAssessment {
 }
 
 class AssessmentQuestion {
-  const AssessmentQuestion({required this.id, required this.text, required this.options, required this.correctIndex});
+  const AssessmentQuestion({
+    required this.id,
+    required this.text,
+    required this.options,
+    required this.correctIndex,
+    this.learningOutcomeIndexes = const [],
+    this.conceptIds = const [],
+    this.skillIds = const [],
+  });
   final String id;
   final String text;
   final List<String> options;
   final int correctIndex;
+  /// Zero-based lesson learning-outcome indexes measured by this question.
+  final List<int> learningOutcomeIndexes;
+  /// Concepts assessed by this question.
+  final List<String> conceptIds;
+  /// Skills evidenced by this question.
+  final List<String> skillIds;
 }
 
 class LessonPractice {
@@ -121,8 +147,16 @@ class PracticeTask {
 }
 
 class AcademicProject {
-  const AcademicProject({required this.id, required this.title, required this.description});
+  const AcademicProject({
+    required this.id,
+    required this.title,
+    required this.description,
+    this.skillIds = const [],
+    this.conceptIds = const [],
+  });
   final String id;
   final String title;
   final String description;
+  final List<String> skillIds;
+  final List<String> conceptIds;
 }
