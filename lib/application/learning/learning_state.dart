@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../../data/academic/academic_catalog.dart';
 import '../../domain/learning/learning_models.dart';
 import 'skill_update_state.dart';
+import '../../application/student/student_state.dart';
 import 'progress_state.dart';
 
 final learningSessionProvider =
@@ -33,12 +34,35 @@ class LearningSessionController extends Notifier<LearningSession?> {
       completedAt: DateTime.now(),
     );
     ref.read(learningProgressProvider.notifier).completeLesson(session.lessonId);
-    ref.read(skillUpdateHistoryProvider.notifier).apply(
-      sourceId: session.lessonId,
-      sourceType: 'study',
-      knowledgeDelta: 2,
-      skillDelta: 1,
-      capabilityDelta: 1,
+  }
+
+  void completePractice() {
+    final session = state;
+    if (session == null || session.stage != LearningStage.practice) return;
+    state = LearningSession(
+      lessonId: session.lessonId,
+      stage: LearningStage.assessment,
+      startedAt: session.startedAt,
+    );
+  }
+
+  void startAssessment() {
+    final session = state;
+    if (session == null || session.stage != LearningStage.assessment) return;
+    state = LearningSession(
+      lessonId: session.lessonId,
+      stage: LearningStage.assessment,
+      startedAt: session.startedAt,
+    );
+  }
+
+  void enterProject() {
+    final session = state;
+    if (session == null) return;
+    state = LearningSession(
+      lessonId: session.lessonId,
+      stage: LearningStage.project,
+      startedAt: session.startedAt,
     );
   }
 
