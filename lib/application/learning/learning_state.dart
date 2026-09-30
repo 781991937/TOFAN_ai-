@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../../data/academic/academic_catalog.dart';
 import '../../domain/learning/learning_models.dart';
 import 'skill_update_state.dart';
+import 'progress_state.dart';
 
 final learningSessionProvider =
     NotifierProvider<LearningSessionController, LearningSession?>(
@@ -31,6 +32,7 @@ class LearningSessionController extends Notifier<LearningSession?> {
       startedAt: session.startedAt,
       completedAt: DateTime.now(),
     );
+    ref.read(learningProgressProvider.notifier).completeLesson(session.lessonId);
     ref.read(skillUpdateHistoryProvider.notifier).apply(
       sourceId: session.lessonId,
       sourceType: 'study',
