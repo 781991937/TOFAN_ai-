@@ -1,3 +1,15 @@
+class AcademicField {
+  const AcademicField({
+    required this.id,
+    required this.name,
+    required this.universities,
+  });
+
+  final String id;
+  final String name;
+  final List<AcademicUniversity> universities;
+}
+
 class AcademicUniversity {
   const AcademicUniversity({required this.id, required this.name, required this.colleges});
   final String id;
@@ -31,11 +43,44 @@ class AcademicSemester {
   final List<AcademicCourse> courses;
 }
 
+class AcademicUnit {
+  const AcademicUnit({
+    required this.id,
+    required this.title,
+    required this.lessons,
+  });
+
+  final String id;
+  final String title;
+  final List<AcademicLesson> lessons;
+}
+
 class AcademicCourse {
-  const AcademicCourse({required this.id, required this.name, required this.lessons});
+  const AcademicCourse({
+    required this.id,
+    required this.name,
+    required this.lessons,
+    this.units = const [],
+  });
+
   final String id;
   final String name;
   final List<AcademicLesson> lessons;
+  final List<AcademicUnit> units;
+
+  /// Provides the approved Course → Unit → Lesson hierarchy while preserving
+  /// the existing lesson-based catalog data during incremental migration.
+  List<AcademicUnit> get normalizedUnits {
+    if (units.isNotEmpty) return units;
+    if (lessons.isEmpty) return const [];
+    return <AcademicUnit>[
+      AcademicUnit(
+        id: '$id-unit-1',
+        title: 'الوحدة الأولى',
+        lessons: lessons,
+      ),
+    ];
+  }
 }
 
 class AcademicLesson {
