@@ -184,6 +184,7 @@ skillEvidence: ['يبني برنامجًا تفاعليًا بسيطًا.', 'ي�
                           id: 'discrete-math',
                           name: 'الرياضيات المتقطعة',
                           knowledgeAreaIds: ['MSF','AL'],
+                          prerequisiteCourseIds: const [],
                           lessons: [
                             AcademicLesson(
                               id: 'sets',
@@ -383,6 +384,7 @@ skillEvidence: ['يحدد مكونات نموذج وكيل.', 'يربط المل
                           id: 'data-structures',
                           name: 'هياكل البيانات',
                           knowledgeAreaIds: ['AL','SDF'],
+                          prerequisiteCourseIds: const ['python', 'discrete-math'],
                           lessons: [
                             AcademicLesson(
                               id: 'arrays',
