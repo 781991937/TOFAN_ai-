@@ -53,10 +53,21 @@ Agents are specialized workers, not independent uncontrolled chatbots.
 
 The Main Manager coordinates bounded agent actions and records important events.
 
-## Academic hierarchy
-University → College/Center → Specialization → Year → Semester → Course → Lesson/File/Assessment/Project
+## Global Academic Library — approved structure
+The academic library is a global, multi-disciplinary curriculum system. It is not limited to one university. Its approved structural hierarchy is:
 
-The catalog is global. Sana'a University can be reference data, not a platform limitation.
+**Academic Field → University → College/Center → Specialization → Year (1–4) → Semester (1–2) → Course → Unit → Lesson → Practice → Assessment → Analysis → Skill Update → Project**
+
+Structural rules:
+- The library may contain multiple academic fields and computing disciplines.
+- Each specialization is organized across four academic years, with two semesters per year.
+- Courses contain ordered units and lessons; lessons are the executable learning unit.
+- Each lesson follows the approved learning lifecycle: Study → Practice → Assessment → Analysis → Skill Update → Project.
+- University and college names are organizational/reference data and must not constrain the global scope of TOFAN.
+- Academic content must be original TOFAN content grounded in recognized global curriculum knowledge; external frameworks guide coverage but are not copied as a university curriculum.
+- The catalog is expanded by completing the structure and content systematically, not by creating parallel or duplicate catalogs.
+
+Sana'a University remains valid as initial reference data, not as a platform limitation.
 
 ## Student lifecycle
 Onboarding → Academic Profile → Diagnostic → Learning Plan → Study → Practice → Assessment → Analysis → Skill Update → Project
