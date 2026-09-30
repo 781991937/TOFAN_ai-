@@ -39,8 +39,24 @@ class AcademicCourse {
 }
 
 class AcademicLesson {
-  const AcademicLesson({required this.id, required this.title, this.isFree = true});
+  const AcademicLesson({required this.id, required this.title, this.isFree = true, this.assessments = const []});
   final String id;
   final String title;
   final bool isFree;
+  final List<LessonAssessment> assessments;
+}
+
+class LessonAssessment {
+  const LessonAssessment({required this.id, required this.title, required this.questions});
+  final String id;
+  final String title;
+  final List<AssessmentQuestion> questions;
+}
+
+class AssessmentQuestion {
+  const AssessmentQuestion({required this.id, required this.text, required this.options, required this.correctIndex});
+  final String id;
+  final String text;
+  final List<String> options;
+  final int correctIndex;
 }
