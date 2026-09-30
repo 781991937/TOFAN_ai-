@@ -21,6 +21,7 @@ class LessonScreen extends ConsumerWidget {
     final completed = active && session!.stage != LearningStage.study;
     final practiceReady = active && session!.stage == LearningStage.practice;
     final assessmentReady = active && session!.stage == LearningStage.assessment;
+    final projectReady = active && session!.stage == LearningStage.project;
     final theme = Theme.of(context);
 
     return Directionality(
@@ -112,7 +113,7 @@ class LessonScreen extends ConsumerWidget {
                     ),
                   ),
               ],
-            if (assessmentReady && lesson.projects.isNotEmpty)
+            if (projectReady && lesson.projects.isNotEmpty)
               ...[
                 const SizedBox(height: 18),
                 Text('المشروع',
