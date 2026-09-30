@@ -19,8 +19,18 @@ class LearningSessionController extends Notifier<LearningSession?> {
   void startLesson(String lessonId) {
     state = LearningSession(
       lessonId: lessonId,
-      stage: LearningStage.study,
+      stage: LearningStage.learningPlan,
       startedAt: DateTime.now(),
+    );
+  }
+
+  void beginStudy() {
+    final session = state;
+    if (session == null || session.stage != LearningStage.learningPlan) return;
+    state = LearningSession(
+      lessonId: session.lessonId,
+      stage: LearningStage.study,
+      startedAt: session.startedAt,
     );
   }
 
