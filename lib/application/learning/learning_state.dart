@@ -56,9 +56,39 @@ class LearningSessionController extends Notifier<LearningSession?> {
     );
   }
 
+  void completeAssessment() {
+    final session = state;
+    if (session == null || session.stage != LearningStage.assessment) return;
+    state = LearningSession(
+      lessonId: session.lessonId,
+      stage: LearningStage.analysis,
+      startedAt: session.startedAt,
+    );
+  }
+
+  void completeAnalysis() {
+    final session = state;
+    if (session == null || session.stage != LearningStage.analysis) return;
+    state = LearningSession(
+      lessonId: session.lessonId,
+      stage: LearningStage.skillUpdate,
+      startedAt: session.startedAt,
+    );
+  }
+
+  void completeSkillUpdate() {
+    final session = state;
+    if (session == null || session.stage != LearningStage.skillUpdate) return;
+    state = LearningSession(
+      lessonId: session.lessonId,
+      stage: LearningStage.project,
+      startedAt: session.startedAt,
+    );
+  }
+
   void enterProject() {
     final session = state;
-    if (session == null) return;
+    if (session == null || session.stage != LearningStage.project) return;
     state = LearningSession(
       lessonId: session.lessonId,
       stage: LearningStage.project,
