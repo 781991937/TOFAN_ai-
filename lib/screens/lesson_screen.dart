@@ -18,7 +18,8 @@ class LessonScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(learningSessionProvider);
     final active = session?.lessonId == lesson.id;
-    final completed = active && session!.stage != LearningStage.study;
+    final completed = active && session!.stage == LearningStage.project;
+    final planReady = active && session!.stage == LearningStage.learningPlan;
     final practiceReady = active && session!.stage == LearningStage.practice;
     final assessmentReady = active && session!.stage == LearningStage.assessment;
     final projectReady = active && session!.stage == LearningStage.project;
@@ -75,16 +76,20 @@ class LessonScreen extends ConsumerWidget {
                 ),
                 title: Text(
                   completed
-                      ? 'اكتملت جلسة الدراسة'
-                      : active
-                          ? 'جلسة الدراسة جارية'
-                          : 'لم تبدأ الدراسة بعد',
+                      ? 'وصلت إلى مرحلة المشروع'
+                      : planReady
+                          ? 'خطة التعلم جاهزة'
+                          : active
+                              ? 'جلسة الدراسة جارية'
+                              : 'لم تبدأ الدراسة بعد',
                   style: const TextStyle(fontWeight: FontWeight.w800),
                 ),
                 subtitle: Text(
                   completed
-                      ? 'تم تحديث مؤشرات الطالب الذكي.'
-                      : 'ابدأ الجلسة لتسجيل تقدمك في هذا الدرس.',
+                      ? 'اكتملت مراحل التعلم السابقة ويمكنك بدء المشروع.'
+                      : planReady
+                          ? 'تم إعداد مسار هذا الدرس. ابدأ الدراسة للانتقال إلى المرحلة التالية.'
+                          : 'ابدأ الجلسة لتسجيل تقدمك في هذا الدرس.',
                 ),
               ),
             ),
@@ -161,19 +166,30 @@ class LessonScreen extends ConsumerWidget {
               FilledButton.icon(
                 onPressed: lesson.isFree
                     ? () {
+                        final controller = ref.read(learningSessionProvider.notifier);
                         if (!active) {
-                          ref
-                              .read(learningSessionProvider.notifier)
-                              .startLesson(lesson.id);
+                          controller.startLesson(lesson.id);
+                        } else if (planReady) {
+                          controller.beginStudy();
                         } else {
-                          ref
-                              .read(learningSessionProvider.notifier)
-                              .completeStudy();
+                          controller.completeStudy();
                         }
                       }
                     : null,
-                icon: Icon(active ? Icons.check : Icons.play_arrow),
-                label: Text(active ? 'أنهيت دراسة الدرس' : 'ابدأ دراسة الدرس'),
+                icon: Icon(
+                  !active
+                      ? Icons.play_arrow
+                      : planReady
+                          ? Icons.school_outlined
+                          : Icons.check,
+                ),
+                label: Text(
+                  !active
+                      ? 'ابدأ خطة التعلم'
+                      : planReady
+                          ? 'ابدأ الدراسة'
+                          : 'أنهي دراسة الدرس',
+                ),
               )
             else
               OutlinedButton.icon(
