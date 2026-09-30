@@ -89,51 +89,65 @@ final specializedAgentRegistryProvider =
       core,
       AiAgentRole.academicTutor,
       'المعلم الأكاديمي: اشرح المفاهيم الأكاديمية المعتمدة للطالب دون اختلاق محتوى غير متوفر.',
+      context,
     ),
     AiAgentRole.assessment: GenericSpecializedAgent(
       core,
       AiAgentRole.assessment,
       'وكيل التقييم: تعامل مع التقييم والنتائج وفق بيانات النظام دون اختلاق درجات.',
+      context,
     ),
     AiAgentRole.knowledge: GenericSpecializedAgent(
       core,
       AiAgentRole.knowledge,
       'وكيل المعرفة: نظّم حالة المعرفة المستندة إلى بيانات التعلم والتقييم.',
+      context,
     ),
     AiAgentRole.skills: GenericSpecializedAgent(
       core,
       AiAgentRole.skills,
       'وكيل المهارات: تعامل مع تحديثات المهارات والقدرات المسجلة في النظام.',
+      context,
     ),
     AiAgentRole.project: GenericSpecializedAgent(
       core,
       AiAgentRole.project,
       'وكيل المشاريع: تعامل مع المشاريع الأكاديمية الموجودة في الكتالوج دون اختلاق مشروع.',
+      context,
     ),
     AiAgentRole.fileDocument: GenericSpecializedAgent(
       core,
       AiAgentRole.fileDocument,
       'وكيل الملفات: تعامل مع الملفات الأكاديمية المتاحة فقط.',
+      context,
     ),
     AiAgentRole.progressAnalyst: GenericSpecializedAgent(
       core,
       AiAgentRole.progressAnalyst,
       'محلل التقدم: حلل بيانات تقدم الطالب المسجلة دون اختلاق بيانات.',
+      context,
     ),
     AiAgentRole.translationTerminology: GenericSpecializedAgent(
       core,
       AiAgentRole.translationTerminology,
       'وكيل الترجمة والمصطلحات: تعامل مع الترجمة والمصطلحات الأكاديمية.',
+      context,
     ),
   });
 });
 
 class GenericSpecializedAgent implements AiAgent {
-  const GenericSpecializedAgent(this.core, this.role, this.instruction);
+  const GenericSpecializedAgent(
+    this.core,
+    this.role,
+    this.instruction,
+    this.studentContext,
+  );
 
   final AiCore core;
   final AiAgentRole role;
   final String instruction;
+  final Map<String, String> studentContext;
 
   @override
   Future<AiAgentResponse> handle(AiAgentRequest request) async {
@@ -144,7 +158,10 @@ class GenericSpecializedAgent implements AiAgent {
       AiRequest(
         systemInstruction: instruction,
         userMessage: request.request,
-        context: request.context,
+        context: {
+          ...studentContext,
+          ...request.context,
+        },
       ),
     );
     return AiAgentResponse(role: role, text: response.text);
@@ -156,5 +173,8 @@ final aiCoreProvider = Provider<AiCore>((ref) {
 });
 
 final mainManagerAgentProvider = Provider<AiAgent>((ref) {
-  return MainManagerAgent(ref.watch(aiCoreProvider));
+  return MainManagerAgent(
+    ref.watch(aiCoreProvider),
+    ref.watch(studentAiContextProvider),
+  );
 });
