@@ -1,5 +1,6 @@
 import '../../domain/academic/academic_models.dart';
 import 'academic_catalog.dart';
+import 'academic_knowledge_area_catalog.dart';
 
 /// Structural and instructional integrity gate for the TOFAN Academic Library.
 class AcademicLibraryAudit {
@@ -19,10 +20,9 @@ class AcademicLibraryAudit {
     final skillIds = <String>{};
     final allCourses = <AcademicCourse>[];
     final knowledgeAreas = <String>{};
-    const knownKnowledgeAreas = <String>{
-      'AI', 'AL', 'AR', 'DM', 'FPL', 'GIT', 'HCI', 'MSF', 'NC',
-      'OS', 'PDC', 'SEC', 'SEP', 'SDF', 'SE', 'SPD', 'SF',
-    };
+    final knownKnowledgeAreas = AcademicKnowledgeAreaCatalog.areas
+        .map((area) => area.id)
+        .toSet();
 
     for (final field in AcademicCatalog.fields) {
       fields++;
