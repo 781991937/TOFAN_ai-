@@ -1,5 +1,6 @@
 import '../../domain/academic/academic_models.dart';
 import 'academic_knowledge_unit_catalog.dart';
+import 'academic_lesson_blueprints.dart';
 
 /// Reference catalog for the global TOFAN AI STUDENT library.
 /// The structure is independent from any single university.
@@ -696,78 +697,115 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
     required String courseName,
     required int lessonNumber,
   }) {
-    if (lessonNumber > 3) {
-      return _deepCurriculumLesson(
-        courseId: courseId,
-        courseName: courseName,
-        lessonNumber: lessonNumber,
-      );
-    }
-
-    final blueprint = _blueprintFor(courseName);
-    final title = blueprint.titles[lessonNumber - 1];
-    final topic = blueprint.topics[lessonNumber - 1];
-    final lessonId = '$courseId-$lessonNumber';
+    final units = _knowledgeUnitsFor(courseName);
+    final specs = AcademicCourseLessonBlueprints.forCourse(courseName, units);
+    final spec = specs[(lessonNumber - 1).clamp(0, specs.length - 1)];
+    final lessonId = '\$courseId-\$lessonNumber';
+    final conceptId = 'concept-\$courseId-\$lessonNumber';
+    final skillId = 'skill-\$courseId-\$lessonNumber';
 
     return AcademicLesson(
       id: lessonId,
-      title: title,
-      content: blueprint.content[lessonNumber - 1],
-      definition: _definitionFor(
-        topic: topic,
-        content: blueprint.content[lessonNumber - 1],
-      ),
-      applications: [
-        'طبّق «$topic» على حالة صغيرة مرتبطة بمقرر «$courseName».',
-        'قارن بين حالتين مختلفتين وحدد كيف تؤثر المدخلات أو القيود في النتيجة.',
-      ],
-      errorAnalysisGuidance: 'عند الخطأ، حدّد المفهوم الذي أخطأت فيه أولًا، ثم راجع التعريف والافتراضات، وأعد الحل على مثال جديد قبل إعادة التقييم.',
+      title: spec.title,
+      content: spec.content,
+      definition: spec.definition,
+      applications: spec.applications,
+      errorAnalysisGuidance:
+          'افصل بين تعريف المفهوم، والمدخلات والافتراضات، وخطوات التطبيق. حدّد أول خطوة تغيّرت فيها النتيجة، ثم أعد الاختبار بحالة مستقلة.',
       learningOutcomes: [
-        'يشرح الطالب مفهوم «$topic» بلغة علمية واضحة.',
-        'يميز المكونات والعلاقات الرئيسة المرتبطة بـ«$topic».',
-        'يطبق المفهوم على مسألة أو مثال مناسب لمقرر «$courseName».',
-        'يحلل النتيجة ويبرر الاختيار أو الحل باستخدام المصطلحات الصحيحة.',
+        'يشرح الطالب «\${spec.topic}» بلغة علمية واضحة.',
+        'يميز المكونات والعلاقات والافتراضات المرتبطة بالمفهوم.',
+        'يطبق المفهوم على حالة جديدة مرتبطة بمقرر «\$courseName».',
+        'يحلل النتيجة ويبرر الاختيار ويحدد القيود.',
       ],
-      keyTerms: blueprint.terms,
-      examples: [
-        'مثال مفاهيمي: حدّد «$topic» في موقف عملي، ثم اشرح سبب تحديدك له.',
-        'مثال تطبيقي: قارن حالتين مرتبطتين بـ«$topic» وحدد أثر اختلاف المدخلات أو القيود على النتيجة.',
-      ],
-      practices: _practicesFor(
-        lessonId: lessonId,
-        courseName: courseName,
-        topic: topic,
-      ),
-      assessments: _alignedAssessments(
-        assessments: _assessmentsFor(
-          lessonId: lessonId,
-          courseName: courseName,
-          title: title,
-          topic: topic,
+      keyTerms: spec.terms,
+      examples: spec.examples,
+      practices: [
+        LessonPractice(
+          id: '\$lessonId-practice',
+          title: 'تدريب متدرج: \${spec.title}',
+          tasks: [
+            PracticeTask(
+              id: '\$lessonId-p1',
+              instruction: 'عرّف «\${spec.topic}» وحدد البيانات أو الشروط التي تحتاجها قبل التطبيق.',
+            ),
+            PracticeTask(
+              id: '\$lessonId-p2',
+              instruction: 'طبّق المفهوم على حالة جديدة وسجل الخطوات والافتراضات والنتيجة.',
+            ),
+            PracticeTask(
+              id: '\$lessonId-p3',
+              instruction: 'غيّر قيدًا واحدًا، ثم حلّل الفرق وحدد سبب تغير النتيجة.',
+            ),
+          ],
         ),
-        conceptIds: ['concept-' + courseId + '-' + lessonNumber.toString()],
-        skillIds: ['skill-' + courseId + '-' + lessonNumber.toString()],
-        outcomeCount: 4,
-      ),
-      projects: _alignedProjects(
-        projects: _projectsFor(
-          lessonId: lessonId,
-          courseName: courseName,
-          topic: topic,
+      ],
+      assessments: [
+        LessonAssessment(
+          id: '\$lessonId-assessment',
+          title: 'تقييم تحليلي: \${spec.title}',
+          questions: [
+            AssessmentQuestion(
+              id: '\$lessonId-q1',
+              text: 'ما الذي يثبت فهم «\${spec.topic}»؟',
+              options: [
+                'حفظ المصطلح فقط',
+                'تطبيقه وتفسير أثره في سياق المقرر',
+                'نسخ مثال دون تفسير',
+                'تجاهل القيود',
+              ],
+              correctIndex: 1,
+              learningOutcomeIndexes: [0],
+              conceptIds: [conceptId],
+              skillIds: [skillId],
+            ),
+            AssessmentQuestion(
+              id: '\$lessonId-q2',
+              text: 'ما الذي يجب فحصه قبل قبول نتيجة تطبيقية؟',
+              options: [
+                'النتيجة النهائية فقط',
+                'المدخلات والافتراضات والخطوات والقيود',
+                'طول الحل',
+                'اسم الأداة',
+              ],
+              correctIndex: 1,
+              learningOutcomeIndexes: [1],
+              conceptIds: [conceptId],
+              skillIds: [skillId],
+            ),
+            AssessmentQuestion(
+              id: '\$lessonId-q3',
+              text: 'كيف نختبر نقل المعرفة إلى مسألة جديدة؟',
+              options: [
+                'تكرار المثال نفسه',
+                'حفظ التعريف',
+                'حل حالة مختلفة وتحليل النتيجة',
+                'تجاهل الحالات الحدية',
+              ],
+              correctIndex: 2,
+              learningOutcomeIndexes: [2],
+              conceptIds: [conceptId],
+              skillIds: [skillId],
+            ),
+          ],
         ),
-        conceptIds: ['concept-' + courseId + '-' + lessonNumber.toString()],
-        skillIds: ['skill-' + courseId + '-' + lessonNumber.toString()],
-      ),
-      conceptIds: [
-        'concept-${courseId}-${lessonNumber}',
       ],
-      skillIds: [
-        'skill-${courseId}-${lessonNumber}',
+      projects: [
+        AcademicProject(
+          id: '\$lessonId-project',
+          title: 'مشروع تطبيقي: \${spec.title}',
+          description:
+              'أنجز تطبيقًا صغيرًا في «\$courseName» يثبت فهم «\${spec.topic}». وثّق المتطلبات والخطوات والاختبارات والنتيجة والقيود.',
+          conceptIds: [conceptId],
+          skillIds: [skillId],
+        ),
       ],
+      conceptIds: [conceptId],
+      skillIds: [skillId],
       skillEvidence: [
-        'يشرح «$topic» دون الاعتماد على الحفظ الحرفي.',
-        'يطبق «$topic» على حالة جديدة ويسجل خطواته ونتيجته.',
-        'يفسر خطأ أو نتيجة غير متوقعة ويقترح تصحيحًا قابلًا للتحقق.',
+        'يشرح المفهوم ويربطه بوحدات المعرفة في المقرر.',
+        'يطبقه على حالة جديدة ويوثق خطواته.',
+        'يحلل نتيجة أو خطأ ويقترح تحققًا أو تحسينًا قابلًا للقياس.',
       ],
     );
   }
