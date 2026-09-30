@@ -186,6 +186,7 @@ skillEvidence: ['يبني برنامجًا تفاعليًا بسيطًا.', 'ي�
                           id: 'discrete-math',
                           name: 'الرياضيات المتقطعة',
                           knowledgeAreaIds: ['MSF','AL'],
+                          knowledgeUnitIds: ['msf-01','msf-02','al-01'],
                           prerequisiteCourseIds: const [],
                           lessons: [
                             AcademicLesson(
@@ -284,6 +285,7 @@ skillEvidence: ['يمثل علاقة صحيحة.', 'يفسر كل زوج مرت�
                           id: 'ai-intro',
                           name: 'مقدمة في الذكاء الاصطناعي',
                           knowledgeAreaIds: ['AI','MSF'],
+                          knowledgeUnitIds: ['ai-01','ai-03','msf-02'],
                           lessons: [
                             AcademicLesson(
                               id: 'ai-foundations',
