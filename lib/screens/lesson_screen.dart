@@ -66,6 +66,8 @@ class LessonScreen extends ConsumerWidget {
                       ],
                     ),
                     const SizedBox(height: 14),
+                    if (lesson.content.isNotEmpty) Text(lesson.content),
+                    const SizedBox(height: 14),
                     Text(
                       lesson.isFree
                           ? 'هذا الدرس متاح ضمن المحتوى المجاني.'
