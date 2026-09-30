@@ -44,6 +44,8 @@ class AcademicCatalog {
                           lessons: [
                             AcademicLesson(
                               id: 'python-1',
+                              conceptIds: ['concept-python-1'],
+                              skillIds: ['skill-python-1'],
                               title: 'مقدمة في Python',
                               practices: [
                                 LessonPractice(
@@ -76,6 +78,8 @@ class AcademicCatalog {
                             ),
                             AcademicLesson(
                               id: 'python-2',
+                              conceptIds: ['concept-python-2'],
+                              skillIds: ['skill-python-2'],
                               title: 'المتغيرات وأنواع البيانات',
                               practices: [
                                 LessonPractice(
@@ -108,6 +112,8 @@ class AcademicCatalog {
                             ),
                             AcademicLesson(
                               id: 'python-3',
+                              conceptIds: ['concept-python-3'],
+                              skillIds: ['skill-python-3'],
                               title: 'الإدخال والعمليات الحسابية',
                               practices: [
                                 LessonPractice(
@@ -146,6 +152,8 @@ class AcademicCatalog {
                           lessons: [
                             AcademicLesson(
                               id: 'sets',
+                              conceptIds: ['concept-sets'],
+                              skillIds: ['skill-sets'],
                               title: 'المجموعات',
                               practices: [
                                 LessonPractice(
@@ -178,6 +186,8 @@ class AcademicCatalog {
                             ),
                             AcademicLesson(
                               id: 'relations',
+                              conceptIds: ['concept-relations'],
+                              skillIds: ['skill-relations'],
                               title: 'العلاقات',
                               practices: [
                                 LessonPractice(
@@ -216,6 +226,8 @@ class AcademicCatalog {
                           lessons: [
                             AcademicLesson(
                               id: 'ai-foundations',
+                              conceptIds: ['concept-ai-foundations'],
+                              skillIds: ['skill-ai-foundations'],
                               title: 'مفاهيم الذكاء الاصطناعي',
                               practices: [
                                 LessonPractice(
@@ -248,6 +260,8 @@ class AcademicCatalog {
                             ),
                             AcademicLesson(
                               id: 'ai-agents',
+                              conceptIds: ['concept-ai-agents'],
+                              skillIds: ['skill-ai-agents'],
                               title: 'الوكلاء الأذكياء',
                               practices: [
                                 LessonPractice(
@@ -291,6 +305,8 @@ class AcademicCatalog {
                           lessons: [
                             AcademicLesson(
                               id: 'arrays',
+                              conceptIds: ['concept-arrays'],
+                              skillIds: ['skill-arrays'],
                               title: 'المصفوفات والقوائم',
                               practices: [
                                 LessonPractice(
