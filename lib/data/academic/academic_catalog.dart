@@ -456,6 +456,15 @@ class AcademicCatalog {
       id: lessonId,
       title: title,
       content: blueprint.content[lessonNumber - 1],
+      definition: _definitionFor(
+        topic: topic,
+        content: blueprint.content[lessonNumber - 1],
+      ),
+      applications: [
+        'طبّق «$topic» على حالة صغيرة مرتبطة بمقرر «$courseName».',
+        'قارن بين حالتين مختلفتين وحدد كيف تؤثر المدخلات أو القيود في النتيجة.',
+      ],
+      errorAnalysisGuidance: 'عند الخطأ، حدّد المفهوم الذي أخطأت فيه أولًا، ثم راجع التعريف والافتراضات، وأعد الحل على مثال جديد قبل إعادة التقييم.',
       learningOutcomes: [
         'يشرح الطالب مفهوم «$topic» بلغة علمية واضحة.',
         'يميز المكونات والعلاقات الرئيسة المرتبطة بـ«$topic».',
@@ -472,16 +481,25 @@ class AcademicCatalog {
         courseName: courseName,
         topic: topic,
       ),
-      assessments: _assessmentsFor(
-        lessonId: lessonId,
-        courseName: courseName,
-        title: title,
-        topic: topic,
+      assessments: _alignedAssessments(
+        assessments: _assessmentsFor(
+          lessonId: lessonId,
+          courseName: courseName,
+          title: title,
+          topic: topic,
+        ),
+        conceptIds: ['concept-' + courseId + '-' + lessonNumber.toString()],
+        skillIds: ['skill-' + courseId + '-' + lessonNumber.toString()],
+        outcomeCount: 4,
       ),
-      projects: _projectsFor(
-        lessonId: lessonId,
-        courseName: courseName,
-        topic: topic,
+      projects: _alignedProjects(
+        projects: _projectsFor(
+          lessonId: lessonId,
+          courseName: courseName,
+          topic: topic,
+        ),
+        conceptIds: ['concept-' + courseId + '-' + lessonNumber.toString()],
+        skillIds: ['skill-' + courseId + '-' + lessonNumber.toString()],
       ),
       conceptIds: [
         'concept-${courseId}-${lessonNumber}',
@@ -489,7 +507,63 @@ class AcademicCatalog {
       skillIds: [
         'skill-${courseId}-${lessonNumber}',
       ],
+      skillEvidence: [
+        'يشرح «$topic» دون الاعتماد على الحفظ الحرفي.',
+        'يطبق «$topic» على حالة جديدة ويسجل خطواته ونتيجته.',
+        'يفسر خطأ أو نتيجة غير متوقعة ويقترح تصحيحًا قابلًا للتحقق.',
+      ],
     );
+  }
+
+  static String _definitionFor({
+    required String topic,
+    required String content,
+  }) {
+    final firstSentence = content.split('。').first.trim();
+    if (firstSentence.isNotEmpty) return '$firstSentence.';
+    return 'يقصد بـ«$topic» المفهوم الذي يدرسه هذا الدرس ويستخدمه الطالب في التحليل والتطبيق.';
+  }
+
+  static List<LessonAssessment> _alignedAssessments({
+    required List<LessonAssessment> assessments,
+    required List<String> conceptIds,
+    required List<String> skillIds,
+    required int outcomeCount,
+  }) {
+    return assessments.map((assessment) {
+      return LessonAssessment(
+        id: assessment.id,
+        title: assessment.title,
+        questions: assessment.questions.asMap().entries.map((entry) {
+          final index = entry.key;
+          final question = entry.value;
+          final outcome = index < outcomeCount ? index : outcomeCount - 1;
+          return AssessmentQuestion(
+            id: question.id,
+            text: question.text,
+            options: question.options,
+            correctIndex: question.correctIndex,
+            learningOutcomeIndexes: [outcome],
+            conceptIds: conceptIds,
+            skillIds: skillIds,
+          );
+        }).toList(),
+      );
+    }).toList();
+  }
+
+  static List<AcademicProject> _alignedProjects({
+    required List<AcademicProject> projects,
+    required List<String> conceptIds,
+    required List<String> skillIds,
+  }) {
+    return projects.map((project) => AcademicProject(
+      id: project.id,
+      title: project.title,
+      description: project.description,
+      conceptIds: conceptIds,
+      skillIds: skillIds,
+    )).toList();
   }
 
   static List<LessonPractice> _practicesFor({
