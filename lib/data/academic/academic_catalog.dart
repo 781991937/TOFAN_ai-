@@ -395,13 +395,32 @@ class AcademicCatalog {
   static AcademicCourse _course(String specializationId, int year, int semester, String name) {
     final courseId = '${specializationId}-y$year-s$semester-${name.toLowerCase().replaceAll(' ', '-')}'
         .replaceAll('—', '-');
+    final lessons = [
+      AcademicLesson(id: '$courseId-1', title: 'مقدمة إلى $name'),
+      AcademicLesson(id: '$courseId-2', title: 'المفاهيم والمكونات الأساسية في $name'),
+      AcademicLesson(id: '$courseId-3', title: 'التطبيقات الأساسية في $name'),
+    ];
+
     return AcademicCourse(
       id: courseId,
       name: name,
-      lessons: [
-        AcademicLesson(id: '$courseId-1', title: 'الوحدة الأولى: المفاهيم والأساسيات'),
-        AcademicLesson(id: '$courseId-2', title: 'الوحدة الثانية: التطبيق والممارسة'),
-        AcademicLesson(id: '$courseId-3', title: 'الوحدة الثالثة: التحليل والمشروع'),
+      lessons: lessons,
+      units: [
+        AcademicUnit(
+          id: '$courseId-unit-1',
+          title: 'الوحدة الأولى: المدخل والمفاهيم الأساسية',
+          lessons: [lessons[0]],
+        ),
+        AcademicUnit(
+          id: '$courseId-unit-2',
+          title: 'الوحدة الثانية: المفاهيم والمكونات',
+          lessons: [lessons[1]],
+        ),
+        AcademicUnit(
+          id: '$courseId-unit-3',
+          title: 'الوحدة الثالثة: التطبيقات الأساسية',
+          lessons: [lessons[2]],
+        ),
       ],
     );
   }
