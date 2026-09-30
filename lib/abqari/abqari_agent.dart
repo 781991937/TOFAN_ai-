@@ -4,8 +4,9 @@ import 'academic_knowledge_engine.dart';
 import 'abqari_models.dart';
 import 'cyber_command_engine.dart';
 import 'project_engine.dart';
+import 'security_lab.dart';
 
-enum AbqariTaskKind { academic, project, cybersecurity, programming, personalSafety, translation, general }
+enum AbqariTaskKind { academic, project, cybersecurity, securityLab, programming, personalSafety, translation, general }
 enum AbqariRiskLevel { low, guarded, high }
 
 class AbqariTask {
@@ -34,14 +35,17 @@ class TofanAbqariAgent {
     this.knowledgeEngine = const AcademicKnowledgeEngine(),
     this.projectEngine = const AbqariProjectEngine(),
     this.cyberEngine = const AbqariCyberCommandEngine(),
+    this.securityLab = const SmartSecurityLabEngine(),
   });
 
   final AcademicKnowledgeEngine knowledgeEngine;
   final AbqariProjectEngine projectEngine;
   final AbqariCyberCommandEngine cyberEngine;
+  final SmartSecurityLabEngine securityLab;
 
   AbqariTask classify(String request) {
     final text = request.trim().toLowerCase();
+    final lab = _containsAny(text, ['مختبر أمني', 'اختبار اختراق أخلاقي', 'ethical hacking', 'security lab', 'wstg']);
     final cyber = _containsAny(text, ['هجوم', 'هاجم', 'اختراق', 'أمن سيبراني', 'attack', 'hack']);
     final safety = _containsAny(text, ['خطر', 'تهديد', 'يهاجم', 'اعتداء', 'يحاول إيذاء', 'threat', 'danger']);
     final project = _containsAny(text, ['مشروع', 'ابن', 'بناء نظام', 'project', 'build']);
@@ -50,6 +54,7 @@ class TofanAbqariAgent {
     final academic = _containsAny(text, ['اشرح', 'درس', 'مقرر', 'محاضرة', 'تعلم', 'مفهوم', 'شرح', 'study']);
 
     if (safety) return AbqariTask(request: request, kind: AbqariTaskKind.personalSafety, risk: AbqariRiskLevel.high, requiresApproval: true);
+    if (lab) return AbqariTask(request: request, kind: AbqariTaskKind.securityLab, risk: AbqariRiskLevel.guarded, requiresApproval: true);
     if (cyber) return AbqariTask(request: request, kind: AbqariTaskKind.cybersecurity, risk: AbqariRiskLevel.guarded, requiresApproval: text.contains('هجوم') || text.contains('هاجم') || text.contains('attack'));
     if (project) return AbqariTask(request: request, kind: AbqariTaskKind.project, risk: AbqariRiskLevel.guarded, requiresApproval: false);
     if (programming) return AbqariTask(request: request, kind: AbqariTaskKind.programming, risk: AbqariRiskLevel.guarded, requiresApproval: false);
@@ -66,6 +71,25 @@ class TofanAbqariAgent {
       case AbqariTaskKind.project:
         final plan = projectEngine.plan(AbqariProjectRequest(idea: task.request));
         return AbqariAgentResult(task: task, summary: 'تم تحويل الطلب إلى خطة مشروع مترابطة مع المعرفة والمهارات والفجوات.', knowledge: plan.knowledge, actions: plan.phases, blocked: false, approvalRequired: task.requiresApproval);
+      case AbqariTaskKind.securityLab:
+        final plan = securityLab.plan(
+          scenarioId: _labScenarioId(task.request),
+          assetId: _labAssetId(task.request),
+          authorization: null,
+        );
+        return AbqariAgentResult(
+          task: task,
+          summary: plan.isReady ? 'تم تجهيز المختبر ضمن النطاق المصرح.' : 'المختبر متوقف حتى يصل تفويض صالح ونطاق أصل واضح.',
+          knowledge: knowledge,
+          actions: [
+            'تحديد النطاق والأصل التدريبي.',
+            'جمع الملاحظات والأدلة داخل المختبر.',
+            'ربط النتيجة بالمعرفة والمهارة.',
+            plan.reason,
+          ],
+          blocked: !plan.isReady,
+          approvalRequired: true,
+        );
       case AbqariTaskKind.cybersecurity:
         final command = cyberEngine.parse(task.request);
         final result = cyberEngine.execute(command);
@@ -96,6 +120,18 @@ class TofanAbqariAgent {
     if (domains.isEmpty) return const <AbqariKnowledgeItem>[];
     final allowedAreas = <String>{for (final domain in domains) ...domain.knowledgeAreaIds};
     return knowledgeEngine.search(request).where((item) => item.knowledgeAreaIds.any(allowedAreas.contains)).toList(growable: false);
+  }
+
+  String _labScenarioId(String request) {
+    final text = request.toLowerCase();
+    if (text.contains('جلسة') || text.contains('session')) return 'session-01';
+    if (text.contains('مدخل') || text.contains('input')) return 'input-01';
+    return 'web-authz-01';
+  }
+
+  String _labAssetId(String request) {
+    final match = RegExp(r'(?:مختبر|lab)\\s*[/:-]?\\s*([a-z0-9_-]+)', caseSensitive: false).firstMatch(request);
+    return match?.group(1) == null ? '' : 'lab/${match!.group(1)}';
   }
 
   bool _containsAny(String text, List<String> terms) => terms.any(text.contains);
