@@ -699,7 +699,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
   }) {
     final units = _knowledgeUnitsFor(courseName);
     final specs = AcademicCourseLessonBlueprints.forCourse(courseName, units);
-    final spec = specs[(lessonNumber - 1).clamp(0, specs.length - 1)];
+    final spec = specs[lessonNumber - 1];
     final lessonId = '$courseId-$lessonNumber';
     final conceptId = 'concept-$courseId-$lessonNumber';
     final skillId = 'skill-$courseId-$lessonNumber';
