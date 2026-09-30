@@ -18,7 +18,17 @@ final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) {
 /// Controls the TOFAN AI Core execution mode.
 /// Local is deliberately the default and requires no external API key.
 class AiExecutionModeNotifier extends StateNotifier<AiExecutionMode> {
-  AiExecutionModeNotifier() : super(AiExecutionMode.local);
+  AiExecutionModeNotifier() : super(AiExecutionMode.local) {
+    _load();
+  }
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    final stored = prefs.getString('tofan_ai_execution_mode');
+    if (stored == AiExecutionMode.openAi.name) state = AiExecutionMode.openAi;
+    if (stored == AiExecutionMode.gemini.name) state = AiExecutionMode.gemini;
+    if (stored == AiExecutionMode.local.name) state = AiExecutionMode.local;
+  }
 
   Future<void> setMode(AiExecutionMode mode) async {
     state = mode;
