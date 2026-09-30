@@ -395,31 +395,81 @@ class AcademicCatalog {
   static AcademicCourse _course(String specializationId, int year, int semester, String name) {
     final courseId = '${specializationId}-y$year-s$semester-${name.toLowerCase().replaceAll(' ', '-')}'
         .replaceAll('—', '-');
-    final lessons = [
-      AcademicLesson(id: '$courseId-1', title: 'مقدمة إلى $name'),
-      AcademicLesson(id: '$courseId-2', title: 'المفاهيم والمكونات الأساسية في $name'),
-      AcademicLesson(id: '$courseId-3', title: 'التطبيقات الأساسية في $name'),
-    ];
+
+    final lessons = List<AcademicLesson>.generate(
+      3,
+      (index) => _generatedLesson(courseId: courseId, courseName: name, lessonNumber: index + 1),
+    );
 
     return AcademicCourse(
       id: courseId,
       name: name,
       lessons: lessons,
       units: [
-        AcademicUnit(
-          id: '$courseId-unit-1',
-          title: 'الوحدة الأولى: المدخل والمفاهيم الأساسية',
-          lessons: [lessons[0]],
+        AcademicUnit(id: '$courseId-unit-1', title: 'الوحدة الأولى: المدخل والمفاهيم الأساسية', lessons: [lessons[0]]),
+        AcademicUnit(id: '$courseId-unit-2', title: 'الوحدة الثانية: المفاهيم والمكونات', lessons: [lessons[1]]),
+        AcademicUnit(id: '$courseId-unit-3', title: 'الوحدة الثالثة: التطبيقات الأساسية', lessons: [lessons[2]]),
+      ],
+    );
+  }
+
+  static AcademicLesson _generatedLesson({
+    required String courseId,
+    required String courseName,
+    required int lessonNumber,
+  }) {
+    final titles = [
+      'مقدمة إلى $courseName',
+      'المفاهيم والمكونات الأساسية في $courseName',
+      'التطبيقات الأساسية في $courseName',
+    ];
+    final focus = [
+      'التعريف بالمجال ومشكلاته ومفاهيمه الأساسية',
+      'فهم المكونات والمبادئ والعلاقات بينها',
+      'تطبيق المفاهيم على مسألة واقعية وتحليل النتيجة',
+    ];
+    final lessonId = '$courseId-$lessonNumber';
+
+    return AcademicLesson(
+      id: lessonId,
+      title: titles[lessonNumber - 1],
+      content: 'هذا درس أكاديمي أصلي من TOFAN في مقرر $courseName. يشرح الدرس ${focus[lessonNumber - 1]} بصورة تدريجية، ويربط المفهوم بالممارسة والتقييم والمشروع.',
+      learningOutcomes: [
+        'يعرّف الطالب المفهوم الرئيس في الدرس ويحدد حدوده.',
+        'يفسر العلاقة بين المفاهيم والعناصر الأساسية في $courseName.',
+        'يطبق الفكرة على مثال أو مسألة بسيطة ويبرر النتيجة.',
+      ],
+      keyTerms: ['المفهوم الأساسي', 'المكوّن', 'التطبيق', 'التحليل'],
+      examples: [
+        'مثال تمهيدي: اختر مسألة بسيطة من $courseName وحدد المفهوم المستخدم فيها.',
+        'مثال تطبيقي: قارن بين حالتين ووضّح أي مبدأ من مبادئ $courseName يفسر الفرق.',
+      ],
+      practices: [
+        LessonPractice(
+          id: '$lessonId-practice',
+          title: 'تدريب عملي: $courseName',
+          tasks: [
+            PracticeTask(id: '$lessonId-p1', instruction: 'طبّق مفهوم الدرس على مثال صغير من $courseName، واكتب خطوات الحل بترتيب واضح.'),
+            PracticeTask(id: '$lessonId-p2', instruction: 'أنشئ مثالًا جديدًا من واقعك، وحدد المفهوم والمكوّنات والنتيجة، ثم فسّر سبب اختيارك.'),
+          ],
         ),
-        AcademicUnit(
-          id: '$courseId-unit-2',
-          title: 'الوحدة الثانية: المفاهيم والمكونات',
-          lessons: [lessons[1]],
+      ],
+      assessments: [
+        LessonAssessment(
+          id: '$lessonId-assessment',
+          title: 'تقييم: ${titles[lessonNumber - 1]}',
+          questions: [
+            AssessmentQuestion(id: '$lessonId-q1', text: 'ما الهدف الرئيس من دراسة هذا الدرس في $courseName؟', options: ['فهم المفاهيم وتطبيقها على مشكلة', 'حفظ أسماء الملفات فقط', 'تغيير إعدادات الجهاز فقط', 'تثبيت نظام التشغيل فقط'], correctIndex: 0),
+            AssessmentQuestion(id: '$lessonId-q2', text: 'ما الخطوة المناسبة بعد فهم المفهوم الأساسي؟', options: ['تطبيقه على مثال وتحليل النتيجة', 'تجاهل المثال', 'حذف البيانات', 'إيقاف التعلم'], correctIndex: 0),
+            AssessmentQuestion(id: '$lessonId-q3', text: 'كيف يتحقق الطالب من فهمه للمفهوم؟', options: ['يشرح الفكرة ويطبقها ويبرر النتيجة', 'يحفظ العنوان فقط', 'ينسخ الإجابة دون فهم', 'يتجنب التدريب'], correctIndex: 0),
+          ],
         ),
-        AcademicUnit(
-          id: '$courseId-unit-3',
-          title: 'الوحدة الثالثة: التطبيقات الأساسية',
-          lessons: [lessons[2]],
+      ],
+      projects: [
+        AcademicProject(
+          id: '$lessonId-project',
+          title: 'مشروع تطبيقي: $courseName',
+          description: 'أنجز تطبيقًا مصغرًا مرتبطًا بـ$courseName يوضح مفهوم الدرس، ثم وثّق المشكلة والحل والخطوات والنتيجة والمهارة التي اكتسبتها.',
         ),
       ],
     );
