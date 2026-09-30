@@ -481,12 +481,9 @@ class AcademicCatalog {
     int year,
     int semester,
   ) {
-    if (year == 1 && semester == 1) return const [];
-    final previousSemester = semester == 1 ? 2 : 1;
-    final previousYear = semester == 1 ? year - 1 : year;
-    return [
-      '$specializationId-y$previousYear-s$previousSemester',
-    ];
+    // Course-level prerequisite IDs are populated only when a real prerequisite
+    // course is known; never invent a course identifier from semester position.
+    return const [];
   }
 
   static List<LessonPractice> _practicesFor({
