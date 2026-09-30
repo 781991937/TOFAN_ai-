@@ -8,17 +8,27 @@ class AcademicLibraryAudit {
     final issues = <String>[];
     var fields = 0, universities = 0, colleges = 0, specializations = 0;
     var years = 0, semesters = 0, courses = 0, lessons = 0;
+    final fieldIds = <String>{};
+    final universityIds = <String>{};
+    final collegeIds = <String>{};
+    final specializationIds = <String>{};
+    final courseIds = <String>{};
+    final lessonIds = <String>{};
 
     for (final field in AcademicCatalog.fields) {
       fields++;
+      if (!fieldIds.add(field.id)) issues.add('معرف الحقل مكرر: ${field.id}.');
       if (field.universities.isEmpty) issues.add('الحقل ${field.name} بلا جامعة مرجعية.');
       for (final university in field.universities) {
         universities++;
+        if (!universityIds.add(university.id)) issues.add('معرف الجامعة مكرر: ${university.id}.');
         if (university.colleges.isEmpty) issues.add('الجامعة ${university.name} بلا كلية أو مركز.');
         for (final college in university.colleges) {
           colleges++;
+          if (!collegeIds.add(college.id)) issues.add('معرف الكلية أو المركز مكرر: ${college.id}.');
           for (final specialization in college.specializations) {
             specializations++;
+            if (!specializationIds.add(specialization.id)) issues.add('معرف التخصص مكرر: ${specialization.id}.');
             if (specialization.years.length != 4) {
               issues.add('التخصص ${specialization.name} يجب أن يحتوي 4 سنوات.');
             }
@@ -31,10 +41,15 @@ class AcademicLibraryAudit {
                 semesters++;
                 for (final course in semester.courses) {
                   courses++;
+                  if (!courseIds.add(course.id)) issues.add('معرف المقرر مكرر: ${course.id}.');
+                  for (final prerequisiteId in course.prerequisiteCourseIds) {
+                    if (prerequisiteId == course.id) issues.add('المقرر ${course.name} يعتمد على نفسه.');
+                  }
                   if (course.lessons.isEmpty) issues.add('المقرر ${course.name} بلا دروس.');
                   if (course.normalizedUnits.isEmpty) issues.add('المقرر ${course.name} بلا وحدات قابلة للتنفيذ.');
                   for (final lesson in course.lessons) {
                     lessons++;
+                    if (!lessonIds.add(lesson.id)) issues.add('معرف الدرس مكرر: ${lesson.id}.');
                     _checkLesson(issues, lesson, course);
                   }
                 }
@@ -59,6 +74,8 @@ class AcademicLibraryAudit {
     if (lesson.practices.isEmpty) issues.add('الدرس ${lesson.title} بلا تدريب.');
     if (lesson.assessments.isEmpty) issues.add('الدرس ${lesson.title} بلا تقييم.');
     if (lesson.projects.isEmpty) issues.add('الدرس ${lesson.title} بلا مشروع.');
+    if (lesson.conceptIds.isEmpty) issues.add('الدرس ${lesson.title} بلا معرف مفهوم.');
+    if (lesson.skillIds.isEmpty) issues.add('الدرس ${lesson.title} بلا معرف مهارة.');
     for (final assessment in lesson.assessments) {
       if (assessment.questions.isEmpty) issues.add('تقييم ${assessment.title} في ${lesson.title} بلا أسئلة.');
       for (final question in assessment.questions) {
