@@ -50,9 +50,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         body: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            Text('تعريف الطالب', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+            Text('تعريف المستخدم', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
             const SizedBox(height: 8),
-            const Text('هذه البيانات تصبح جزءاً من السياق الذي يستخدمه الطالب الذكي لمساندة رحلة التعلم.'),
+            const Text('هذه البيانات تصبح جزءاً من السياق الذي يستخدمه العبقري طوفان لمساندة رحلة التعلم.'),
             const SizedBox(height: 20),
             TextField(controller: _name, decoration: const InputDecoration(labelText: 'الاسم')),
             const SizedBox(height: 12),
