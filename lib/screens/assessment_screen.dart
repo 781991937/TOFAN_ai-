@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../application/learning/assessment_state.dart';
 import '../domain/academic/academic_models.dart';
+import 'assessment_result_screen.dart';
 
 class AssessmentScreen extends ConsumerStatefulWidget {
   const AssessmentScreen({super.key, required this.assessment});
@@ -90,6 +91,9 @@ class _AssessmentScreenState extends ConsumerState<AssessmentScreen> {
       score: score,
       total: widget.assessment.questions.length,
     );
-    Navigator.pop(context);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const AssessmentResultScreen()),
+    );
   }
 }
