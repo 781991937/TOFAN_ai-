@@ -9,6 +9,8 @@ class LearningAnalysis {
     required this.skillDelta,
     required this.capabilityDelta,
     required this.message,
+    this.errorQuestionIds = const [],
+    this.errorAnalysis = const [],
   });
 
   final String assessmentId;
@@ -18,4 +20,6 @@ class LearningAnalysis {
   final double skillDelta;
   final double capabilityDelta;
   final String message;
+  final List<String> errorQuestionIds;
+  final List<String> errorAnalysis;
 }
