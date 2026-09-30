@@ -142,3 +142,11 @@ TOFAN does not copy CS2023 course packages. CS2023 itself distinguishes
 knowledge areas from courses and notes that a course can combine topics from
 multiple knowledge areas; TOFAN uses that principle to keep its global library
 modular.
+
+## Security quality gate
+
+The academic library is compartmentalized into explicit security domains. Every canonical
+knowledge area must belong to exactly one domain. Access is deny-by-default and every
+new capability requires an explicit policy rule. Learning agents must not receive
+unrestricted database access or library administration. The security architecture is
+part of the academic-library foundation, not an optional later feature.
