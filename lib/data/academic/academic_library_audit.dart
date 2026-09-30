@@ -2,6 +2,7 @@ import '../../domain/academic/academic_models.dart';
 import 'academic_catalog.dart';
 import 'academic_knowledge_area_catalog.dart';
 import 'academic_knowledge_unit_catalog.dart';
+import 'academic_library_security_catalog.dart';
 
 /// Structural and instructional integrity gate for the TOFAN Academic Library.
 class AcademicLibraryAudit {
@@ -127,6 +128,9 @@ class AcademicLibraryAudit {
     }
 
     _checkPrerequisites(issues, allCourses);
+    final securityReport = AcademicLibrarySecurityAudit.run();
+    issues.addAll(securityReport.issues.map((issue) => 'أمن المكتبة: $issue'));
+
     final missingAreas = knownKnowledgeAreas.difference(knowledgeAreas);
     if (missingAreas.isNotEmpty) {
       issues.add('مجالات CS2023 غير المغطاة في المكتبة: ${missingAreas.join(', ')}.');
