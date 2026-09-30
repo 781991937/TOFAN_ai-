@@ -1,25 +1,26 @@
 import 'academic_knowledge_engine.dart';
 import 'abqari_models.dart';
+import 'knowledge_graph.dart';
+import 'learning_gap_engine.dart';
 
 class AbqariProjectEngine {
-  const AbqariProjectEngine({this.knowledgeEngine = const AcademicKnowledgeEngine()});
+  const AbqariProjectEngine({this.knowledgeEngine = const AcademicKnowledgeEngine(), this.knowledgeGraph = const AbqariKnowledgeGraph(), this.learningGapEngine = const AbqariLearningGapEngine()});
   final AcademicKnowledgeEngine knowledgeEngine;
+  final AbqariKnowledgeGraph knowledgeGraph;
+  final AbqariLearningGapEngine learningGapEngine;
 
   AbqariProjectPlan plan(AbqariProjectRequest request) {
     final knowledge = knowledgeEngine.search(request.idea);
+    final gap = learningGapEngine.analyze(request.idea);
     final disciplines = _disciplines(request.idea, knowledge);
     final skills = <String>{for (final item in knowledge) ...item.skillIds}.toList();
     return AbqariProjectPlan(
       idea: request.idea,
-      requirements: [
-        'تحديد الهدف ومعيار النجاح: ' + request.idea,
-        'تحديد المدخلات والمخرجات والقيود.',
-        'تحديد المخاطر وحالات الفشل قبل التنفيذ.',
-      ],
+      requirements: ['تحديد الهدف ومعيار النجاح: ' + request.idea, 'تحديد المدخلات والمخرجات والقيود.', 'تحديد المخاطر وحالات الفشل قبل التنفيذ.'],
       disciplines: disciplines,
       knowledge: knowledge,
       skills: skills,
-      knowledgeGaps: knowledge.isEmpty ? ['لا توجد معرفة مطابقة في المكتبة بعد؛ يجب إضافة محتوى أكاديمي قبل التنفيذ.'] : const [],
+      knowledgeGaps: gap.missing ? ['لا توجد معرفة مطابقة في المكتبة بعد؛ يجب التعلم أو إضافة محتوى أكاديمي قبل التنفيذ.'] : const [],
       phases: const ['تحليل المتطلبات', 'تصميم المعمارية', 'تحديد المكونات والواجهات', 'التنفيذ البرمجي', 'المحاكاة داخل الحاسوب', 'الاختبار وتحليل الأخطاء', 'التصحيح وإعادة الاختبار', 'توثيق المشروع وتحديث الخبرة'],
       softwareOutputs: const ['مخطط معماري', 'هيكل مشروع برمجي', 'كود قابل للاختبار', 'اختبارات آلية ومحاكاة عند توفر نموذج برمجي', 'تقرير نتائج وأخطاء'],
       physicalComponents: _physicalComponents(request.idea),
