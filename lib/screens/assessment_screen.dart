@@ -102,6 +102,10 @@ class _AssessmentScreenState extends ConsumerState<AssessmentScreen> {
       assessmentId: widget.assessment.id,
       score: score,
       total: widget.assessment.questions.length,
+      questionCorrect: {
+        for (final q in widget.assessment.questions)
+          q.id: answers[q.id] == q.correctIndex,
+      },
     );
     ref.read(learningSessionProvider.notifier).completeAssessment();
     Navigator.pushReplacement(
