@@ -18,7 +18,7 @@ class ProfileScreen extends ConsumerWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(title: const Text('الطالب الذكي')),
+        appBar: AppBar(title: const Text('العبقري طوفان')),
         body: ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
           children: [
@@ -76,7 +76,7 @@ class ProfileScreen extends ConsumerWidget {
                 ),
               ),
             const SizedBox(height: 18),
-            Text('حالة الطالب الذكي',
+            Text('حالة العبقري طوفان',
                 style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
             const SizedBox(height: 10),
             Row(
