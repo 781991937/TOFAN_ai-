@@ -16,7 +16,9 @@ class LearningPlanController extends Notifier<LearningPlan?> {
     final student = ref.watch(studentProfileProvider);
     if (student == null) return null;
 
-    final courses = _currentCourses(student.currentYear, student.currentSemester);
+    final courses =
+        _currentCourses(student.specialization, student.currentYear, student.currentSemester);
+
     return LearningPlan(
       id: 'plan-${const Uuid().v4()}',
       studentName: student.name,
@@ -35,23 +37,34 @@ class LearningPlanController extends Notifier<LearningPlan?> {
     state = plan.copyWith(currentCourseIndex: plan.currentCourseIndex + 1);
   }
 
-  List<AcademicCourse> _currentCourses(int yearNumber, int semesterNumber) {
-    final specialization = AcademicCatalog.referenceUniversity.colleges
+  List<AcademicCourse> _currentCourses(
+    String specializationName,
+    int yearNumber,
+    int semesterNumber,
+  ) {
+    final specializations = AcademicCatalog.referenceUniversity.colleges
         .expand((college) => college.specializations)
-        .firstWhere(
-          (specialization) => specialization.id == 'ai',
-          orElse: () => AcademicCatalog.referenceUniversity.colleges
-              .expand((college) => college.specializations)
-              .first,
-        );
+        .toList(growable: false);
+
+    if (specializations.isEmpty) return const <AcademicCourse>[];
+
+    final specialization = specializations.firstWhere(
+      (item) =>
+          item.id == specializationName || item.name == specializationName,
+      orElse: () => specializations.first,
+    );
+
+    if (specialization.years.isEmpty) return const <AcademicCourse>[];
 
     final year = specialization.years.firstWhere(
-      (year) => year.number == yearNumber,
+      (item) => item.number == yearNumber,
       orElse: () => specialization.years.first,
     );
 
+    if (year.semesters.isEmpty) return const <AcademicCourse>[];
+
     final semester = year.semesters.firstWhere(
-      (semester) => semester.number == semesterNumber,
+      (item) => item.number == semesterNumber,
       orElse: () => year.semesters.first,
     );
 
