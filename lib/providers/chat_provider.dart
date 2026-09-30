@@ -5,9 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../database/app_database.dart';
 import '../models/chat_message.dart';
 import '../models/conversation.dart';
-import '../services/ai/ai_manager.dart';
-import '../services/ai/ai_models.dart';
-import '../services/ai/ai_provider.dart';
+import '../application/ai/agent_state.dart';
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) => AppDatabase.instance);
 
@@ -70,27 +68,19 @@ class ChatMessagesNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> 
     await loadMessages();
 
     try {
-      final history = await db.getMessages(conversationId);
-      final priorMessages = history.length > 1
-          ? history.sublist(0, history.length - 1)
-          : <ChatMessage>[];
-      final formattedHistory = priorMessages
-          .map((m) => AIChatMessage(
-                role: m.role == MessageRole.user ? 'user' : 'assistant',
-                content: m.content,
-              ))
-          .toList();
-
-      final reply = await aiManager.sendPrompt(
-        content,
-        history: formattedHistory,
-        override: manualOverride ?? AIProvider.auto,
+      final manager = _ref.read(mainManagerAgentProvider);
+      final reply = await manager.handle(
+        AiAgentRequest(
+          role: AiAgentRole.mainManager,
+          request: content,
+        ),
       );
+      final assistantText = reply.text;
 
       final assistantMessage = ChatMessage(
         conversationId: conversationId,
         role: MessageRole.assistant,
-        content: reply,
+        content: assistantText,
         createdAt: DateTime.now(),
       );
       await db.insertMessage(assistantMessage);
