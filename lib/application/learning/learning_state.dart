@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../data/academic/academic_catalog.dart';
+import '../../domain/academic/academic_models.dart';
 import '../../domain/learning/learning_models.dart';
 import 'skill_update_state.dart';
 import '../../application/student/student_state.dart';
@@ -39,11 +40,35 @@ class LearningSessionController extends Notifier<LearningSession?> {
     if (session == null || session.isCompleted) return;
     state = LearningSession(
       lessonId: session.lessonId,
-      stage: LearningStage.practice,
+      stage: _nextAfterStudy(session.lessonId),
       startedAt: session.startedAt,
       completedAt: DateTime.now(),
     );
     ref.read(learningProgressProvider.notifier).completeLesson(session.lessonId);
+  }
+
+  LearningStage _nextAfterStudy(String lessonId) {
+    final lesson = _findLesson(lessonId);
+    return lesson?.practices.isNotEmpty == true
+        ? LearningStage.practice
+        : LearningStage.assessment;
+  }
+
+  AcademicLesson? _findLesson(String lessonId) {
+    for (final college in AcademicCatalog.referenceUniversity.colleges) {
+      for (final specialization in college.specializations) {
+        for (final year in specialization.years) {
+          for (final semester in year.semesters) {
+            for (final course in semester.courses) {
+              for (final lesson in course.lessons) {
+                if (lesson.id == lessonId) return lesson;
+              }
+            }
+          }
+        }
+      }
+    }
+    return null;
   }
 
   void completePractice() {
