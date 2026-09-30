@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import '../domain/academic/academic_models.dart';
+import '../application/learning/learning_state.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PracticeScreen extends StatefulWidget {
+class PracticeScreen extends ConsumerStatefulWidget {
   const PracticeScreen({super.key, required this.practice});
   final LessonPractice practice;
 
   @override
-  State<PracticeScreen> createState() => _PracticeScreenState();
+  ConsumerState<PracticeScreen> createState() => _PracticeScreenState();
 }
 
-class _PracticeScreenState extends State<PracticeScreen> {
+class _PracticeScreenState extends ConsumerState<PracticeScreen> {
   int _index = 0;
   bool _completed = false;
 
@@ -61,6 +63,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                     setState(() => _index++);
                   } else {
                     setState(() => _completed = true);
+                    ref.read(learningSessionProvider.notifier).completePractice();
                   }
                 },
                 icon: Icon(
