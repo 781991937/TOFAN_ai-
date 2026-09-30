@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../ai/ai_core.dart';
-import '../../ai/local_ai_core.dart';
+import '../../ai/local_first_ai_core.dart';
 import 'student_ai_context.dart';
 
 enum AiAgentRole {
@@ -169,7 +169,7 @@ class GenericSpecializedAgent implements AiAgent {
 }
 
 final aiCoreProvider = Provider<AiCore>((ref) {
-  return const LocalAiCore();
+  return LocalFirstAiCore();
 });
 
 final mainManagerAgentProvider = Provider<AiAgent>((ref) {
