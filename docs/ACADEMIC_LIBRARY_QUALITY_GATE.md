@@ -91,3 +91,37 @@ Generated content is a scaffold only. A generated lesson must not be treated as 
 Deep content is added by domain-specific blueprints first. Remaining generic blueprints are progressively replaced as each knowledge area is reviewed.
 
 This prevents the library from appearing complete while hiding shallow or duplicated instructional content.
+
+
+## Executable instructional schema
+
+The academic model now stores the instructional chain explicitly:
+
+- `definition`: the primary definition that precedes dependent explanation.
+- `applications`: concrete transfer contexts.
+- `learningOutcomes`: observable outcomes.
+- `keyTerms` and `examples`: terminology and worked context.
+- `practices`: graduated learner tasks.
+- `AssessmentQuestion.learningOutcomeIndexes`: outcome alignment.
+- `AssessmentQuestion.conceptIds` and `skillIds`: assessment-to-knowledge/skill alignment.
+- `errorAnalysisGuidance`: guidance for diagnosing learning errors.
+- `skillEvidence`: observable evidence for skill acquisition.
+- `AcademicProject.conceptIds` and `skillIds`: project transfer alignment.
+
+The audit rejects published lessons that omit these instructional evidence links.
+
+## Prerequisite integrity
+
+Course prerequisites are treated as a directed graph. The audit checks:
+
+1. Every referenced prerequisite course exists.
+2. A course cannot depend on itself.
+3. The prerequisite graph contains no cycles.
+
+No prerequisite identifier is generated unless it refers to an actual course in the catalog.
+
+## Global curriculum reference
+
+TOFAN uses CS2023 as a coverage reference, not as a copied university curriculum. CS2023 identifies 17 knowledge areas and distinguishes knowledge areas from individual courses; this allows TOFAN to build a global foundational library while retaining its own course packaging and original instructional content.
+
+Reference: https://csed.acm.org/
