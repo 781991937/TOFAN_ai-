@@ -42,9 +42,8 @@ class LearningSessionController extends Notifier<LearningSession?> {
       lessonId: session.lessonId,
       stage: _nextAfterStudy(session.lessonId),
       startedAt: session.startedAt,
-      completedAt: DateTime.now(),
+      completedAt: null,
     );
-    ref.read(learningProgressProvider.notifier).completeLesson(session.lessonId);
   }
 
   LearningStage _nextAfterStudy(String lessonId) {
