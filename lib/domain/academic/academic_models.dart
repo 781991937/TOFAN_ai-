@@ -49,7 +49,8 @@ class AcademicCourse {
   const AcademicCourse({required this.id, required this.name, required this.lessons,
     this.units = const [],
     this.prerequisiteCourseIds = const [],
-    this.knowledgeAreaIds = const []});
+    this.knowledgeAreaIds = const [],
+    this.knowledgeUnitIds = const []});
   final String id;
   final String name;
   final List<AcademicLesson> lessons;
@@ -57,6 +58,8 @@ class AcademicCourse {
   final List<String> prerequisiteCourseIds;
   /// CS2023 knowledge-area references used for global coverage and retrieval.
   final List<String> knowledgeAreaIds;
+  /// Canonical knowledge-unit references used for precise retrieval and graph edges.
+  final List<String> knowledgeUnitIds;
 
   List<AcademicUnit> get normalizedUnits {
     if (units.isNotEmpty) return units;
@@ -166,6 +169,24 @@ class AcademicProject {
   final List<String> conceptIds;
 }
 
+
+class AcademicKnowledgeUnit {
+  const AcademicKnowledgeUnit({
+    required this.id,
+    required this.areaId,
+    required this.name,
+    required this.arabicName,
+    required this.description,
+    required this.learningOutcomes,
+  });
+
+  final String id;
+  final String areaId;
+  final String name;
+  final String arabicName;
+  final String description;
+  final List<String> learningOutcomes;
+}
 
 class AcademicKnowledgeArea {
   const AcademicKnowledgeArea({
