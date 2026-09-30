@@ -590,8 +590,11 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
     final courseId = '${specializationId}-y$year-s$semester-${name.toLowerCase().replaceAll(' ', '-')}'
         .replaceAll('—', '-');
 
+    // Generated global courses use a six-lesson depth model:
+    // foundation -> core concepts -> application -> knowledge-unit deep dive 1
+    // -> knowledge-unit deep dive 2 -> integration/capstone.
     final lessons = List<AcademicLesson>.generate(
-      3,
+      6,
       (index) => _generatedLesson(courseId: courseId, courseName: name, lessonNumber: index + 1),
     );
 
@@ -606,6 +609,9 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
         AcademicUnit(id: '$courseId-unit-1', title: 'الوحدة الأولى: المدخل والمفاهيم الأساسية', lessons: [lessons[0]]),
         AcademicUnit(id: '$courseId-unit-2', title: 'الوحدة الثانية: المفاهيم والمكونات', lessons: [lessons[1]]),
         AcademicUnit(id: '$courseId-unit-3', title: 'الوحدة الثالثة: التطبيقات الأساسية', lessons: [lessons[2]]),
+        AcademicUnit(id: '$courseId-unit-4', title: 'الوحدة الرابعة: تعميق المعرفة المتخصصة', lessons: [lessons[3]]),
+        AcademicUnit(id: '$courseId-unit-5', title: 'الوحدة الخامسة: التحليل والتطبيق المتقدم', lessons: [lessons[4]]),
+        AcademicUnit(id: '$courseId-unit-6', title: 'الوحدة السادسة: التكامل والمشروع المصغر', lessons: [lessons[5]]),
       ],
     );
   }
@@ -615,6 +621,14 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
     required String courseName,
     required int lessonNumber,
   }) {
+    if (lessonNumber > 3) {
+      return _deepCurriculumLesson(
+        courseId: courseId,
+        courseName: courseName,
+        lessonNumber: lessonNumber,
+      );
+    }
+
     final blueprint = _blueprintFor(courseName);
     final title = blueprint.titles[lessonNumber - 1];
     final topic = blueprint.topics[lessonNumber - 1];
@@ -679,6 +693,135 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
         'يشرح «$topic» دون الاعتماد على الحفظ الحرفي.',
         'يطبق «$topic» على حالة جديدة ويسجل خطواته ونتيجته.',
         'يفسر خطأ أو نتيجة غير متوقعة ويقترح تصحيحًا قابلًا للتحقق.',
+      ],
+    );
+  }
+
+  static AcademicLesson _deepCurriculumLesson({
+    required String courseId,
+    required String courseName,
+    required int lessonNumber,
+  }) {
+    final course = AcademicCourse(
+      id: courseId,
+      name: courseName,
+      lessons: const [],
+      knowledgeAreaIds: _knowledgeAreasFor(courseName),
+      knowledgeUnitIds: _knowledgeUnitsFor(courseName),
+    );
+    final units = AcademicKnowledgeUnitCatalog.forCourse(course);
+    final unitNames = units.map((unit) => unit.arabicName).toList(growable: false);
+    final focus = units.isEmpty
+        ? 'المفاهيم المتقدمة في $courseName'
+        : units[(lessonNumber - 4) % units.length].arabicName;
+    final allFocus = unitNames.isEmpty ? courseName : unitNames.join('، ');
+    final lessonId = '$courseId-$lessonNumber';
+
+    final bool integration = lessonNumber == 6;
+    final title = integration
+        ? 'التكامل والمشروع المصغر في $courseName'
+        : 'تعميق المعرفة: $focus';
+    final topic = integration ? 'تكامل وحدات المعرفة والتطبيق' : focus;
+
+    final content = integration
+        ? 'يجمع هذا الدرس بين وحدات المعرفة المرتبطة بالمقرر ($allFocus) في مسألة واحدة قابلة للتنفيذ. يبدأ الطالب بتحديد المشكلة والمتطلبات والقيود، ثم يختار المفاهيم اللازمة ويبرر ترتيب استخدامها. لا يكفي إنتاج نتيجة؛ يجب توثيق الافتراضات، اختبار الحالات العادية والحدية، وتحليل ما نجح وما يحتاج إلى تحسين. هذا المستوى يحول المعرفة المتفرقة إلى قدرة على بناء حل متكامل.'
+        : 'تعمّق هذه الوحدة فهم الطالب لـ«$focus» بوصفها جزءًا من مقرر «$courseName». يبدأ الطالب بتعريف المفهوم وحدوده وعلاقته بالمفاهيم السابقة، ثم يدرس مكوناته وآلية عمله والافتراضات التي يعتمد عليها. بعد ذلك يطبق المفهوم على حالة صغيرة ويقارن بين بدائل أو حالات مختلفة، ثم يحلل النتيجة ويحدد مصادر الخطأ والقيود. الهدف هو الانتقال من معرفة المصطلح إلى القدرة على الشرح والتطبيق والتقييم.';
+
+    final outcomes = <String>[
+      'يشرح الطالب «$topic» ويحدد علاقته بوحدات المعرفة في المقرر.',
+      'يطبق المفهوم على مسألة جديدة مع توثيق المدخلات والافتراضات والخطوات.',
+      'يقيّم النتيجة ويحدد الأخطاء والقيود وما يحتاج إلى تحقق إضافي.',
+      if (integration) 'يطور حلاً مصغرًا يدمج أكثر من مفهوم ويبرر قراراته التقنية.',
+    ];
+
+    return AcademicLesson(
+      id: lessonId,
+      title: title,
+      content: content,
+      definition: 'يقصد بـ«$topic» المعرفة التي يركز عليها هذا المستوى من المقرر ويُطلب من الطالب استخدامها في التحليل والتطبيق.',
+      applications: [
+        'حل حالة تطبيقية مرتبطة بمقرر «$courseName».',
+        'مقارنة حلين أو حالتين وتفسير أثر اختلاف القيود.',
+        if (integration) 'بناء مشروع مصغر يربط المعرفة بالمهارة والتقييم.',
+      ],
+      errorAnalysisGuidance: 'عند الخطأ، افصل بين تعريف المفهوم، والمدخلات والافتراضات، وخطوات التطبيق، ثم حدد أول خطوة تغيرت فيها النتيجة وأعد الاختبار بحالة مستقلة.',
+      learningOutcomes: outcomes,
+      keyTerms: [
+        focus,
+        'تحليل',
+        'تطبيق',
+        'تقييم',
+        'قيود',
+        if (integration) 'تكامل',
+      ],
+      examples: [
+        'مثال تحليلي: حدّد أين تظهر «$topic» في مسألة واقعية وفسّر اختيارك.',
+        'مثال تطبيقي: غيّر قيدًا واحدًا ثم حلّل كيف تتغير النتيجة.',
+        if (integration) 'مثال تكاملي: حدد ثلاث وحدات معرفة يحتاجها المشروع واربط كل وحدة بمخرج قابل للاختبار.',
+      ],
+      practices: [
+        LessonPractice(
+          id: '$lessonId-practice',
+          title: 'تدريب متدرج: $title',
+          tasks: [
+            PracticeTask(id: '$lessonId-p1', instruction: 'عرّف «$topic» وحدد المفاهيم السابقة التي تحتاجها قبل التطبيق.'),
+            PracticeTask(id: '$lessonId-p2', instruction: 'طبّق «$topic» على حالة جديدة، وسجل المدخلات والافتراضات والخطوات والنتيجة.'),
+            PracticeTask(id: '$lessonId-p3', instruction: 'غيّر قيدًا أو مدخلًا، ثم حلل الفرق بين النتيجتين وحدد سبب التغير.'),
+            if (integration) PracticeTask(id: '$lessonId-p4', instruction: 'حوّل التحليل إلى مشروع مصغر قابل للاختبار، وحدد معيار قبول واضحًا.'),
+          ],
+        ),
+      ],
+      assessments: [
+        LessonAssessment(
+          id: '$lessonId-assessment',
+          title: 'تقييم تعميقي: $title',
+          questions: [
+            AssessmentQuestion(
+              id: '$lessonId-q1',
+              text: 'ما الذي يثبت فهم «$topic»؟',
+              options: ['حفظ المصطلح فقط', 'تطبيقه وتفسير أثره ضمن سياق المقرر', 'نسخ مثال دون تفسير', 'تجاهل القيود'],
+              correctIndex: 1,
+            ),
+            AssessmentQuestion(
+              id: '$lessonId-q2',
+              text: 'ما الذي يجب فحصه قبل قبول نتيجة تطبيقية؟',
+              options: ['النتيجة النهائية فقط', 'المدخلات والافتراضات والخطوات والقيود', 'طول الحل', 'اسم الأداة'],
+              correctIndex: 1,
+            ),
+            AssessmentQuestion(
+              id: '$lessonId-q3',
+              text: 'كيف نختبر قابلية نقل المعرفة إلى مسألة جديدة؟',
+              options: ['تكرار المثال نفسه', 'حفظ التعريف', 'حل حالة مختلفة وتحليل النتيجة', 'تجاهل الحالات الحدية'],
+              correctIndex: 2,
+            ),
+            if (integration)
+              AssessmentQuestion(
+                id: '$lessonId-q4',
+                text: 'ما السمة الأساسية للمشروع المصغر المتكامل؟',
+                options: ['جمع أكبر عدد من الأدوات', 'دمج مفاهيم مرتبطة مع مخرجات ومعايير تحقق واضحة', 'تجنب الاختبار', 'عدم توثيق الافتراضات'],
+                correctIndex: 1,
+              ),
+          ],
+        ),
+      ],
+      projects: [
+        AcademicProject(
+          id: '$lessonId-project',
+          title: integration ? 'مشروع مصغر متكامل: $courseName' : 'مشروع تعميقي: $focus',
+          description: integration
+              ? 'صمّم حلاً مصغرًا في «$courseName» يدمج وحدات المعرفة المرتبطة، مع تحديد المشكلة والمتطلبات والاختبارات ومعايير القبول وتوثيق القرارات والقيود.'
+              : 'أنجز تجربة تطبيقية حول «$focus» داخل «$courseName». اشرح المفهوم، طبقه على حالة جديدة، اختبر النتيجة، وحلل الخطأ أو القيد الذي ظهر.',
+          conceptIds: ['concept-$courseId-$lessonNumber'],
+          skillIds: ['skill-$courseId-$lessonNumber'],
+        ),
+      ],
+      conceptIds: ['concept-$courseId-$lessonNumber'],
+      skillIds: ['skill-$courseId-$lessonNumber'],
+      skillEvidence: [
+        'يشرح المفهوم ويحدد علاقته بوحدات المعرفة.',
+        'يطبق المفهوم على حالة جديدة ويوثق خطواته.',
+        'يقيّم النتيجة ويحلل الخطأ والقيود.',
+        if (integration) 'ينجز مشروعًا مصغرًا يدمج المعرفة ويثبتها بأدلة قابلة للتحقق.',
       ],
     );
   }
