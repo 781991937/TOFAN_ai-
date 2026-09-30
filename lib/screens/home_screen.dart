@@ -68,7 +68,7 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 14),
-                      Text('الطالب البشري + الطالب الذكي',
+                      Text('الطالب البشري + العبقري طوفان',
                         style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
                       const SizedBox(height: 6),
                       Text(
