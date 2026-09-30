@@ -22,12 +22,18 @@ class AssessmentController extends Notifier<AssessmentResult?> {
     required String assessmentId,
     required int score,
     required int total,
+    Map<String, bool> questionCorrect = const {},
   }) {
+    final wrongQuestionIds = questionCorrect.entries
+        .where((entry) => !entry.value)
+        .map((entry) => entry.key)
+        .toList(growable: false);
     final result = AssessmentResult(
       assessmentId: assessmentId,
       score: score.toDouble(),
       total: total.toDouble(),
       completedAt: DateTime.now(),
+      wrongQuestionIds: wrongQuestionIds,
     );
     state = result;
 
@@ -60,6 +66,12 @@ class LearningAnalysisController extends Notifier<LearningAnalysis?> {
                 ? LearningPerformance.proficient
                 : LearningPerformance.advanced;
 
+    final errorAnalysis = result.wrongQuestionIds.isEmpty
+        ? const <String>[]
+        : result.wrongQuestionIds
+            .map((id) => 'مراجعة السؤال «$id»: أعد قراءة المفهوم المرتبط به، ثم حل مثالًا جديدًا قبل إعادة التقييم.')
+            .toList(growable: false);
+
     final analysis = LearningAnalysis(
       assessmentId: result.assessmentId,
       percentage: p,
@@ -67,6 +79,8 @@ class LearningAnalysisController extends Notifier<LearningAnalysis?> {
       knowledgeDelta: p < 60 ? 0 : p >= 85 ? 3 : 2,
       skillDelta: p < 60 ? 0 : p >= 85 ? 2 : 1,
       capabilityDelta: p < 60 ? 0 : p >= 85 ? 2 : 1,
+      errorQuestionIds: result.wrongQuestionIds,
+      errorAnalysis: errorAnalysis,
       message: p < 60
           ? 'راجع الدرس ثم أعد التدريب.'
           : p < 70
