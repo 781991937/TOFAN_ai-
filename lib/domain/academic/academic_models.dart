@@ -46,12 +46,17 @@ class AcademicUnit {
 }
 
 class AcademicCourse {
-  const AcademicCourse({required this.id, required this.name, required this.lessons, this.units = const [], this.prerequisiteCourseIds = const []});
+  const AcademicCourse({required this.id, required this.name, required this.lessons,
+    this.units = const [],
+    this.prerequisiteCourseIds = const [],
+    this.knowledgeAreaIds = const []});
   final String id;
   final String name;
   final List<AcademicLesson> lessons;
   final List<AcademicUnit> units;
   final List<String> prerequisiteCourseIds;
+  /// CS2023 knowledge-area references used for global coverage and retrieval.
+  final List<String> knowledgeAreaIds;
 
   List<AcademicUnit> get normalizedUnits {
     if (units.isNotEmpty) return units;
