@@ -1,4 +1,5 @@
 import '../academic/academic_models.dart';
+import '../student/student_models.dart';
 
 enum LearningStage {
   diagnostic,
@@ -93,7 +94,7 @@ class AssessmentResult {
 
 /// Builds a deterministic first learning plan from the existing academic catalog.
 LearningPlan buildInitialLearningPlan({
-  required StudentProfileLike student,
+  required StudentProfile student,
   required List<AcademicCourse> courses,
 }) {
   final courseIds = courses.map((course) => course.id).toList(growable: false);
@@ -105,12 +106,4 @@ LearningPlan buildInitialLearningPlan({
     currentSemester: student.currentSemester,
     courseIds: courseIds,
   );
-}
-
-/// Small contract used to avoid coupling the learning domain to a UI state class.
-abstract class StudentProfileLike {
-  String get name;
-  String get specialization;
-  int get currentYear;
-  int get currentSemester;
 }
