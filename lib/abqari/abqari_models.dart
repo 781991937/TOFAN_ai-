@@ -1,7 +1,16 @@
 class AbqariKnowledgeItem {
-  const AbqariKnowledgeItem({required this.id, required this.title, required this.sourcePath, required this.content, this.terms = const [], this.conceptIds = const [], this.skillIds = const []});
+  const AbqariKnowledgeItem({required this.id, required this.title, required this.sourcePath,
+    required this.content,
+    this.definition = '',
+    this.applications = const [],
+    this.learningOutcomes = const [],
+    this.terms = const [],
+    this.conceptIds = const [],
+    this.skillIds = const [],
+    this.knowledgeAreaIds = const []});
   final String id, title, sourcePath, content;
-  final List<String> terms, conceptIds, skillIds;
+  final String definition;
+  final List<String> applications, learningOutcomes, terms, conceptIds, skillIds, knowledgeAreaIds;
 }
 class AbqariProjectRequest {
   const AbqariProjectRequest({required this.idea});
