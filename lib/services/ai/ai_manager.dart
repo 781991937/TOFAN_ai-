@@ -8,8 +8,8 @@ import '../secure_storage_service.dart';
 import 'ai_models.dart';
 import 'ai_provider.dart';
 import 'ai_router.dart';
-import 'gemini_service.dart' as ai;
-import 'openai_service.dart' as ai;
+import 'gemini_service.dart';
+import 'openai_service.dart';
 
 /// Single entry point for the rest of the app to talk to any AI backend.
 ///
@@ -25,15 +25,15 @@ import 'openai_service.dart' as ai;
 class AIManager {
   AIManager({
     required SecureStorageService secureStorage,
-    ai.OpenAIService? openAiService,
-    ai.GeminiService? geminiService,
+    OpenAIService? openAiService,
+    GeminiService? geminiService,
   })  : _secureStorage = secureStorage,
-        _openAiService = openAiService ?? ai.OpenAIService(),
-        _geminiService = geminiService ?? ai.GeminiService();
+        _openAiService = openAiService ?? OpenAIService(),
+        _geminiService = geminiService ?? GeminiService();
 
   final SecureStorageService _secureStorage;
-  final ai.OpenAIService _openAiService;
-  final ai.GeminiService _geminiService;
+  final OpenAIService _openAiService;
+  final GeminiService _geminiService;
 
   /// Sends [prompt] (with optional [history]) to the appropriate AI
   /// backend and returns the assistant's reply as plain text.
@@ -116,8 +116,8 @@ class AIManager {
   }
 }
 
-final openAIServiceProvider = Provider<ai.OpenAIService>((ref) => ai.OpenAIService());
-final geminiAiServiceProvider = Provider<ai.GeminiService>((ref) => ai.GeminiService());
+final openAIServiceProvider = Provider<OpenAIService>((ref) => OpenAIService());
+final geminiAiServiceProvider = Provider<GeminiService>((ref) => GeminiService());
 
 /// Optional manual override for which provider [AIManager] should use.
 /// Defaults to `null`, meaning "let the router decide" (auto mode).
