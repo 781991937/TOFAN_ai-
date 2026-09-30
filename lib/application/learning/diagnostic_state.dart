@@ -63,10 +63,10 @@ class DiagnosticController extends Notifier<DiagnosticResult?> {
       capabilityLevel: capability,
     );
 
-    ref.read(smartStudentProvider.notifier).recordLearning(
-          knowledgeDelta: knowledge,
-          skillDelta: skill,
-          capabilityDelta: capability,
+    ref.read(smartStudentProvider.notifier).setDiagnosticLevels(
+          knowledgeLevel: knowledge,
+          skillLevel: skill,
+          capabilityLevel: capability,
         );
   }
 
