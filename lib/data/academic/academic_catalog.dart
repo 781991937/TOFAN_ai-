@@ -417,6 +417,7 @@ class AcademicCatalog {
       id: courseId,
       name: name,
       lessons: lessons,
+      prerequisiteCourseIds: _prerequisitesFor(specializationId, year, semester),
       units: [
         AcademicUnit(id: '$courseId-unit-1', title: 'الوحدة الأولى: المدخل والمفاهيم الأساسية', lessons: [lessons[0]]),
         AcademicUnit(id: '$courseId-unit-2', title: 'الوحدة الثانية: المفاهيم والمكونات', lessons: [lessons[1]]),
@@ -466,7 +467,26 @@ class AcademicCatalog {
         courseName: courseName,
         topic: topic,
       ),
+      conceptIds: [
+        'concept-${courseId}-${lessonNumber}',
+      ],
+      skillIds: [
+        'skill-${courseId}-${lessonNumber}',
+      ],
     );
+  }
+
+  static List<String> _prerequisitesFor(
+    String specializationId,
+    int year,
+    int semester,
+  ) {
+    if (year == 1 && semester == 1) return const [];
+    final previousSemester = semester == 1 ? 2 : 1;
+    final previousYear = semester == 1 ? year - 1 : year;
+    return [
+      '$specializationId-y$previousYear-s$previousSemester',
+    ];
   }
 
   static List<LessonPractice> _practicesFor({
