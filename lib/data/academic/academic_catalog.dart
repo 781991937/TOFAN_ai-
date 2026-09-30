@@ -1,4 +1,5 @@
 import '../../domain/academic/academic_models.dart';
+import 'academic_knowledge_unit_catalog.dart';
 
 /// Reference catalog for the global TOFAN AI STUDENT library.
 /// The structure is independent from any single university.
@@ -42,6 +43,7 @@ class AcademicCatalog {
                           id: 'python',
                           name: 'أساسيات البرمجة — Python',
                           knowledgeAreaIds: ['SDF','FPL'],
+                          knowledgeUnitIds: ['sdf-01','fpl-01'],
                           lessons: [
                             AcademicLesson(
                               id: 'python-1',
@@ -384,6 +386,7 @@ skillEvidence: ['يحدد مكونات نموذج وكيل.', 'يربط المل
                           id: 'data-structures',
                           name: 'هياكل البيانات',
                           knowledgeAreaIds: ['AL','SDF'],
+                          knowledgeUnitIds: ['al-02','sdf-02'],
                           prerequisiteCourseIds: const ['python', 'discrete-math'],
                           lessons: [
                             AcademicLesson(
@@ -542,6 +545,32 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
     return areas.toList(growable: false);
   }
 
+  static List<String> _knowledgeUnitsFor(String courseName) {
+    final n = courseName.toLowerCase();
+    final units = <String>[];
+    void add(String id) => units.add(id);
+
+    if (n.contains('خوارز') || n.contains('هياكل البيانات') || n.contains('data structure')) { add('al-02'); add('al-03'); }
+    if (n.contains('معمار') || n.contains('منطق رقمي') || n.contains('processor')) { add('ar-01'); add('ar-02'); }
+    if (n.contains('ذكاء اصطناعي') || n.contains('تعلم الآلة') || n.contains('رؤية حاسوبية') || n.contains('معالجة اللغة') || n.contains('agents')) { add('ai-01'); add('ai-04'); }
+    if (n.contains('قواعد البيانات') || n.contains('هندسة البيانات') || n.contains('نمذجة البيانات')) { add('dm-01'); add('dm-02'); }
+    if (n.contains('لغات البرمجة') || n.contains('مترجمات') || n.contains('compiler')) { add('fpl-01'); add('fpl-04'); }
+    if (n.contains('رسوميات') || n.contains('graphics') || n.contains('واقع افتراضي') || n.contains('واقع معزز')) { add('git-01'); add('git-05'); }
+    if (n.contains('تفاعل') || n.contains('hci') || n.contains('تجربة المستخدم') || n.contains('قابلية الاستخدام')) { add('hci-02'); add('hci-04'); }
+    if (n.contains('رياضيات') || n.contains('إحصاء') || n.contains('احتمال') || n.contains('math') || n.contains('statistics')) { add('msf-01'); add('msf-02'); }
+    if (n.contains('شبك') || n.contains('network') || n.contains('اتصال')) { add('nc-01'); add('nc-03'); }
+    if (n.contains('نظم التشغيل') || n.contains('أنظمة التشغيل') || n.contains('operating system')) { add('os-01'); add('os-03'); }
+    if (n.contains('متواز') || n.contains('موزع') || n.contains('parallel') || n.contains('distributed')) { add('pdc-01'); add('pdc-04'); }
+    if (n.contains('أمن') || n.contains('تشفير') || n.contains('security') || n.contains('cyber')) { add('sec-01'); add('sec-03'); }
+    if (n.contains('أخلاقيات') || n.contains('المهنة') || n.contains('المجتمع') || n.contains('ethics') || n.contains('profession')) { add('sep-01'); add('sep-02'); }
+    if (n.contains('برمجة') || n.contains('python') || n.contains('تطوير') || n.contains('programming')) { add('sdf-01'); add('sdf-04'); }
+    if (n.contains('هندسة البرمجيات') || n.contains('software engineering') || n.contains('devops') || n.contains('اختبار البرمجيات')) { add('se-01'); add('se-03'); }
+    if (n.contains('مضمن') || n.contains('إنترنت الأشياء') || n.contains('embedded') || n.contains('mobile') || n.contains('متنقل')) { add('spd-03'); add('spd-04'); }
+    if (n.contains('أساسيات الحوسبة') || n.contains('أنظمة الحاسوب') || n.contains('systems fundamentals')) { add('sf-01'); add('sf-05'); }
+    if (units.isEmpty) { add('sdf-01'); }
+    return units.toSet().toList(growable: false);
+  }
+
   static AcademicCourse _course(String specializationId, int year, int semester, String name) {
     final courseId = '${specializationId}-y$year-s$semester-${name.toLowerCase().replaceAll(' ', '-')}'
         .replaceAll('—', '-');
@@ -557,6 +586,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
       lessons: lessons,
       prerequisiteCourseIds: const [],
       knowledgeAreaIds: _knowledgeAreasFor(name),
+      knowledgeUnitIds: _knowledgeUnitsFor(name),
       units: [
         AcademicUnit(id: '$courseId-unit-1', title: 'الوحدة الأولى: المدخل والمفاهيم الأساسية', lessons: [lessons[0]]),
         AcademicUnit(id: '$courseId-unit-2', title: 'الوحدة الثانية: المفاهيم والمكونات', lessons: [lessons[1]]),
