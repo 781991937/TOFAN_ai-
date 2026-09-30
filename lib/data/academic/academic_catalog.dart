@@ -418,62 +418,215 @@ class AcademicCatalog {
     required String courseName,
     required int lessonNumber,
   }) {
-    final titles = [
-      'مقدمة إلى $courseName',
-      'المفاهيم والمكونات الأساسية في $courseName',
-      'التطبيقات الأساسية في $courseName',
-    ];
-    final focus = [
-      'التعريف بالمجال ومشكلاته ومفاهيمه الأساسية',
-      'فهم المكونات والمبادئ والعلاقات بينها',
-      'تطبيق المفاهيم على مسألة واقعية وتحليل النتيجة',
-    ];
+    final blueprint = _blueprintFor(courseName);
+    final title = blueprint.titles[lessonNumber - 1];
+    final topic = blueprint.topics[lessonNumber - 1];
     final lessonId = '$courseId-$lessonNumber';
 
     return AcademicLesson(
       id: lessonId,
-      title: titles[lessonNumber - 1],
-      content: 'هذا درس أكاديمي أصلي من TOFAN في مقرر $courseName. يشرح الدرس ${focus[lessonNumber - 1]} بصورة تدريجية، ويربط المفهوم بالممارسة والتقييم والمشروع.',
+      title: title,
+      content: '''
+$title
+
+هذا المحتوى التعليمي الأصلي من مكتبة TOFAN يقدّم موضوع «$topic» داخل مقرر «$courseName» بصورة متدرجة. يبدأ الطالب بتحديد المفهوم ومشكلته، ثم يربطه بالمكونات الأساسية، ثم يطبقه على حالة عملية.
+
+الفكرة الأساسية:
+$topic
+
+طريقة الدراسة:
+1. اقرأ التعريف وحدد المصطلحات الجديدة.
+2. اربط المفهوم بالمثال المعطى.
+3. نفّذ التدريب قبل الانتقال إلى التقييم.
+4. بعد التقييم راجع الأخطاء، ثم نفّذ المشروع المصغر.
+
+ملاحظة أكاديمية: المحتوى مبني على المعرفة والموضوعات العامة في إرشادات المناهج العالمية للحوسبة، بينما صياغة الدرس والأمثلة والتدريبات هنا أصلية لمكتبة TOFAN.
+''',
       learningOutcomes: [
-        'يعرّف الطالب المفهوم الرئيس في الدرس ويحدد حدوده.',
-        'يفسر العلاقة بين المفاهيم والعناصر الأساسية في $courseName.',
-        'يطبق الفكرة على مثال أو مسألة بسيطة ويبرر النتيجة.',
+        'يشرح الطالب مفهوم «$topic» بلغة علمية واضحة.',
+        'يميز المكونات والعلاقات الرئيسة المرتبطة بـ«$topic».',
+        'يطبق المفهوم على مسألة أو مثال مناسب لمقرر «$courseName».',
+        'يحلل النتيجة ويبرر الاختيار أو الحل باستخدام المصطلحات الصحيحة.',
       ],
-      keyTerms: ['المفهوم الأساسي', 'المكوّن', 'التطبيق', 'التحليل'],
+      keyTerms: blueprint.terms,
       examples: [
-        'مثال تمهيدي: اختر مسألة بسيطة من $courseName وحدد المفهوم المستخدم فيها.',
-        'مثال تطبيقي: قارن بين حالتين ووضّح أي مبدأ من مبادئ $courseName يفسر الفرق.',
+        'مثال مفاهيمي: حدّد «$topic» في موقف عملي، ثم اشرح سبب تحديدك له.',
+        'مثال تطبيقي: قارن حالتين مرتبطتين بـ«$topic» وحدد أثر اختلاف المدخلات أو القيود على النتيجة.',
       ],
       practices: [
         LessonPractice(
           id: '$lessonId-practice',
-          title: 'تدريب عملي: $courseName',
+          title: 'تدريب متدرج: $topic',
           tasks: [
-            PracticeTask(id: '$lessonId-p1', instruction: 'طبّق مفهوم الدرس على مثال صغير من $courseName، واكتب خطوات الحل بترتيب واضح.'),
-            PracticeTask(id: '$lessonId-p2', instruction: 'أنشئ مثالًا جديدًا من واقعك، وحدد المفهوم والمكوّنات والنتيجة، ثم فسّر سبب اختيارك.'),
+            PracticeTask(id: '$lessonId-p1', instruction: 'اكتب تعريفًا مختصرًا لـ«$topic» ثم حدد مكوناته الأساسية في مثال من مقرر $courseName.'),
+            PracticeTask(id: '$lessonId-p2', instruction: 'طبّق «$topic» على مسألة صغيرة، وسجّل خطواتك والنتيجة والسبب الذي يدعمها.'),
+            PracticeTask(id: '$lessonId-p3', instruction: 'أنشئ مثالًا جديدًا من عندك، ثم اشرح كيف تعرف أن التطبيق صحيح.'),
           ],
         ),
       ],
       assessments: [
         LessonAssessment(
           id: '$lessonId-assessment',
-          title: 'تقييم: ${titles[lessonNumber - 1]}',
+          title: 'تقييم: $title',
           questions: [
-            AssessmentQuestion(id: '$lessonId-q1', text: 'ما الهدف الرئيس من دراسة هذا الدرس في $courseName؟', options: ['فهم المفاهيم وتطبيقها على مشكلة', 'حفظ أسماء الملفات فقط', 'تغيير إعدادات الجهاز فقط', 'تثبيت نظام التشغيل فقط'], correctIndex: 0),
-            AssessmentQuestion(id: '$lessonId-q2', text: 'ما الخطوة المناسبة بعد فهم المفهوم الأساسي؟', options: ['تطبيقه على مثال وتحليل النتيجة', 'تجاهل المثال', 'حذف البيانات', 'إيقاف التعلم'], correctIndex: 0),
-            AssessmentQuestion(id: '$lessonId-q3', text: 'كيف يتحقق الطالب من فهمه للمفهوم؟', options: ['يشرح الفكرة ويطبقها ويبرر النتيجة', 'يحفظ العنوان فقط', 'ينسخ الإجابة دون فهم', 'يتجنب التدريب'], correctIndex: 0),
+            AssessmentQuestion(
+              id: '$lessonId-q1',
+              text: 'ما أفضل وصف للموضوع الرئيس «$topic»؟',
+              options: [blueprint.correct, blueprint.distractor1, blueprint.distractor2, blueprint.distractor3],
+              correctIndex: 0,
+            ),
+            AssessmentQuestion(
+              id: '$lessonId-q2',
+              text: 'ما الخطوة التي تدل على فهم تطبيقي للموضوع؟',
+              options: ['تطبيقه على حالة وتفسير النتيجة', 'حفظ اسم الموضوع فقط', 'نسخ تعريف دون فهم', 'تجاهل القيود والافتراضات'],
+              correctIndex: 0,
+            ),
+            AssessmentQuestion(
+              id: '$lessonId-q3',
+              text: 'ماذا ينبغي أن يفعل الطالب عند ظهور نتيجة غير متوقعة؟',
+              options: ['يفحص الافتراضات والخطوات والبيانات ثم يفسر السبب', 'يغيّر النتيجة دون فحص', 'يحذف المسألة', 'يتوقف عن التقييم'],
+              correctIndex: 0,
+            ),
           ],
         ),
       ],
       projects: [
         AcademicProject(
           id: '$lessonId-project',
-          title: 'مشروع تطبيقي: $courseName',
-          description: 'أنجز تطبيقًا مصغرًا مرتبطًا بـ$courseName يوضح مفهوم الدرس، ثم وثّق المشكلة والحل والخطوات والنتيجة والمهارة التي اكتسبتها.',
+          title: 'مشروع مصغر: $topic',
+          description: 'أنجز تطبيقًا أو دراسة حالة صغيرة في «$courseName» تركز على «$topic». وثّق المشكلة، المفاهيم المستخدمة، خطوات التنفيذ، النتيجة، الأخطاء التي واجهتها، وكيف تحققت من صحة الحل.',
         ),
       ],
     );
   }
+
+  static _LessonBlueprint _blueprintFor(String courseName) {
+    final n = courseName.toLowerCase();
+    if (n.contains('python') || n.contains('البرمجة')) {
+      return _LessonBlueprint(
+        titles: ['الأساس البرمجي والمفاهيم', 'التحكم بالبيانات والعمليات', 'بناء برنامج تطبيقي'],
+        topics: ['المتغيرات وأنواع البيانات', 'التعبيرات والتحكم وتدفق التنفيذ', 'تصميم برنامج صغير واختباره'],
+        terms: ['متغير', 'نوع بيانات', 'تعبير', 'تدفق التنفيذ'],
+        correct: 'هو فهم بنية البرنامج والبيانات ثم تحويل المشكلة إلى خطوات قابلة للتنفيذ',
+        distractor1: 'هو حفظ أسماء الأوامر دون معرفة استخدامها',
+        distractor2: 'هو تشغيل الجهاز دون كتابة تعليمات',
+        distractor3: 'هو تخزين الملفات فقط',
+      );
+    }
+    if (n.contains('رياضيات') || n.contains('mathemat')) {
+      return _LessonBlueprint(
+        titles: ['المفاهيم والرموز الرياضية', 'العمليات والاستدلال', 'تطبيق رياضي في الحوسبة'],
+        topics: ['التعريفات والرموز والبنى الرياضية', 'العمليات والاستدلال المنطقي', 'نمذجة مشكلة حاسوبية بأداة رياضية'],
+        terms: ['تعريف', 'مجموعة', 'علاقة', 'استدلال'],
+        correct: 'استخدام تعريفات ورموز وعمليات رياضية لبناء استدلال صحيح',
+        distractor1: 'حفظ النتائج دون معرفة شروطها',
+        distractor2: 'استبدال البرهان بالتخمين',
+        distractor3: 'استخدام رمز دون تعريف',
+      );
+    }
+    if (n.contains('ذكاء اصطناعي') || n.contains('ai') || n.contains('تعلم الآلة') || n.contains('الرؤية') || n.contains('اللغة')) {
+      return _LessonBlueprint(
+        titles: ['أساسيات الذكاء الاصطناعي والبيانات', 'النماذج والاستدلال والتقييم', 'تطبيق ذكي وتحليل نتائجه'],
+        topics: ['صياغة المشكلة والبيانات والتمثيل', 'اختيار النموذج وقياس الأداء', 'بناء تطبيق ذكي وتحليل حدوده'],
+        terms: ['بيانات', 'تمثيل', 'نموذج', 'تقييم'],
+        correct: 'حل مشكلة حاسوبية باستخدام تمثيل أو نموذج مناسب مع تقييم النتيجة وحدودها',
+        distractor1: 'أي برنامج يستخدم شاشة رسومية',
+        distractor2: 'حفظ أسماء الخوارزميات دون بيانات',
+        distractor3: 'اعتبار كل مخرجات النموذج صحيحة تلقائيًا',
+      );
+    }
+    if (n.contains('شبك') || n.contains('network')) {
+      return _LessonBlueprint(
+        titles: ['أساسيات الاتصال الشبكي', 'البروتوكولات والعنونة والتوجيه', 'تصميم شبكة وتحليل الاتصال'],
+        topics: ['الأجهزة والطبقات ومسار البيانات', 'العنونة والبروتوكولات والتوجيه', 'تحليل اتصال شبكة واكتشاف مشكلة'],
+        terms: ['شبكة', 'بروتوكول', 'عنوان', 'توجيه'],
+        correct: 'تنظيم اتصال بين أجهزة وفق بروتوكولات وعنونة ومسارات محددة',
+        distractor1: 'توصيل الأجهزة بلا قواعد اتصال',
+        distractor2: 'تخزين الملفات فقط',
+        distractor3: 'زيادة سرعة المعالج',
+      );
+    }
+    if (n.contains('قواعد البيانات') || n.contains('البيانات') || n.contains('data')) {
+      return _LessonBlueprint(
+        titles: ['نمذجة البيانات والمفاهيم الأساسية', 'الاستعلام والمعالجة والتحقق', 'حل مشكلة بيانات واقعية'],
+        topics: ['الكيانات والسمات والعلاقات', 'الاستعلامات وجودة البيانات', 'تصميم حل بيانات واختبار نتائجه'],
+        terms: ['بيان', 'كيان', 'علاقة', 'استعلام'],
+        correct: 'تنظيم البيانات وربطها ومعالجتها للحصول على معلومات صحيحة قابلة للاستخدام',
+        distractor1: 'تخزين أي نص بلا بنية',
+        distractor2: 'حذف القيود من قاعدة البيانات',
+        distractor3: 'عرض البيانات دون التحقق منها',
+      );
+    }
+    if (n.contains('أمن') || n.contains('security') || n.contains('تشفير') || n.contains('اختبار الاختراق')) {
+      return _LessonBlueprint(
+        titles: ['مفاهيم الأمن والتهديدات', 'الحماية والتحليل الأمني', 'دراسة حالة أمنية'],
+        topics: ['الأصول والتهديدات ونماذج المخاطر', 'الضوابط والتشفير والممارسات الآمنة', 'تحليل حادثة أو تصميم حماية مناسبة'],
+        terms: ['أصل', 'تهديد', 'ثغرة', 'ضابط أمني'],
+        correct: 'حماية الأصول والأنظمة عبر فهم التهديدات والثغرات وتطبيق ضوابط مناسبة',
+        distractor1: 'اختبار أنظمة الآخرين دون تصريح',
+        distractor2: 'إخفاء الأخطاء بدل معالجتها',
+        distractor3: 'اعتبار كلمة المرور حماية كافية لكل نظام',
+      );
+    }
+    if (n.contains('هندسة البرمجيات') || n.contains('software') || n.contains('devops')) {
+      return _LessonBlueprint(
+        titles: ['مشكلة البرمجيات ودورة التطوير', 'المتطلبات والتصميم والجودة', 'تطوير وتسليم برمجية قابلة للصيانة'],
+        topics: ['دورة حياة البرمجيات وممارسات التطوير', 'المتطلبات والتصميم والاختبار', 'التكامل والتسليم والتحسين المستمر'],
+        terms: ['متطلب', 'تصميم', 'اختبار', 'صيانة'],
+        correct: 'هندسة البرمجيات تستخدم عمليات ومنهجيات لإنتاج برمجيات موثوقة قابلة للصيانة',
+        distractor1: 'كتابة الكود دون متطلبات أو اختبار',
+        distractor2: 'اعتبار المشروع منتهيًا عند أول تشغيل',
+        distractor3: 'إلغاء التوثيق والمراجعة',
+      );
+    }
+    if (n.contains('رسوميات') || n.contains('graphics') || n.contains('تصميم') || n.contains('تفاعل') || n.contains('hci') || n.contains('واجهات')) {
+      return _LessonBlueprint(
+        titles: ['المستخدم والمشكلة والتصميم', 'المبادئ البصرية والتفاعلية', 'بناء نموذج واختباره'],
+        topics: ['فهم المستخدم والسياق والهدف', 'التخطيط البصري والتفاعل وقابلية الاستخدام', 'النمذجة والاختبار والتحسين'],
+        terms: ['مستخدم', 'واجهة', 'تفاعل', 'قابلية الاستخدام'],
+        correct: 'تصميم تجربة أو واجهة تستند إلى احتياجات المستخدم ثم اختبارها وتحسينها',
+        distractor1: 'اختيار الشكل دون معرفة المستخدم',
+        distractor2: 'إضافة عناصر كثيرة بلا هدف',
+        distractor3: 'اعتبار التصميم مكتملًا دون اختبار',
+      );
+    }
+    if (n.contains('نظم المعلومات') || n.contains('إدارة') || n.contains('مشاريع') || n.contains('حوكمة')) {
+      return _LessonBlueprint(
+        titles: ['المشكلة التنظيمية ونظم المعلومات', 'التحليل واتخاذ القرار', 'حل معلوماتي قابل للقياس'],
+        topics: ['أصحاب المصلحة والعمليات والمعلومات', 'تحليل المتطلبات والبيانات ومؤشرات الأداء', 'تصميم حل معلوماتي وقياس أثره'],
+        terms: ['نظام معلومات', 'عملية', 'متطلب', 'مؤشر أداء'],
+        correct: 'استخدام الأشخاص والعمليات والتقنية والبيانات لدعم أهداف المنظمة وقراراتها',
+        distractor1: 'شراء تقنية دون تحليل المشكلة',
+        distractor2: 'اعتبار النظام مجرد أجهزة',
+        distractor3: 'اتخاذ القرار من دون بيانات أو هدف',
+      );
+    }
+    if (n.contains('تشغيل') || n.contains('أنظمة التشغيل') || n.contains('معمار') || n.contains('هندسة الحاسوب') || n.contains('أنظمة مضمنة')) {
+      return _LessonBlueprint(
+        titles: ['بنية النظام ومكوناته', 'الموارد والتنفيذ والتفاعل', 'تحليل نظام حاسوبي'],
+        topics: ['المعالج والذاكرة والبرمجيات كمنظومة', 'إدارة الموارد والتنفيذ والتواصل بين المكونات', 'تحليل تصميم نظام وفق متطلباته'],
+        terms: ['معالج', 'ذاكرة', 'موارد', 'تنفيذ'],
+        correct: 'فهم تفاعل مكونات النظام الحاسوبي وإدارة الموارد لتحقيق متطلبات محددة',
+        distractor1: 'دراسة مكون واحد بمعزل دائمًا',
+        distractor2: 'اعتبار البرمجيات والعتاد غير مترابطين',
+        distractor3: 'زيادة الموارد دون قياس الحاجة',
+      );
+    }
+    return _LessonBlueprint(
+      titles: ['مدخل إلى $courseName', 'المفاهيم والمكونات في $courseName', 'تطبيقات $courseName وتحليلها'],
+      topics: ['مشكلة المجال ومفاهيمه الأساسية', 'المكونات والعلاقات والمبادئ', 'تطبيق المفاهيم على مسألة واقعية'],
+      terms: ['مفهوم', 'مكوّن', 'مبدأ', 'تطبيق'],
+      correct: 'فهم المفاهيم الأساسية للمقرر وربطها بتطبيق عملي قابل للتحليل',
+      distractor1: 'حفظ المصطلحات دون تطبيق',
+      distractor2: 'استخدام أداة دون فهم المشكلة',
+      distractor3: 'قبول النتيجة دون تحليل',
+    );
+  }
+
+  static const _LessonBlueprint _blueprintDummy = _LessonBlueprint(
+    titles: ['','',''], topics: ['','',''], terms: ['','','',''],
+    correct: '', distractor1: '', distractor2: '', distractor3: '',
+  );
 
   /// Global top-level academic fields. The current reference catalog is
   /// grouped under computing and information technology and can expand without
@@ -496,4 +649,23 @@ class AcademicCatalog {
       .expand((c) => c.specializations).expand((s) => s.years)
       .expand((y) => y.semesters).expand((s) => s.courses)
       .expand((c) => c.lessons).length;
+}
+
+class _LessonBlueprint {
+  const _LessonBlueprint({
+    required this.titles,
+    required this.topics,
+    required this.terms,
+    required this.correct,
+    required this.distractor1,
+    required this.distractor2,
+    required this.distractor3,
+  });
+  final List<String> titles;
+  final List<String> topics;
+  final List<String> terms;
+  final String correct;
+  final String distractor1;
+  final String distractor2;
+  final String distractor3;
 }
