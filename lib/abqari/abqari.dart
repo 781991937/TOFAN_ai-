@@ -23,4 +23,6 @@ class TofanAbqari {
       projectEngine.plan(AbqariProjectRequest(idea: idea));
 
   AbqariAgentResult handle(String request) => agent.handle(request);
+
+  AbqariActionPlan plan(String request) => agent.plan(request);
 }
