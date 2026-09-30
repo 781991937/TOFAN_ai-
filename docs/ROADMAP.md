@@ -1,0 +1,22 @@
+# TOFAN AI STUDENT — Roadmap
+
+- [x] Repository cleanup
+- [x] Remove duplicate AI service wrappers
+- [x] Remove unused image-generation feature
+- [x] Remove unused iOS scaffold
+- [x] Remove Replit-only files
+- [ ] Product identity and bilingual shell
+- [ ] Academic catalog
+- [ ] Student identity and onboarding
+- [ ] Smart-student profile
+- [ ] Learning engine
+- [ ] Assessment engine
+- [ ] AI Core backend gateway
+- [ ] Agent orchestration
+- [ ] Knowledge and skills engine
+- [ ] Projects engine
+- [ ] Notifications
+- [ ] Subscription and certificates
+- [ ] PostgreSQL production
+- [ ] Object storage
+- [ ] Security/performance testing
