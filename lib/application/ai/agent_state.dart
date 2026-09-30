@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../ai/ai_core.dart';
 import '../../ai/local_first_ai_core.dart';
+import '../../ai/backend_ai_core.dart';
 import 'student_ai_context.dart';
 import '../../providers/settings_provider.dart';
 
@@ -176,9 +177,11 @@ final aiCoreProvider = Provider<AiCore>((ref) {
       return LocalFirstAiCore();
     case AiExecutionMode.openAi:
     case AiExecutionMode.gemini:
-      // External providers will be connected through the secure backend gateway.
-      // Until then, keep the application keyless and local-first.
-      return LocalFirstAiCore();
+      const gatewayEndpoint = String.fromEnvironment('TOFAN_AI_GATEWAY_URL');
+      return GatewayFirstAiCore(
+        endpoint: gatewayEndpoint,
+        provider: mode,
+      );
   }
 });
 
