@@ -1,6 +1,7 @@
 import '../../domain/academic/academic_models.dart';
 import 'academic_catalog.dart';
 import 'academic_knowledge_area_catalog.dart';
+import 'academic_knowledge_unit_catalog.dart';
 
 /// Structural and instructional integrity gate for the TOFAN Academic Library.
 class AcademicLibraryAudit {
@@ -23,6 +24,10 @@ class AcademicLibraryAudit {
     final knownKnowledgeAreas = AcademicKnowledgeAreaCatalog.areas
         .map((area) => area.id)
         .toSet();
+    final knownKnowledgeUnits = AcademicKnowledgeUnitCatalog.units
+        .map((unit) => unit.id)
+        .toSet();
+    final knowledgeUnitIds = <String>{};
 
     for (final field in AcademicCatalog.fields) {
       fields++;
@@ -61,6 +66,24 @@ class AcademicLibraryAudit {
                     knowledgeAreas.add(area);
                     if (!knownKnowledgeAreas.contains(area)) {
                       issues.add('المقرر ${course.name} يستخدم مجالًا معرفيًا غير معروف: ${area}.');
+                    }
+                  }
+                  if (course.knowledgeUnitIds.isEmpty) {
+                    issues.add('المقرر ${course.name} بلا وحدات معرفية دقيقة.');
+                  }
+                  final courseUnitSet = <String>{};
+                  for (final unitId in course.knowledgeUnitIds) {
+                    if (!courseUnitSet.add(unitId)) {
+                      issues.add('الوحدة المعرفية مكررة داخل ${course.name}: $unitId.');
+                    }
+                    if (!knownKnowledgeUnits.contains(unitId)) {
+                      issues.add('المقرر ${course.name} يستخدم وحدة معرفية غير معروفة: $unitId.');
+                    } else {
+                      knowledgeUnitIds.add(unitId);
+                      final unit = AcademicKnowledgeUnitCatalog.byId(unitId);
+                      if (unit != null && !course.knowledgeAreaIds.contains(unit.areaId)) {
+                        issues.add('الوحدة $unitId في ${course.name} لا تنتمي إلى أحد مجالات المقرر.');
+                      }
                     }
                   }
                   if (!courseIds.add(course.id)) issues.add('معرف المقرر مكرر: ${course.id}.');
@@ -107,6 +130,10 @@ class AcademicLibraryAudit {
     final missingAreas = knownKnowledgeAreas.difference(knowledgeAreas);
     if (missingAreas.isNotEmpty) {
       issues.add('مجالات CS2023 غير المغطاة في المكتبة: ${missingAreas.join(', ')}.');
+    }
+    final missingUnits = knownKnowledgeUnits.difference(knowledgeUnitIds);
+    if (missingUnits.isNotEmpty) {
+      issues.add('وحدات المعرفة غير المرتبطة بأي مقرر: ${missingUnits.join(', ')}.');
     }
     return AcademicLibraryAuditReport(
       fields: fields,
