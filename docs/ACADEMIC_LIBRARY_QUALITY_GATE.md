@@ -136,9 +136,9 @@ which lets the library support coverage auditing and later knowledge-graph
 retrieval without treating a knowledge area as a course.
 
 The 17 identifiers are AI, AL, AR, DM, FPL, GIT, HCI, MSF, NC, OS, PDC, SEC,
-SEP, SDF, SE, SPD, and SF. This set follows the CS2023 knowledge-area model. citeturn0search1turn0search2
+SEP, SDF, SE, SPD, and SF. This set follows the CS2023 knowledge-area model. See https://csed.acm.org/knowledge-areas/ and the CS2023 final report.
 
 TOFAN does not copy CS2023 course packages. CS2023 itself distinguishes
 knowledge areas from courses and notes that a course can combine topics from
 multiple knowledge areas; TOFAN uses that principle to keep its global library
-modular. citeturn0search2
+modular.
