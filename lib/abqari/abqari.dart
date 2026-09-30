@@ -8,6 +8,7 @@ export 'abqari_agent.dart';
 export 'security_lab.dart';
 export 'experience_memory.dart';
 export 'assessment_experience_bridge.dart';
+export 'planning_engine.dart';
 
 class TofanAbqari {
   const TofanAbqari({
