@@ -1,6 +1,7 @@
 import '../../domain/academic/academic_models.dart';
 import 'academic_catalog.dart';
 
+/// Structural and instructional integrity gate for the TOFAN Academic Library.
 class AcademicLibraryAudit {
   const AcademicLibraryAudit._();
 
@@ -14,44 +15,49 @@ class AcademicLibraryAudit {
     final specializationIds = <String>{};
     final courseIds = <String>{};
     final lessonIds = <String>{};
+    final conceptIds = <String>{};
+    final skillIds = <String>{};
+    final allCourses = <AcademicCourse>[];
 
     for (final field in AcademicCatalog.fields) {
       fields++;
       if (!fieldIds.add(field.id)) issues.add('معرف الحقل مكرر: ${field.id}.');
       if (field.universities.isEmpty) issues.add('الحقل ${field.name} بلا جامعة مرجعية.');
+
       for (final university in field.universities) {
         universities++;
         if (!universityIds.add(university.id)) issues.add('معرف الجامعة مكرر: ${university.id}.');
         if (university.colleges.isEmpty) issues.add('الجامعة ${university.name} بلا كلية أو مركز.');
+
         for (final college in university.colleges) {
           colleges++;
           if (!collegeIds.add(college.id)) issues.add('معرف الكلية أو المركز مكرر: ${college.id}.');
+
           for (final specialization in college.specializations) {
             specializations++;
             if (!specializationIds.add(specialization.id)) issues.add('معرف التخصص مكرر: ${specialization.id}.');
-            if (specialization.years.length != 4) {
-              issues.add('التخصص ${specialization.name} يجب أن يحتوي 4 سنوات.');
-            }
+            if (specialization.years.length != 4) issues.add('التخصص ${specialization.name} يجب أن يحتوي 4 سنوات.');
+
             for (final year in specialization.years) {
               years++;
               if (year.semesters.length != 2) {
                 issues.add('السنة ${year.number} في ${specialization.name} يجب أن تحتوي فصلين.');
               }
+
               for (final semester in year.semesters) {
                 semesters++;
                 for (final course in semester.courses) {
                   courses++;
+                  allCourses.add(course);
                   if (!courseIds.add(course.id)) issues.add('معرف المقرر مكرر: ${course.id}.');
-                  for (final prerequisiteId in course.prerequisiteCourseIds) {
-                    if (prerequisiteId == course.id) issues.add('المقرر ${course.name} يعتمد على نفسه.');
-                  }
                   if (course.lessons.isEmpty) issues.add('المقرر ${course.name} بلا دروس.');
                   if (course.normalizedUnits.isEmpty) issues.add('المقرر ${course.name} بلا وحدات قابلة للتنفيذ.');
+
+                  final unitIds = <String>{};
                   final unitLessonIds = <String>[];
                   for (final unit in course.normalizedUnits) {
-                    for (final unitLesson in unit.lessons) {
-                      unitLessonIds.add(unitLesson.id);
-                    }
+                    if (!unitIds.add(unit.id)) issues.add('معرف الوحدة مكرر داخل ${course.name}: ${unit.id}.');
+                    for (final unitLesson in unit.lessons) unitLessonIds.add(unitLesson.id);
                   }
                   final courseLessonIds = course.lessons.map((lesson) => lesson.id).toSet();
                   if (unitLessonIds.length != courseLessonIds.length ||
@@ -59,9 +65,20 @@ class AcademicLibraryAudit {
                       !unitLessonIds.toSet().containsAll(courseLessonIds)) {
                     issues.add('وحدات المقرر ${course.name} لا تمثل دروسه مرة واحدة وبصورة كاملة.');
                   }
+
+                  for (final prerequisiteId in course.prerequisiteCourseIds) {
+                    if (prerequisiteId == course.id) issues.add('المقرر ${course.name} يعتمد على نفسه.');
+                  }
+
                   for (final lesson in course.lessons) {
                     lessons++;
                     if (!lessonIds.add(lesson.id)) issues.add('معرف الدرس مكرر: ${lesson.id}.');
+                    for (final conceptId in lesson.conceptIds) {
+                      if (!conceptIds.add(conceptId)) issues.add('معرف المفهوم مكرر: ${conceptId}.');
+                    }
+                    for (final skillId in lesson.skillIds) {
+                      if (!skillIds.add(skillId)) issues.add('معرف المهارة مكرر: ${skillId}.');
+                    }
                     _checkLesson(issues, lesson, course);
                   }
                 }
@@ -71,31 +88,113 @@ class AcademicLibraryAudit {
         }
       }
     }
+
+    _checkPrerequisites(issues, allCourses);
     return AcademicLibraryAuditReport(
-      fields: fields, universities: universities, colleges: colleges,
-      specializations: specializations, years: years, semesters: semesters,
-      courses: courses, lessons: lessons, issues: List.unmodifiable(issues),
+      fields: fields,
+      universities: universities,
+      colleges: colleges,
+      specializations: specializations,
+      years: years,
+      semesters: semesters,
+      courses: courses,
+      lessons: lessons,
+      issues: List.unmodifiable(issues),
     );
   }
 
   static void _checkLesson(List<String> issues, AcademicLesson lesson, AcademicCourse course) {
-    if (lesson.content.trim().isEmpty) issues.add('الدرس ${lesson.title} في ${course.name} بلا محتوى.');
-    if (lesson.learningOutcomes.isEmpty) issues.add('الدرس ${lesson.title} بلا نواتج تعلم.');
-    if (lesson.keyTerms.isEmpty) issues.add('الدرس ${lesson.title} بلا مصطلحات.');
-    if (lesson.examples.isEmpty) issues.add('الدرس ${lesson.title} بلا أمثلة.');
-    if (lesson.practices.isEmpty) issues.add('الدرس ${lesson.title} بلا تدريب.');
-    if (lesson.assessments.isEmpty) issues.add('الدرس ${lesson.title} بلا تقييم.');
-    if (lesson.projects.isEmpty) issues.add('الدرس ${lesson.title} بلا مشروع.');
-    if (lesson.conceptIds.isEmpty) issues.add('الدرس ${lesson.title} بلا معرف مفهوم.');
-    if (lesson.skillIds.isEmpty) issues.add('الدرس ${lesson.title} بلا معرف مهارة.');
+    final context = '${lesson.title} في ${course.name}';
+    if (lesson.content.trim().isEmpty) issues.add('الدرس $context بلا محتوى.');
+    if (lesson.definition.trim().isEmpty) issues.add('الدرس $context بلا تعريف صريح.');
+    if (lesson.learningOutcomes.isEmpty) issues.add('الدرس $context بلا نواتج تعلم.');
+    if (lesson.keyTerms.isEmpty) issues.add('الدرس $context بلا مصطلحات.');
+    if (lesson.examples.isEmpty) issues.add('الدرس $context بلا أمثلة.');
+    if (lesson.applications.isEmpty) issues.add('الدرس $context بلا تطبيقات.');
+    if (lesson.practices.isEmpty) issues.add('الدرس $context بلا تدريب.');
+    if (lesson.assessments.isEmpty) issues.add('الدرس $context بلا تقييم.');
+    if (lesson.errorAnalysisGuidance.trim().isEmpty) issues.add('الدرس $context بلا إرشاد لتحليل الأخطاء.');
+    if (lesson.skillEvidence.isEmpty) issues.add('الدرس $context بلا دليل قابل للملاحظة على اكتساب المهارة.');
+    if (lesson.projects.isEmpty) issues.add('الدرس $context بلا مشروع.');
+    if (lesson.conceptIds.isEmpty) issues.add('الدرس $context بلا معرف مفهوم.');
+    if (lesson.skillIds.isEmpty) issues.add('الدرس $context بلا معرف مهارة.');
+
+    for (final practice in lesson.practices) {
+      if (practice.tasks.length < 2) issues.add('التدريب ${practice.title} في $context غير متدرج بما يكفي.');
+    }
+
     for (final assessment in lesson.assessments) {
-      if (assessment.questions.isEmpty) issues.add('تقييم ${assessment.title} في ${lesson.title} بلا أسئلة.');
+      if (assessment.questions.length < 3) issues.add('تقييم ${assessment.title} في $context يحتاج 3 أسئلة على الأقل.');
+      final answerPositions = <int>{};
       for (final question in assessment.questions) {
         if (question.options.length < 2 ||
             question.correctIndex < 0 ||
             question.correctIndex >= question.options.length) {
-          issues.add('سؤال غير صالح ${question.id} في ${lesson.title}.');
+          issues.add('سؤال غير صالح ${question.id} في $context.');
         }
+        answerPositions.add(question.correctIndex);
+        if (question.learningOutcomeIndexes.isEmpty) {
+          issues.add('السؤال ${question.id} في $context غير مرتبط بناتج تعلم.');
+        }
+        for (final outcomeIndex in question.learningOutcomeIndexes) {
+          if (outcomeIndex < 0 || outcomeIndex >= lesson.learningOutcomes.length) {
+            issues.add('السؤال ${question.id} في $context يشير إلى ناتج تعلم غير موجود.');
+          }
+        }
+        if (question.conceptIds.isEmpty || !lesson.conceptIds.toSet().containsAll(question.conceptIds)) {
+          issues.add('السؤال ${question.id} في $context غير مرتبط بمفاهيم الدرس بصورة صحيحة.');
+        }
+        if (question.skillIds.isEmpty || !lesson.skillIds.toSet().containsAll(question.skillIds)) {
+          issues.add('السؤال ${question.id} في $context غير مرتبط بمهارات الدرس بصورة صحيحة.');
+        }
+      }
+      if (assessment.questions.length >= 3 && answerPositions.length < 2) {
+        issues.add('تقييم ${assessment.title} في $context يضع الإجابات الصحيحة في موضع واحد فقط.');
+      }
+    }
+
+    for (final project in lesson.projects) {
+      if (project.description.trim().isEmpty) issues.add('المشروع ${project.title} في $context بلا وصف.');
+      if (project.conceptIds.isEmpty || !lesson.conceptIds.toSet().containsAll(project.conceptIds)) {
+        issues.add('المشروع ${project.title} في $context غير مرتبط بمفاهيم الدرس.');
+      }
+      if (project.skillIds.isEmpty || !lesson.skillIds.toSet().containsAll(project.skillIds)) {
+        issues.add('المشروع ${project.title} في $context غير مرتبط بمهارات الدرس.');
+      }
+    }
+  }
+
+  static void _checkPrerequisites(List<String> issues, List<AcademicCourse> courses) {
+    final byId = <String, AcademicCourse>{for (final course in courses) course.id: course};
+    for (final course in courses) {
+      for (final prerequisiteId in course.prerequisiteCourseIds) {
+        if (!byId.containsKey(prerequisiteId)) {
+          issues.add('المتطلب السابق $prerequisiteId للمقرر ${course.name} غير موجود في المكتبة.');
+        }
+      }
+    }
+
+    final visiting = <String>{};
+    final visited = <String>{};
+    bool visit(String id) {
+      if (visiting.contains(id)) return false;
+      if (visited.contains(id)) return true;
+      visiting.add(id);
+      final course = byId[id];
+      if (course != null) {
+        for (final prerequisiteId in course.prerequisiteCourseIds) {
+          if (!visit(prerequisiteId)) return false;
+        }
+      }
+      visiting.remove(id);
+      visited.add(id);
+      return true;
+    }
+
+    for (final course in courses) {
+      if (!visit(course.id)) {
+        issues.add('دورة اعتماد دائرية في المتطلبات السابقة تبدأ عند ${course.name}.');
+        break;
       }
     }
   }
@@ -103,11 +202,16 @@ class AcademicLibraryAudit {
 
 class AcademicLibraryAuditReport {
   const AcademicLibraryAuditReport({
-    required this.fields, required this.universities, required this.colleges,
-    required this.specializations, required this.years, required this.semesters,
-    required this.courses, required this.lessons, required this.issues,
+    required this.fields,
+    required this.universities,
+    required this.colleges,
+    required this.specializations,
+    required this.years,
+    required this.semesters,
+    required this.courses,
+    required this.lessons,
+    required this.issues,
   });
-
   final int fields;
   final int universities;
   final int colleges;
@@ -117,6 +221,5 @@ class AcademicLibraryAuditReport {
   final int courses;
   final int lessons;
   final List<String> issues;
-
   bool get isHealthy => issues.isEmpty;
 }
