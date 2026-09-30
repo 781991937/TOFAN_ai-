@@ -31,13 +31,13 @@ class LessonScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(learningSessionProvider);
     final active = session?.lessonId == lesson.id;
-    final completed = active && session!.stage == LearningStage.project;
+    final completed = active && session!.isCompleted;
     final planReady = active && session!.stage == LearningStage.learningPlan;
     final practiceReady = active && session!.stage == LearningStage.practice;
     final assessmentReady = active && session!.stage == LearningStage.assessment;
-    final projectReady = active && session!.stage == LearningStage.project;
+    final projectReady = active && session!.stage == LearningStage.project && !session!.isCompleted;
     final studyReady = active && session!.stage == LearningStage.study;
-    final lifecycleInProgress = active && !planReady && !studyReady && !practiceReady && !assessmentReady && !projectReady;
+    final lifecycleInProgress = active && !completed && !planReady && !studyReady && !practiceReady && !assessmentReady && !projectReady;
     final theme = Theme.of(context);
 
     return Directionality(
