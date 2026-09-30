@@ -1,0 +1,29 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../domain/student/student_models.dart';
+
+final studentProfileProvider = StateProvider<StudentProfile?>((ref) => null);
+
+final smartStudentProvider =
+    StateNotifierProvider<SmartStudentController, SmartStudentState>(
+  (ref) => SmartStudentController(),
+);
+
+class SmartStudentController extends StateNotifier<SmartStudentState> {
+  SmartStudentController() : super(const SmartStudentState());
+
+  void recordLearning({
+    double knowledgeDelta = 0.0,
+    double skillDelta = 0.0,
+    double capabilityDelta = 0.0,
+  }) {
+    state = state.copyWith(
+      knowledgeLevel: _bounded(state.knowledgeLevel + knowledgeDelta),
+      skillLevel: _bounded(state.skillLevel + skillDelta),
+      capabilityLevel: _bounded(state.capabilityLevel + capabilityDelta),
+      learningStreak: state.learningStreak + 1,
+    );
+  }
+
+  double _bounded(double value) => value.clamp(0.0, 100.0).toDouble();
+}
