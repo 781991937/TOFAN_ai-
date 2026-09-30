@@ -323,6 +323,17 @@ class AcademicCatalog {
     ),
   ];
 
+  /// Global top-level academic fields. The current reference catalog is
+  /// grouped under computing and information technology and can expand without
+  /// changing the lower academic hierarchy.
+  static const fields = <AcademicField>[
+    AcademicField(
+      id: 'computing-it',
+      name: 'علوم الحاسوب وتكنولوجيا المعلومات',
+      universities: universities,
+    ),
+  ];
+
   static AcademicUniversity get referenceUniversity => universities.first;
 
   static int get courseCount => universities.expand((u) => u.colleges)
