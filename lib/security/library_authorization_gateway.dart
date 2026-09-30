@@ -1,4 +1,5 @@
 import '../data/academic/academic_library_security.dart';
+import '../data/academic/academic_library_security_catalog.dart';
 import 'tofan_owner_command_authority.dart';
 
 class LibraryAuthorizationGateway {
