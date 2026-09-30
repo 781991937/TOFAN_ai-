@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'ai_core.dart';
+import 'local_first_ai_core.dart';
 
 /// Secure backend gateway adapter.
 ///
@@ -73,5 +74,27 @@ class BackendAiCore implements AiCore {
         model: 'unavailable',
       );
     }
+  }
+}
+
+
+/// Uses the secure gateway when configured and keeps the local-first fallback.
+class GatewayFirstAiCore implements AiCore {
+  const GatewayFirstAiCore({
+    required this.endpoint,
+    required this.provider,
+  });
+
+  final String endpoint;
+  final AiExecutionMode provider;
+
+  @override
+  Future<AiResponse> generate(AiRequest request) async {
+    final gateway = BackendAiCore(endpoint: endpoint, provider: provider);
+    final response = await gateway.generate(request);
+    if (response.provider == 'gateway') {
+      return LocalFirstAiCore().generate(request);
+    }
+    return response;
   }
 }
