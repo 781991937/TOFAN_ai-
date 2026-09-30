@@ -34,8 +34,10 @@ The smart student uses the academic profile, knowledge state, skills, progress, 
 Existing code is migrated incrementally. Do not rewrite working functionality only for directory aesthetics.
 
 ## AI Core
-The AI Core provides one application-level interface. Provider adapters may include OpenAI, Gemini and future providers.
-The application must not expose provider secrets to ordinary students.
+The AI Core provides one application-level interface through `lib/ai/ai_core.dart`.
+The Flutter client depends on this contract rather than a provider-specific SDK.
+Provider adapters may include OpenAI, Gemini and future providers, but credentials and network calls belong behind the backend AI gateway.
+The current client foundation includes a safe unconfigured implementation; it does not fabricate AI answers or expose provider secrets.
 
 ## Agent model
 Agents are specialized workers, not independent uncontrolled chatbots.
