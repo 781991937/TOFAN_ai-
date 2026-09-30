@@ -44,9 +44,10 @@ abstract interface class AiAgent {
 }
 
 class MainManagerAgent implements AiAgent {
-  const MainManagerAgent(this.core);
+  const MainManagerAgent(this.core, this.studentContext);
 
   final AiCore core;
+  final StudentAiContext studentContext;
 
   @override
   AiAgentRole get role => AiAgentRole.mainManager;
@@ -62,7 +63,7 @@ class MainManagerAgent implements AiAgent {
             'أنت مدير النواة الذكية TOFAN AI. نسّق الطلب ضمن نطاقه الأكاديمي وحدد الوكيل المتخصص المناسب، ولا تنفذ وظيفة وكيل متخصص بنفسك.',
         userMessage: request.request,
         context: {
-          ...ref.read(studentAiContextProvider).toMap(),
+          ...studentContext.toMap(),
           ...request.context,
         },
       ),
@@ -82,6 +83,7 @@ class SpecializedAgentRegistry {
 final specializedAgentRegistryProvider =
     Provider<SpecializedAgentRegistry>((ref) {
   final core = ref.watch(aiCoreProvider);
+  final context = ref.watch(studentAiContextProvider).toMap();
   return SpecializedAgentRegistry({
     AiAgentRole.academicTutor: GenericSpecializedAgent(
       core,
