@@ -569,7 +569,15 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
     if (n.contains('هندسة البرمجيات') || n.contains('software engineering') || n.contains('devops') || n.contains('اختبار البرمجيات')) { add('se-01'); add('se-03'); }
     if (n.contains('مضمن') || n.contains('إنترنت الأشياء') || n.contains('embedded') || n.contains('mobile') || n.contains('متنقل')) { add('spd-03'); add('spd-04'); }
     if (n.contains('أساسيات الحوسبة') || n.contains('أنظمة الحاسوب') || n.contains('systems fundamentals')) { add('sf-01'); add('sf-05'); }
-    if (units.isEmpty) { add('sdf-01'); }
+    // If a course name does not match a specialized keyword, derive its
+    // units from the canonical knowledge-area classification instead of
+    // attaching unrelated programming content as a fallback.
+    if (units.isEmpty) {
+      for (final areaId in _knowledgeAreasFor(courseName)) {
+        final areaUnits = AcademicKnowledgeUnitCatalog.forArea(areaId);
+        if (areaUnits.isNotEmpty) add(areaUnits.first.id);
+      }
+    }
     return units.toSet().toList(growable: false);
   }
 
