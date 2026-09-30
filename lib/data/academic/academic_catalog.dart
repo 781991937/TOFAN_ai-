@@ -417,7 +417,7 @@ class AcademicCatalog {
       id: courseId,
       name: name,
       lessons: lessons,
-      prerequisiteCourseIds: _prerequisitesFor(specializationId, year, semester),
+      prerequisiteCourseIds: const [],
       units: [
         AcademicUnit(id: '$courseId-unit-1', title: 'الوحدة الأولى: المدخل والمفاهيم الأساسية', lessons: [lessons[0]]),
         AcademicUnit(id: '$courseId-unit-2', title: 'الوحدة الثانية: المفاهيم والمكونات', lessons: [lessons[1]]),
@@ -474,16 +474,6 @@ class AcademicCatalog {
         'skill-${courseId}-${lessonNumber}',
       ],
     );
-  }
-
-  static List<String> _prerequisitesFor(
-    String specializationId,
-    int year,
-    int semester,
-  ) {
-    // Course-level prerequisite IDs are populated only when a real prerequisite
-    // course is known; never invent a course identifier from semester position.
-    return const [];
   }
 
   static List<LessonPractice> _practicesFor({
