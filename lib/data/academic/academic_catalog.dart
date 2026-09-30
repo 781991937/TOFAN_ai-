@@ -779,7 +779,7 @@ class AcademicCatalog {
       );
     }
 
-    if (n.contains('الواقع الافتراضي') || n.contains('الواقع المعزز') || n.contains('vr') || n.contains('ar')) {
+    if (n.contains('الواقع الافتراضي') || n.contains('الواقع المعزز') || n.contains('virtual reality') || n.contains('augmented reality') || n.contains('mixed reality') || n.contains('extended reality') || n.contains('xr')) {
       return _LessonBlueprint(
         titles: ['أساسيات الواقع الافتراضي والمعزز والتفاعل المكاني', 'بناء التجربة وتتبع المستخدم والبيئة', 'تقييم تجربة XR والسلامة وقابلية الاستخدام'],
         topics: [
