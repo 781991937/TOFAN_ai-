@@ -700,9 +700,9 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
     final units = _knowledgeUnitsFor(courseName);
     final specs = AcademicCourseLessonBlueprints.forCourse(courseName, units);
     final spec = specs[(lessonNumber - 1).clamp(0, specs.length - 1)];
-    final lessonId = '\$courseId-\$lessonNumber';
-    final conceptId = 'concept-\$courseId-\$lessonNumber';
-    final skillId = 'skill-\$courseId-\$lessonNumber';
+    final lessonId = '$courseId-$lessonNumber';
+    final conceptId = 'concept-$courseId-$lessonNumber';
+    final skillId = 'skill-$courseId-$lessonNumber';
 
     return AcademicLesson(
       id: lessonId,
@@ -713,28 +713,28 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
       errorAnalysisGuidance:
           'افصل بين تعريف المفهوم، والمدخلات والافتراضات، وخطوات التطبيق. حدّد أول خطوة تغيّرت فيها النتيجة، ثم أعد الاختبار بحالة مستقلة.',
       learningOutcomes: [
-        'يشرح الطالب «\${spec.topic}» بلغة علمية واضحة.',
+        'يشرح الطالب «${spec.topic}» بلغة علمية واضحة.',
         'يميز المكونات والعلاقات والافتراضات المرتبطة بالمفهوم.',
-        'يطبق المفهوم على حالة جديدة مرتبطة بمقرر «\$courseName».',
+        'يطبق المفهوم على حالة جديدة مرتبطة بمقرر «$courseName».',
         'يحلل النتيجة ويبرر الاختيار ويحدد القيود.',
       ],
       keyTerms: spec.terms,
       examples: spec.examples,
       practices: [
         LessonPractice(
-          id: '\$lessonId-practice',
-          title: 'تدريب متدرج: \${spec.title}',
+          id: '$lessonId-practice',
+          title: 'تدريب متدرج: ${spec.title}',
           tasks: [
             PracticeTask(
-              id: '\$lessonId-p1',
-              instruction: 'عرّف «\${spec.topic}» وحدد البيانات أو الشروط التي تحتاجها قبل التطبيق.',
+              id: '$lessonId-p1',
+              instruction: 'عرّف «${spec.topic}» وحدد البيانات أو الشروط التي تحتاجها قبل التطبيق.',
             ),
             PracticeTask(
-              id: '\$lessonId-p2',
+              id: '$lessonId-p2',
               instruction: 'طبّق المفهوم على حالة جديدة وسجل الخطوات والافتراضات والنتيجة.',
             ),
             PracticeTask(
-              id: '\$lessonId-p3',
+              id: '$lessonId-p3',
               instruction: 'غيّر قيدًا واحدًا، ثم حلّل الفرق وحدد سبب تغير النتيجة.',
             ),
           ],
@@ -742,12 +742,12 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
       ],
       assessments: [
         LessonAssessment(
-          id: '\$lessonId-assessment',
-          title: 'تقييم تحليلي: \${spec.title}',
+          id: '$lessonId-assessment',
+          title: 'تقييم تحليلي: ${spec.title}',
           questions: [
             AssessmentQuestion(
-              id: '\$lessonId-q1',
-              text: 'ما الذي يثبت فهم «\${spec.topic}»؟',
+              id: '$lessonId-q1',
+              text: 'ما الذي يثبت فهم «${spec.topic}»؟',
               options: [
                 'حفظ المصطلح فقط',
                 'تطبيقه وتفسير أثره في سياق المقرر',
@@ -760,7 +760,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
               skillIds: [skillId],
             ),
             AssessmentQuestion(
-              id: '\$lessonId-q2',
+              id: '$lessonId-q2',
               text: 'ما الذي يجب فحصه قبل قبول نتيجة تطبيقية؟',
               options: [
                 'النتيجة النهائية فقط',
@@ -774,7 +774,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
               skillIds: [skillId],
             ),
             AssessmentQuestion(
-              id: '\$lessonId-q3',
+              id: '$lessonId-q3',
               text: 'كيف نختبر نقل المعرفة إلى مسألة جديدة؟',
               options: [
                 'تكرار المثال نفسه',
@@ -792,10 +792,10 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
       ],
       projects: [
         AcademicProject(
-          id: '\$lessonId-project',
-          title: 'مشروع تطبيقي: \${spec.title}',
+          id: '$lessonId-project',
+          title: 'مشروع تطبيقي: ${spec.title}',
           description:
-              'أنجز تطبيقًا صغيرًا في «\$courseName» يثبت فهم «\${spec.topic}». وثّق المتطلبات والخطوات والاختبارات والنتيجة والقيود.',
+              'أنجز تطبيقًا صغيرًا في «$courseName» يثبت فهم «${spec.topic}». وثّق المتطلبات والخطوات والاختبارات والنتيجة والقيود.',
           conceptIds: [conceptId],
           skillIds: [skillId],
         ),
