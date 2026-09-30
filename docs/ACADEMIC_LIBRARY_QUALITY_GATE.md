@@ -125,3 +125,20 @@ No prerequisite identifier is generated unless it refers to an actual course in 
 TOFAN uses CS2023 as a coverage reference, not as a copied university curriculum. CS2023 identifies 17 knowledge areas and distinguishes knowledge areas from individual courses; this allows TOFAN to build a global foundational library while retaining its own course packaging and original instructional content.
 
 Reference: https://csed.acm.org/
+
+
+## Canonical knowledge-area layer
+
+TOFAN now maintains a canonical 17-area knowledge model in
+`lib/data/academic/academic_knowledge_area_catalog.dart`. Each area has
+original TOFAN instructional units. Courses reference one or more area IDs,
+which lets the library support coverage auditing and later knowledge-graph
+retrieval without treating a knowledge area as a course.
+
+The 17 identifiers are AI, AL, AR, DM, FPL, GIT, HCI, MSF, NC, OS, PDC, SEC,
+SEP, SDF, SE, SPD, and SF. This set follows the CS2023 knowledge-area model. citeturn0search1turn0search2
+
+TOFAN does not copy CS2023 course packages. CS2023 itself distinguishes
+knowledge areas from courses and notes that a course can combine topics from
+multiple knowledge areas; TOFAN uses that principle to keep its global library
+modular. citeturn0search2
