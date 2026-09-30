@@ -46,11 +46,12 @@ class AcademicUnit {
 }
 
 class AcademicCourse {
-  const AcademicCourse({required this.id, required this.name, required this.lessons, this.units = const []});
+  const AcademicCourse({required this.id, required this.name, required this.lessons, this.units = const [], this.prerequisiteCourseIds = const []});
   final String id;
   final String name;
   final List<AcademicLesson> lessons;
   final List<AcademicUnit> units;
+  final List<String> prerequisiteCourseIds;
 
   List<AcademicUnit> get normalizedUnits {
     if (units.isNotEmpty) return units;
@@ -71,6 +72,8 @@ class AcademicLesson {
     this.practices = const [],
     this.assessments = const [],
     this.projects = const [],
+    this.conceptIds = const [],
+    this.skillIds = const [],
   });
 
   final String id;
@@ -83,6 +86,10 @@ class AcademicLesson {
   final List<LessonPractice> practices;
   final List<LessonAssessment> assessments;
   final List<AcademicProject> projects;
+  /// Stable concept identifiers used by analysis and skill-update layers.
+  final List<String> conceptIds;
+  /// Stable skill identifiers that the lesson is expected to develop.
+  final List<String> skillIds;
 }
 
 class LessonAssessment {
