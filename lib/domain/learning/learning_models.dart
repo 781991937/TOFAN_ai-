@@ -1,6 +1,3 @@
-import '../academic/academic_models.dart';
-import '../student/student_models.dart';
-
 enum LearningStage {
   diagnostic,
   learningPlan,
@@ -90,20 +87,4 @@ class AssessmentResult {
       total <= 0 ? 0 : (score / total * 100).clamp(0.0, 100.0).toDouble();
 
   bool get passed => percentage >= 60;
-}
-
-/// Builds a deterministic first learning plan from the existing academic catalog.
-LearningPlan buildInitialLearningPlan({
-  required StudentProfile student,
-  required List<AcademicCourse> courses,
-}) {
-  final courseIds = courses.map((course) => course.id).toList(growable: false);
-  return LearningPlan(
-    id: 'plan-${student.name.hashCode.abs()}',
-    studentName: student.name,
-    specialization: student.specialization,
-    currentYear: student.currentYear,
-    currentSemester: student.currentSemester,
-    courseIds: courseIds,
-  );
 }
