@@ -10,6 +10,11 @@ class AssessmentResultScreen extends ConsumerWidget {
 
   void _continueLifecycle(BuildContext context, WidgetRef ref) {
     final controller = ref.read(learningSessionProvider.notifier);
+    if (!ref.read(assessmentResultProvider)!.passed) {
+      controller.retryAssessment();
+      Navigator.pop(context);
+      return;
+    }
     controller.completeAnalysis();
     controller.completeSkillUpdate();
     Navigator.pop(context);
@@ -107,7 +112,7 @@ class AssessmentResultScreen extends ConsumerWidget {
             FilledButton.icon(
               onPressed: () => _continueLifecycle(context, ref),
               icon: const Icon(Icons.arrow_back),
-              label: const Text('متابعة إلى مرحلة المشروع'),
+              label: Text(result.passed ? 'متابعة إلى مرحلة المشروع' : 'إعادة التدريب والتقييم'),
             ),
           ],
         ),
