@@ -24,7 +24,7 @@ class SmartStudentScreen extends ConsumerWidget {
       return Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-          appBar: AppBar(title: const Text('الطالب الذكي')),
+          appBar: AppBar(title: const Text('العبقري طوفان')),
           body: const Center(child: Text('أكمل ملفك الأكاديمي أولاً.')),
         ),
       );
@@ -41,7 +41,7 @@ class SmartStudentScreen extends ConsumerWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(title: const Text('TOFAN AI • الطالب الذكي')),
+        appBar: AppBar(title: const Text('العبقري طوفان')),
         body: ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
           children: [
@@ -63,7 +63,7 @@ class SmartStudentScreen extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('حالة الطالب الذكي',
+                          Text('حالة العبقري طوفان',
                               style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900)),
                           const SizedBox(height: 4),
                           Text('ملف يتطور مع التعلم والتقييم والتطبيق.',
@@ -97,7 +97,7 @@ class SmartStudentScreen extends ConsumerWidget {
                     style: const TextStyle(fontWeight: FontWeight.w800)),
                 subtitle: diagnostic == null
                     ? const Text('قياس أولي لبناء مسار تعلم مناسب.')
-                    : Text('تم تحديث مؤشرات الطالب الذكي بعد التشخيص.'),
+                    : Text('تم تحديث مؤشرات العبقري طوفان بعد التشخيص.'),
                 trailing: TextButton(
                   onPressed: () => Navigator.push(context,
                     MaterialPageRoute(builder: (_) => const DiagnosticScreen())),
