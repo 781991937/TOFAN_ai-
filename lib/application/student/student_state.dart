@@ -5,12 +5,13 @@ import '../../domain/student/student_models.dart';
 final studentProfileProvider = StateProvider<StudentProfile?>((ref) => null);
 
 final smartStudentProvider =
-    StateNotifierProvider<SmartStudentController, SmartStudentState>(
-  (ref) => SmartStudentController(),
+    NotifierProvider<SmartStudentController, SmartStudentState>(
+  SmartStudentController.new,
 );
 
-class SmartStudentController extends StateNotifier<SmartStudentState> {
-  SmartStudentController() : super(const SmartStudentState());
+class SmartStudentController extends Notifier<SmartStudentState> {
+  @override
+  SmartStudentState build() => const SmartStudentState();
 
   void recordLearning({
     double knowledgeDelta = 0.0,
