@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../application/learning/diagnostic_state.dart';
 import '../application/learning/learning_state.dart';
+import '../application/learning/progress_state.dart';
 import '../application/student/student_state.dart';
 import '../data/academic/academic_catalog.dart';
 
@@ -14,6 +15,7 @@ class SmartStudentScreen extends ConsumerWidget {
     final profile = ref.watch(studentProfileProvider);
     final smart = ref.watch(smartStudentProvider);
     final plan = ref.watch(learningPlanProvider);
+    final progress = ref.watch(learningProgressProvider);
     final diagnostic = ref.watch(diagnosticProvider);
     final theme = Theme.of(context);
     final primary = theme.colorScheme.primary;
@@ -100,6 +102,37 @@ class SmartStudentScreen extends ConsumerWidget {
                   onPressed: () => Navigator.push(context,
                     MaterialPageRoute(builder: (_) => const DiagnosticScreen())),
                   child: Text(diagnostic == null ? 'ابدأ' : 'إعادة'),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Icon(Icons.timeline_outlined, color: primary),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('التقدم في التعلم',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w900)),
+                          const SizedBox(height: 6),
+                          LinearProgressIndicator(
+                              value: progress.overallProgress()),
+                          const SizedBox(height: 6),
+                          Text(
+                            (progress.overallProgress() * 100).toStringAsFixed(0) +
+                                '% من دروس المكتبة المرجعية',
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
