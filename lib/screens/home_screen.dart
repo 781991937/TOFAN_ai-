@@ -9,73 +9,107 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(title: const Text(AppConstants.appName)),
         body: SafeArea(
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
             children: [
-              Text(
-                'مرحباً بك في ' + AppConstants.productName,
-                style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'الطالب البشري والطالب الذكي يعملان كفريق واحد لبناء المعرفة والمهارات والقدرات.',
-                style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('TOFAN SMART ACADEMY',
+                            style: theme.textTheme.labelLarge?.copyWith(
+                              color: primary, fontWeight: FontWeight.w800, letterSpacing: .5)),
+                        const SizedBox(height: 4),
+                        Text('مساحتك الذكية للتعلم',
+                            style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900)),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 44, height: 44,
+                    decoration: BoxDecoration(
+                      color: primary.withValues(alpha: .12),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: primary.withValues(alpha: .22)),
+                    ),
+                    child: Icon(Icons.auto_awesome, color: primary),
+                  ),
+                ],
               ),
               const SizedBox(height: 18),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(18),
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.auto_awesome, size: 42, color: theme.colorScheme.primary),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('TOFAN AI', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
-                            const SizedBox(height: 4),
-                            const Text('نواة الذكاء التي ستنسق التعلم والتقييم والمهارات والمشاريع عبر وكلاء متخصصين.'),
-                          ],
-                        ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: primary.withValues(alpha: .12),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Icon(Icons.psychology_outlined, color: primary),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(child: Text('TOFAN AI',
+                            style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900))),
+                          Icon(Icons.arrow_forward_ios, size: 15, color: primary),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      Text('الطالب البشري + الطالب الذكي',
+                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
+                      const SizedBox(height: 6),
+                      Text(
+                        'تعلم، طبّق، قيّم مستواك، وطوّر المعرفة والمهارات والقدرات مع نواة الذكاء.',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant, height: 1.5)),
+                      const SizedBox(height: 16),
+                      FilledButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.play_arrow_rounded),
+                        label: const Text('ابدأ جلسة التعلم'),
                       ),
                     ],
                   ),
                 ),
               ),
               const SizedBox(height: 18),
-              Text('مساحة الطالب', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
+              Text('نظرة سريعة', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
               const SizedBox(height: 10),
-              Card(
-                child: ListTile(
-                  leading: Icon(Icons.menu_book_outlined, size: 32, color: theme.colorScheme.primary),
-                  title: const Text('المكتبة الأكاديمية', style: TextStyle(fontWeight: FontWeight.w700)),
-                  subtitle: const Text('جامعة ← كلية ← تخصص ← سنة ← فصل ← مقرر ← درس'),
-                  trailing: const Icon(Icons.chevron_left),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Expanded(child: _Stat(value: AcademicCatalog.courseCount.toString(), label: 'مقررات')),
-                      Expanded(child: _Stat(value: AcademicCatalog.lessonCount.toString(), label: 'دروس')),
-                      const Expanded(child: _Stat(value: '1', label: 'تخصص مرجعي')),
-                    ],
-                  ),
-                ),
+              Row(
+                children: [
+                  Expanded(child: _StatCard(value: AcademicCatalog.courseCount.toString(), label: 'مقررات')),
+                  const SizedBox(width: 10),
+                  Expanded(child: _StatCard(value: AcademicCatalog.lessonCount.toString(), label: 'دروس')),
+                  const SizedBox(width: 10),
+                  const Expanded(child: _StatCard(value: '1', label: 'تخصص مرجعي')),
+                ],
               ),
               const SizedBox(height: 18),
-              Text('دورة التعلم', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
+              Text('المسار الأكاديمي', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
               const SizedBox(height: 10),
-              const _LifecycleCard(),
+              Card(
+                child: Column(
+                  children: const [
+                    _PathItem(icon: Icons.account_balance_outlined, title: 'المكتبة الأكاديمية', subtitle: 'جامعة → كلية → تخصص → سنة → فصل'),
+                    _PathItem(icon: Icons.menu_book_outlined, title: 'المقرر والدروس', subtitle: 'محتوى أكاديمي منظم وقابل للتوسع'),
+                    _PathItem(icon: Icons.analytics_outlined, title: 'التشخيص والتقييم', subtitle: 'قياس المعرفة والمهارات والقدرات'),
+                    _PathItem(icon: Icons.rocket_launch_outlined, title: 'المشاريع', subtitle: 'تحويل التعلم إلى تطبيق عملي'),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -84,41 +118,44 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class _Stat extends StatelessWidget {
-  const _Stat({required this.value, required this.label});
+class _StatCard extends StatelessWidget {
+  const _StatCard({required this.value, required this.label});
   final String value;
   final String label;
+
   @override
-  Widget build(BuildContext context) => Column(children: [
-    Text(value, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900)),
-    const SizedBox(height: 2),
-    Text(label),
-  ]);
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Column(
+          children: [
+            Text(value, style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900)),
+            const SizedBox(height: 3),
+            Text(label, style: theme.textTheme.bodySmall),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _LifecycleCard extends StatelessWidget {
-  const _LifecycleCard();
-  static const steps = [
-    ('1', 'التعريف', Icons.person_outline),
-    ('2', 'التشخيص', Icons.analytics_outlined),
-    ('3', 'خطة التعلم', Icons.route_outlined),
-    ('4', 'الدراسة والتطبيق', Icons.school_outlined),
-    ('5', 'التقييم', Icons.assignment_outlined),
-    ('6', 'تحديث المهارات', Icons.psychology_outlined),
-    ('7', 'المشروع', Icons.rocket_launch_outlined),
-  ];
+class _PathItem extends StatelessWidget {
+  const _PathItem({required this.icon, required this.title, required this.subtitle});
+  final IconData icon;
+  final String title;
+  final String subtitle;
+
   @override
-  Widget build(BuildContext context) => Card(
-    child: Padding(
-      padding: const EdgeInsets.all(12),
-      child: Column(children: [
-        for (final step in steps) ListTile(
-          dense: true,
-          leading: CircleAvatar(radius: 15, child: Text(step.$1)),
-          title: Text(step.$2),
-          trailing: Icon(step.$3),
-        ),
-      ]),
-    ),
-  );
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
+      leading: Icon(icon, color: theme.colorScheme.primary),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
+      subtitle: Text(subtitle),
+      trailing: const Icon(Icons.chevron_left),
+    );
+  }
 }
