@@ -77,6 +77,29 @@ class LessonScreen extends ConsumerWidget {
                           child: Text('• $outcome'),
                         ),
                     ],
+                    if (lesson.keyTerms.isNotEmpty) ...[
+                      const SizedBox(height: 14),
+                      Text('المصطلحات الأساسية', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (final term in lesson.keyTerms)
+                            Chip(label: Text(term)),
+                        ],
+                      ),
+                    ],
+                    if (lesson.examples.isNotEmpty) ...[
+                      const SizedBox(height: 14),
+                      Text('أمثلة تطبيقية', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
+                      const SizedBox(height: 8),
+                      for (final example in lesson.examples)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text('• $example'),
+                        ),
+                    ],
                     const SizedBox(height: 14),
                     Text(
                       lesson.isFree
