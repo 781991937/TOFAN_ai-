@@ -71,7 +71,29 @@ class AssessmentResultScreen extends ConsumerWidget {
                 subtitle: Text(analysis.message),
               ),
             ),
-            const SizedBox(height: 14),
+            if (analysis.errorAnalysis.isNotEmpty) ...[
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('تحليل الأخطاء',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w900,
+                          )),
+                      const SizedBox(height: 8),
+                      for (final item in analysis.errorAnalysis)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text('• $item'),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+            ],
             Card(
               child: Column(
                 children: [
