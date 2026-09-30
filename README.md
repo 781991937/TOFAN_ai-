@@ -1,16 +1,42 @@
-# tofan_ai
+# TOFAN SMART ACADEMY — TOFAN AI STUDENT
 
-A new Flutter project.
+نظام تعليمي ذكي عالمي، يبدأ من الطالب البشري ويعمل معه الطالب الذكي كفريق واحد.
 
-## Getting Started
+## Vision
+- الطالب البشري + الطالب الذكي.
+- AI Core متعدد النماذج وقابل للتوسع.
+- مكتبة أكاديمية عالمية منظمة حسب الجامعة/الكلية/التخصص/السنة/الفصل/المقرر.
+- تعلم تفاعلي، تقييم، تحليل تقدم، ومهارات.
+- ملفات ومحاضرات واختبارات ومشاريع.
+- AI Agents متخصصة للوظائف الأكاديمية.
+- العربية RTL والإنجليزية.
+- Android أولاً مع Web للابتوب.
+- Backend آمن وقاعدة بيانات سحابية.
 
-This project is a starting point for a Flutter application.
+## Current foundation
+هذا المستودع هو واجهة Flutter الأساسية للنظام، وتم تنظيفه من الأجزاء غير المطلوبة والتكرارات قبل بدء البناء الحقيقي.
 
-A few resources to get you started if this is your first Flutter project:
+## Preserved
+- Android
+- Web/PWA
+- Flutter + Riverpod
+- local conversation persistence
+- AI abstraction layer
+- voice feature foundation
+- files feature foundation
+- tests and project configuration
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Removed
+- iOS platform scaffold
+- Replit-specific configuration
+- unused image-generation screen
+- duplicate legacy OpenAI/Gemini service wrappers
+- obsolete agent-memory notes
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Architecture direction
+Presentation → Application → Domain → Data → AI Core → Backend API
+
+في الإنتاج ستكون مفاتيح مزودي الذكاء الاصطناعي في الخادم، وليس داخل تطبيق الطالب.
+
+## Build rule
+نطوّر المشروع تدريجياً داخل هذا المستودع، مع الحفاظ على الأجزاء المفيدة، وعدم إنشاء مشروع بديل أو إعادة كتابة النظام بلا حاجة.
