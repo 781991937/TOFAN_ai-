@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/secure_storage_service.dart';
+import '../ai/ai_core.dart';
 import '../utils/constants.dart';
 
 final secureStorageServiceProvider = Provider<SecureStorageService>((ref) {
@@ -13,6 +14,24 @@ final secureStorageServiceProvider = Provider<SecureStorageService>((ref) {
 final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) {
   return SharedPreferences.getInstance();
 });
+
+/// Controls the TOFAN AI Core execution mode.
+/// Local is deliberately the default and requires no external API key.
+class AiExecutionModeNotifier extends StateNotifier<AiExecutionMode> {
+  AiExecutionModeNotifier() : super(AiExecutionMode.local);
+
+  Future<void> setMode(AiExecutionMode mode) async {
+    state = mode;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('tofan_ai_execution_mode', mode.name);
+  }
+}
+
+final aiExecutionModeProvider =
+    StateNotifierProvider<AiExecutionModeNotifier, AiExecutionMode>((ref) {
+  return AiExecutionModeNotifier();
+});
+
 
 /// Controls the current app-wide [ThemeMode], persisted to SharedPreferences.
 class ThemeModeNotifier extends StateNotifier<ThemeMode> {
