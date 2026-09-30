@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/settings_provider.dart';
+import '../ai/ai_core.dart';
 import '../utils/constants.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -68,6 +69,38 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               selected: {themeMode},
               onSelectionChanged: (selection) =>
                   ref.read(themeModeProvider.notifier).setThemeMode(selection.first),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'TOFAN AI execution mode',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            SegmentedButton<AiExecutionMode>(
+              segments: const [
+                ButtonSegment(
+                  value: AiExecutionMode.local,
+                  label: Text('Local'),
+                  icon: Icon(Icons.memory_outlined),
+                ),
+                ButtonSegment(
+                  value: AiExecutionMode.openAi,
+                  label: Text('OpenAI'),
+                ),
+                ButtonSegment(
+                  value: AiExecutionMode.gemini,
+                  label: Text('Gemini'),
+                ),
+              ],
+              selected: {ref.watch(aiExecutionModeProvider)},
+              onSelectionChanged: (selection) => ref
+                  .read(aiExecutionModeProvider.notifier)
+                  .setMode(selection.first),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Local هو الوضع الافتراضي ولا يحتاج إلى مفتاح API.',
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 24),
             Text('Default AI provider', style: Theme.of(context).textTheme.titleMedium),
