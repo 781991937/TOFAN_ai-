@@ -39,10 +39,11 @@ class AcademicCourse {
 }
 
 class AcademicLesson {
-  const AcademicLesson({required this.id, required this.title, this.isFree = true, this.assessments = const []});
+  const AcademicLesson({required this.id, required this.title, this.isFree = true, this.practices = const [], this.assessments = const []});
   final String id;
   final String title;
   final bool isFree;
+  final List<LessonPractice> practices;
   final List<LessonAssessment> assessments;
 }
 
@@ -59,4 +60,17 @@ class AssessmentQuestion {
   final String text;
   final List<String> options;
   final int correctIndex;
+}
+
+class LessonPractice {
+  const LessonPractice({required this.id, required this.title, required this.tasks});
+  final String id;
+  final String title;
+  final List<PracticeTask> tasks;
+}
+
+class PracticeTask {
+  const PracticeTask({required this.id, required this.instruction});
+  final String id;
+  final String instruction;
 }
