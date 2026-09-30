@@ -127,6 +127,17 @@ class LearningSessionController extends Notifier<LearningSession?> {
       lessonId: session.lessonId,
       stage: LearningStage.project,
       startedAt: session.startedAt,
+    );
+  }
+
+  void completeProject() {
+    final session = state;
+    if (session == null || session.stage != LearningStage.project) return;
+    if (session.isCompleted) return;
+    state = LearningSession(
+      lessonId: session.lessonId,
+      stage: LearningStage.project,
+      startedAt: session.startedAt,
       completedAt: DateTime.now(),
     );
     ref.read(learningProgressProvider.notifier).completeLesson(session.lessonId);
