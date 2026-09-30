@@ -20,7 +20,7 @@ class AcademicCatalog {
 
   static AcademicUniversity get referenceUniversity => universities.first;
 
-  static final universities = <AcademicUniversity>[
+  static final _baseUniversities = <AcademicUniversity>[
     AcademicUniversity(
       id: 'sanaa',
       name: 'جامعة صنعاء',
@@ -450,6 +450,81 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
       ],
     ),
   ];
+
+  /// Public catalog view. Every specialization is normalized through the same
+  /// depth layer so hand-authored reference courses and generated global courses
+  /// expose the same deep lesson structure.
+  static List<AcademicUniversity> get universities =>
+      _baseUniversities.map(_deepenUniversity).toList(growable: false);
+
+  static AcademicUniversity _deepenUniversity(AcademicUniversity university) {
+    return AcademicUniversity(
+      id: university.id,
+      name: university.name,
+      colleges: university.colleges.map((college) => AcademicCollege(
+        id: college.id,
+        name: college.name,
+        specializations: college.specializations
+            .map(_deepenSpecialization)
+            .toList(growable: false),
+      )).toList(growable: false),
+    );
+  }
+
+  static AcademicSpecialization _deepenSpecialization(
+      AcademicSpecialization specialization) {
+    return AcademicSpecialization(
+      id: specialization.id,
+      name: specialization.name,
+      years: specialization.years.map((year) => AcademicYear(
+        number: year.number,
+        semesters: year.semesters.map((semester) => AcademicSemester(
+          number: semester.number,
+          courses: semester.courses.map(_deepenCourse).toList(growable: false),
+        )).toList(growable: false),
+      )).toList(growable: false),
+    );
+  }
+
+  static AcademicCourse _deepenCourse(AcademicCourse course) {
+    if (course.lessons.length >= 6) return course;
+
+    final existing = course.lessons;
+    final lessons = <AcademicLesson>[...existing];
+    for (var number = lessons.length + 1; number <= 6; number++) {
+      lessons.add(_deepCurriculumLesson(
+        courseId: course.id,
+        courseName: course.name,
+        lessonNumber: number,
+      ));
+    }
+
+    final units = <AcademicUnit>[
+      ...course.units,
+      ...lessons.skip(course.units.length).take(6 - course.units.length).toList()
+          .asMap()
+          .entries
+          .map((entry) => AcademicUnit(
+                id: '${course.id}-deep-unit-${entry.key + 1}',
+                title: 'وحدة تعميق ${entry.key + 1}: المعرفة والتطبيق',
+                lessons: [entry.value],
+              )),
+    ];
+
+    return AcademicCourse(
+      id: course.id,
+      name: course.name,
+      lessons: lessons,
+      units: units,
+      prerequisiteCourseIds: course.prerequisiteCourseIds,
+      knowledgeAreaIds: course.knowledgeAreaIds.isNotEmpty
+          ? course.knowledgeAreaIds
+          : _knowledgeAreasFor(course.name),
+      knowledgeUnitIds: course.knowledgeUnitIds.isNotEmpty
+          ? course.knowledgeUnitIds
+          : _knowledgeUnitsFor(course.name),
+    );
+  }
 
   /// Global computing specializations. These entries complete the academic
   /// skeleton across four years and two semesters; lesson content is expanded
