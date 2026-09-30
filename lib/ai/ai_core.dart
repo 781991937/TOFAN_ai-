@@ -6,6 +6,13 @@ abstract interface class AiCore {
   Future<AiResponse> generate(AiRequest request);
 }
 
+/// Provider-agnostic execution modes. Local is the default and requires no key.
+enum AiExecutionMode {
+  local,
+  openAi,
+  gemini,
+}
+
 class AiRequest {
   const AiRequest({
     required this.systemInstruction,
