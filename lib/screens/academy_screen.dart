@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/academic/academic_catalog.dart';
 import '../domain/academic/academic_models.dart';
+import 'lesson_screen.dart';
 
 class AcademyScreen extends StatelessWidget {
   const AcademyScreen({super.key});
@@ -153,7 +154,16 @@ class _CourseTile extends StatelessWidget {
                 leading: Icon(lesson.isFree ? Icons.play_circle_outline : Icons.lock_outline),
                 title: Text(lesson.title),
                 subtitle: Text(lesson.isFree ? 'متاح' : 'مدفوع'),
-                onTap: () => Navigator.pop(context),
+                onTap: () {
+                  if (!lesson.isFree) return;
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => LessonScreen(course: course, lesson: lesson),
+                    ),
+                  );
+                },
               ),
           ],
         ),
