@@ -47,6 +47,18 @@ class AcademicLibraryAudit {
                   }
                   if (course.lessons.isEmpty) issues.add('المقرر ${course.name} بلا دروس.');
                   if (course.normalizedUnits.isEmpty) issues.add('المقرر ${course.name} بلا وحدات قابلة للتنفيذ.');
+                  final unitLessonIds = <String>[];
+                  for (final unit in course.normalizedUnits) {
+                    for (final unitLesson in unit.lessons) {
+                      unitLessonIds.add(unitLesson.id);
+                    }
+                  }
+                  final courseLessonIds = course.lessons.map((lesson) => lesson.id).toSet();
+                  if (unitLessonIds.length != courseLessonIds.length ||
+                      unitLessonIds.toSet().length != unitLessonIds.length ||
+                      !unitLessonIds.toSet().containsAll(courseLessonIds)) {
+                    issues.add('وحدات المقرر ${course.name} لا تمثل دروسه مرة واحدة وبصورة كاملة.');
+                  }
                   for (final lesson in course.lessons) {
                     lessons++;
                     if (!lessonIds.add(lesson.id)) issues.add('معرف الدرس مكرر: ${lesson.id}.');
