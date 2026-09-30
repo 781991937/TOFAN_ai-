@@ -76,12 +76,14 @@ class AssessmentResult {
     required this.score,
     required this.total,
     required this.completedAt,
+    this.wrongQuestionIds = const [],
   });
 
   final String assessmentId;
   final double score;
   final double total;
   final DateTime completedAt;
+  final List<String> wrongQuestionIds;
 
   double get percentage =>
       total <= 0 ? 0 : (score / total * 100).clamp(0.0, 100.0).toDouble();
