@@ -1,10 +1,5 @@
 class AcademicField {
-  const AcademicField({
-    required this.id,
-    required this.name,
-    required this.universities,
-  });
-
+  const AcademicField({required this.id, required this.name, required this.universities});
   final String id;
   final String name;
   final List<AcademicUniversity> universities;
@@ -44,50 +39,47 @@ class AcademicSemester {
 }
 
 class AcademicUnit {
-  const AcademicUnit({
-    required this.id,
-    required this.title,
-    required this.lessons,
-  });
-
+  const AcademicUnit({required this.id, required this.title, required this.lessons});
   final String id;
   final String title;
   final List<AcademicLesson> lessons;
 }
 
 class AcademicCourse {
-  const AcademicCourse({
-    required this.id,
-    required this.name,
-    required this.lessons,
-    this.units = const [],
-  });
-
+  const AcademicCourse({required this.id, required this.name, required this.lessons, this.units = const []});
   final String id;
   final String name;
   final List<AcademicLesson> lessons;
   final List<AcademicUnit> units;
 
-  /// Provides the approved Course → Unit → Lesson hierarchy while preserving
-  /// the existing lesson-based catalog data during incremental migration.
   List<AcademicUnit> get normalizedUnits {
     if (units.isNotEmpty) return units;
     if (lessons.isEmpty) return const [];
-    return <AcademicUnit>[
-      AcademicUnit(
-        id: '$id-unit-1',
-        title: 'الوحدة الأولى',
-        lessons: lessons,
-      ),
-    ];
+    return <AcademicUnit>[AcademicUnit(id: '$id-unit-1', title: 'الوحدة الأولى', lessons: lessons)];
   }
 }
 
 class AcademicLesson {
-  const AcademicLesson({required this.id, required this.title, this.isFree = true, this.practices = const [], this.assessments = const [], this.projects = const []});
+  const AcademicLesson({
+    required this.id,
+    required this.title,
+    this.isFree = true,
+    this.content = '',
+    this.learningOutcomes = const [],
+    this.keyTerms = const [],
+    this.examples = const [],
+    this.practices = const [],
+    this.assessments = const [],
+    this.projects = const [],
+  });
+
   final String id;
   final String title;
   final bool isFree;
+  final String content;
+  final List<String> learningOutcomes;
+  final List<String> keyTerms;
+  final List<String> examples;
   final List<LessonPractice> practices;
   final List<LessonAssessment> assessments;
   final List<AcademicProject> projects;
