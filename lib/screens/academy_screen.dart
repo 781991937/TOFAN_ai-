@@ -76,9 +76,10 @@ class _CollegeSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      clipBehavior: Clip.antiAlias,
       child: ExpansionTile(
         initiallyExpanded: true,
-        leading: const Icon(Icons.account_balance),
+        leading: Icon(Icons.account_balance, color: Theme.of(context).colorScheme.primary),
         title: Text(college.name, style: const TextStyle(fontWeight: FontWeight.w700)),
         children: [
           for (final specialization in college.specializations)
@@ -96,7 +97,7 @@ class _SpecializationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-      leading: const Icon(Icons.psychology_outlined),
+      leading: Icon(Icons.psychology_outlined, color: Theme.of(context).colorScheme.primary),
       title: Text(specialization.name),
       children: [
         for (final year in specialization.years)
@@ -128,7 +129,7 @@ class _CourseTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: const EdgeInsets.only(right: 60, left: 16),
-      leading: const Icon(Icons.menu_book_outlined),
+      leading: Icon(Icons.menu_book_outlined, color: Theme.of(context).colorScheme.primary),
       title: Text(course.name),
       subtitle: Text(course.lessons.length.toString() + ' دروس'),
       trailing: const Icon(Icons.chevron_left),
