@@ -26,5 +26,17 @@ class SmartStudentController extends Notifier<SmartStudentState> {
     );
   }
 
+  void setDiagnosticLevels({
+    required double knowledgeLevel,
+    required double skillLevel,
+    required double capabilityLevel,
+  }) {
+    state = state.copyWith(
+      knowledgeLevel: _bounded(knowledgeLevel),
+      skillLevel: _bounded(skillLevel),
+      capabilityLevel: _bounded(capabilityLevel),
+    );
+  }
+
   double _bounded(double value) => value.clamp(0.0, 100.0).toDouble();
 }
