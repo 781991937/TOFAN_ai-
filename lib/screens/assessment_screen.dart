@@ -20,6 +20,17 @@ class _AssessmentScreenState extends ConsumerState<AssessmentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.assessment.questions.isEmpty) {
+      return Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          appBar: AppBar(title: Text(widget.assessment.title)),
+          body: const Center(
+            child: Text('لا توجد أسئلة تقييم متاحة لهذا التقييم بعد.'),
+          ),
+        ),
+      );
+    }
     final q = widget.assessment.questions[index];
     final selected = answers[q.id];
     final theme = Theme.of(context);
