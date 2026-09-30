@@ -7,6 +7,18 @@ import '../../domain/academic/academic_models.dart';
 class AcademicCatalog {
   const AcademicCatalog._();
 
+  /// Single global academic field containing the reference university catalog.
+  /// The university is organizational reference data; the library remains global.
+  static List<AcademicField> get fields => [
+        AcademicField(
+          id: 'computing',
+          name: 'علوم الحاسوب وتقنية المعلومات',
+          universities: universities,
+        ),
+      ];
+
+  static AcademicUniversity get referenceUniversity => universities.first;
+
   static final universities = <AcademicUniversity>[
     AcademicUniversity(
       id: 'sanaa',
