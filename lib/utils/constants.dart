@@ -15,12 +15,13 @@ class AppConstants {
   static const String selectedAiProviderKey = 'selected_ai_provider';
 
   static const String databaseName = 'tofan_ai.db';
-  static const int databaseVersion = 2;
+  static const int databaseVersion = 3;
   static const String chatMessagesTable = 'chat_messages';
   static const String conversationsTable = 'conversations';
   static const String auditEventsTable = 'audit_events';
   static const String auditActorIndex = 'idx_audit_events_actor';
   static const String auditResourceIndex = 'idx_audit_events_resource';
+  static const String studentLearningTable = 'student_learning_state';
 }
 
 /// Supported AI providers during the current migration stage.
