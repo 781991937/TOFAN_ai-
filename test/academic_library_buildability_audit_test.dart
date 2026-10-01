@@ -11,15 +11,14 @@ void main() {
         reports.length);
   });
 
-  test('audit never treats generic fallback lessons as complete evidence', () {
+  test('all canonical specializations pass the current buildability gate', () {
     final reports = AcademicLibraryBuildabilityAudit.run();
-    final partial = reports.where((report) => !report.isComplete).toList();
 
-    expect(partial, isNotEmpty);
+    expect(reports, isNotEmpty);
+    expect(reports.every((report) => report.isComplete), isTrue);
     expect(
-      partial.any((report) => report.findings.any(
-            (finding) => finding.contains('تحتاج تعميقًا أو اعتمادًا تخصصيًا'),
-          )),
+      reports.every((report) =>
+          report.partialCourses == 0 && report.missingCourses == 0),
       isTrue,
     );
   });
