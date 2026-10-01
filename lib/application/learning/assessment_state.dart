@@ -67,8 +67,8 @@ class AssessmentController extends Notifier<AssessmentResult?> {
 
     if (result.passed) {
       ref.read(skillUpdateHistoryProvider.notifier).apply(
-        sourceId: result.assessmentId,
-        sourceType: 'assessment',
+        sourceId: result.attemptId,
+        sourceType: result.isReassessment ? 'assessment_reassessment' : 'assessment',
         knowledgeDelta: analysis.knowledgeDelta,
         skillDelta: analysis.skillDelta,
         capabilityDelta: analysis.capabilityDelta,
