@@ -137,22 +137,14 @@ Persistent database، production auth/authorization، secure AI gateway، storag
 
 | # | البند التنفيذي | المرحلة الأم | الحالة المرجعية | الاعتماد |
 |---:|---|---:|:---:|---|
-| 01 | النواة الأكاديمية العالمية | 2 | COMPLETED/BASE | — |
-| 02 | مجالات علوم الحاسوب Knowledge Areas | 2 | COMPLETED/BASE | 01 |
-| 03 | التخصصات الحاسوبية العالمية | 4 | PARTIALLY IMPLEMENTED | 02 |
-| 04 | 4 سنوات × 8 فصول كهيكل مرحلي | 4 | COMPLETED/STRUCTURE | 03 |
-| 05 | المقررات وربطها بالتخصصات | 3–4 | PARTIALLY IMPLEMENTED | 04 |
-| 06 | Knowledge Units | 2 | COMPLETED/BASE | 05 |
-| 07 | الدروس الأكاديمية | 5 | PARTIALLY IMPLEMENTED | 06 |
-| 08 | عقد الدرس: تعريف/شرح/أمثلة/تطبيق/تدريب/تقييم | 5 | COMPLETED/BASE | 07 |
-| 09 | Prerequisite Graph | 3/6 | PARTIALLY IMPLEMENTED | 06–08 |
+| 01 | النواة الأكاديمية العالمية | 2 | COMPLETED/BASE | — |🟢 | 02 | مجالات علوم الحاسوب Knowledge Areas | 2 | COMPLETED/BASE | 01 |🟢 | 03 | التخصصات الحاسوبية العالمية | 4 | PARTIALLY IMPLEMENTED | 02 |
+| 04 | 4 سنوات × 8 فصول كهيكل مرحلي | 4 | COMPLETED/STRUCTURE | 03 |🟢 | 05 | المقررات وربطها بالتخصصات | 3–4 | PARTIALLY IMPLEMENTED | 04 |
+| 06 | Knowledge Units | 2 | COMPLETED/BASE | 05 |🟢 | 07 | الدروس الأكاديمية | 5 | PARTIALLY IMPLEMENTED | 06 |
+| 08 | عقد الدرس: تعريف/شرح/أمثلة/تطبيق/تدريب/تقييم | 5 | COMPLETED/BASE | 07 |🟢 | 09 | Prerequisite Graph | 3/6 | PARTIALLY IMPLEMENTED | 06–08 |
 | 10 | Concept Model | 6 | PARTIALLY IMPLEMENTED | 06–09 |
 | 11 | Knowledge Graph غني بالعلاقات | 6 | PARTIALLY IMPLEMENTED | 10 |
-| 12 | Skill Model | 7 | COMPLETED/BASE | 10 |
-| 13 | Capability Model | 7 | COMPLETED/BASE | 12 |
-| 14 | Knowledge → Skill → Capability | 7 | PARTIALLY IMPLEMENTED | 10–13 |
-| 15 | Academic Quality Gate | 24 | COMPLETED/BASE | 07–14 |
-| 16 | تعميق المحتوى التخصصي واعتماده | 4/17/18/24 | PARTIALLY IMPLEMENTED | 15 |
+| 12 | Skill Model | 7 | COMPLETED/BASE | 10 |🟢 | 13 | Capability Model | 7 | COMPLETED/BASE | 12 |🟢 | 14 | Knowledge → Skill → Capability | 7 | PARTIALLY IMPLEMENTED | 10–13 |
+| 15 | Academic Quality Gate | 24 | COMPLETED/BASE | 07–14 |🟢 | 16 | تعميق المحتوى التخصصي واعتماده | 4/17/18/24 | PARTIALLY IMPLEMENTED | 15 |
 | 17 | Student Model الدائم | 10/21 | PARTIALLY IMPLEMENTED | 16 |
 | 18 | Knowledge State لكل مفهوم | 10/11 | PARTIALLY IMPLEMENTED | 17 |
 | 19 | Skill State لكل مهارة | 7/10 | PARTIALLY IMPLEMENTED | 17 |
@@ -162,23 +154,13 @@ Persistent database، production auth/authorization، secure AI gateway، storag
 | 23 | Personalized Learning Plan | 11 | PARTIALLY IMPLEMENTED | 22 |
 | 24 | Knowledge/Skill/Prerequisite Gap Detection | 11 | PARTIALLY IMPLEMENTED | 09,18,19 |
 | 25 | Learning Intelligence والتحديث الديناميكي | 11 | MISSING/PARTIAL | 23–24 |
-| 26 | Assessment Engine | 8 | COMPLETED/BASE | 15 |
-| 27 | Assessment Analysis وربط الخطأ بالمفهوم | 8 | COMPLETED/BASE | 26 |
-| 28 | Remediation Engine | 8/11 | PARTIALLY IMPLEMENTED | 24,27 |
+| 26 | Assessment Engine | 8 | COMPLETED/BASE | 15 |🟢 | 27 | Assessment Analysis وربط الخطأ بالمفهوم | 8 | COMPLETED/BASE | 26 |🟢 | 28 | Remediation Engine | 8/11 | PARTIALLY IMPLEMENTED | 24,27 |
 | 29 | Retry/Reassessment | 8 | PARTIALLY IMPLEMENTED | 28 |
-| 30 | Skill Update من نتائج التقييم | 7/8 | COMPLETED/BASE | 29 |
-| 31 | Project Engine | 9 | COMPLETED/BASE | 13–16 |
-| 32 | Project Requirements | 9 | COMPLETED/BASE | 31 |
-| 33 | Implementation Tasks | 9 | COMPLETED/BASE | 32 |
-| 34 | Project Test Cases | 9 | COMPLETED/BASE | 33 |
-| 35 | Evidence Requirements | 9 | COMPLETED/BASE | 34 |
-| 36 | Capability Verification بالمشروع | 9 | PARTIALLY IMPLEMENTED | 35 |
-| 37 | TOFAN AI Core abstraction | 16 | COMPLETED/BASE | 10–16 |
-| 38 | Local-first AI architecture | 16 | PARTIALLY IMPLEMENTED | 37 |
+| 30 | Skill Update من نتائج التقييم | 7/8 | COMPLETED/BASE | 29 |🟢 | 31 | Project Engine | 9 | COMPLETED/BASE | 13–16 |🟢 | 32 | Project Requirements | 9 | COMPLETED/BASE | 31 |🟢 | 33 | Implementation Tasks | 9 | COMPLETED/BASE | 32 |🟢 | 34 | Project Test Cases | 9 | COMPLETED/BASE | 33 |🟢 | 35 | Evidence Requirements | 9 | COMPLETED/BASE | 34 |🟢 | 36 | Capability Verification بالمشروع | 9 | PARTIALLY IMPLEMENTED | 35 |
+| 37 | TOFAN AI Core abstraction | 16 | COMPLETED/BASE | 10–16 |🟢 | 38 | Local-first AI architecture | 16 | PARTIALLY IMPLEMENTED | 37 |
 | 39 | تشغيل النظام دون مفاتيح خارجية | 16 | PARTIALLY IMPLEMENTED | 38 |
 | 40 | Provider Independence كخيار اختياري | 16 | PARTIALLY IMPLEMENTED | 38–39 |
-| 41 | Agent Architecture الموحد | 12 | COMPLETED/BASE | 37 |
-| 42 | Academic Tutor Agent | 12 | PARTIALLY IMPLEMENTED | 41 |
+| 41 | Agent Architecture الموحد | 12 | COMPLETED/BASE | 37 |🟢 | 42 | Academic Tutor Agent | 12 | PARTIALLY IMPLEMENTED | 41 |
 | 43 | Knowledge Agent | 12 | PARTIALLY IMPLEMENTED | 11,41 |
 | 44 | Assessment Agent | 12 | PARTIALLY IMPLEMENTED | 26–30,41 |
 | 45 | Skills Agent | 12 | PARTIALLY IMPLEMENTED | 12–14,41 |
@@ -187,13 +169,9 @@ Persistent database، production auth/authorization، secure AI gateway، storag
 | 48 | Progress Analyst Agent | 12 | PARTIALLY IMPLEMENTED | 17–25,41 |
 | 49 | Translation/Terminology Agent | 12 | PARTIALLY IMPLEMENTED | 10,41 |
 | 50 | Main Manager Agent | 12 | PARTIALLY IMPLEMENTED | 41–49 |
-| 51 | ABQARI Core | 12 | COMPLETED/BASE | 11–16,37 |
-| 52 | Intent Analysis | 12 | PARTIALLY IMPLEMENTED | 51 |
-| 53 | Task/Discipline Classification | 12 | COMPLETED/BASE | 52 |
-| 54 | Academic Retrieval | 12 | COMPLETED/BASE | 11 |
-| 55 | Knowledge Gap داخل ABQARI | 12 | PARTIALLY IMPLEMENTED | 24,54 |
-| 56 | Engineering Planning | 12 | COMPLETED/BASE | 55 |
-| 57 | Tool Layer وعقود الأدوات | 13 | PARTIALLY IMPLEMENTED | 56 |
+| 51 | ABQARI Core | 12 | COMPLETED/BASE | 11–16,37 |🟢 | 52 | Intent Analysis | 12 | PARTIALLY IMPLEMENTED | 51 |
+| 53 | Task/Discipline Classification | 12 | COMPLETED/BASE | 52 |🟢 | 54 | Academic Retrieval | 12 | COMPLETED/BASE | 11 |🟢 | 55 | Knowledge Gap داخل ABQARI | 12 | PARTIALLY IMPLEMENTED | 24,54 |
+| 56 | Engineering Planning | 12 | COMPLETED/BASE | 55 |🟢 | 57 | Tool Layer وعقود الأدوات | 13 | PARTIALLY IMPLEMENTED | 56 |
 | 58 | Safe Code Workspace | 13 | MISSING | 57 |
 | 59 | General Testing Execution | 13 | PARTIALLY IMPLEMENTED | 58 |
 | 60 | Correction Loop | 13 | MISSING | 59 |
@@ -220,15 +198,9 @@ Persistent database، production auth/authorization، secure AI gateway، storag
 | 81 | Student API | 22 | MISSING | 17 |
 | 82 | Learning/Assessment API | 22 | MISSING | 22–30 |
 | 83 | Project API | 22 | MISSING | 31–36 |
-| 84 | Android/Mobile UI | 23 | COMPLETED/BASE | 77 |
-| 85 | Web/Desktop UI | 23 | COMPLETED/BASE | 77 |
-| 86 | Academic Library UI | 23 | COMPLETED/BASE | 80 |
-| 87 | Learning UI | 23 | COMPLETED/BASE | 82 |
-| 88 | Assessment UI | 23 | COMPLETED/BASE | 82 |
-| 89 | Project UI | 23 | PARTIALLY IMPLEMENTED | 83 |
+| 84 | Android/Mobile UI | 23 | COMPLETED/BASE | 77 |🟢 | 85 | Web/Desktop UI | 23 | COMPLETED/BASE | 77 |🟢 | 86 | Academic Library UI | 23 | COMPLETED/BASE | 80 |🟢 | 87 | Learning UI | 23 | COMPLETED/BASE | 82 |🟢 | 88 | Assessment UI | 23 | COMPLETED/BASE | 82 |🟢 | 89 | Project UI | 23 | PARTIALLY IMPLEMENTED | 83 |
 | 90 | ABQARI UI | 23 | PARTIALLY IMPLEMENTED | 79 |
-| 91 | Student Dashboard | 23 | COMPLETED/BASE | 81–90 |
-| 92 | Administration | 23 | PARTIALLY IMPLEMENTED | 77 |
+| 91 | Student Dashboard | 23 | COMPLETED/BASE | 81–90 |🟢 | 92 | Administration | 23 | PARTIALLY IMPLEMENTED | 77 |
 | 93 | Academic Administration | 23 | MISSING | 92 |
 | 94 | Agent Administration | 23 | MISSING | 92 |
 | 95 | Security Administration | 23 | MISSING | 92 |
@@ -238,10 +210,8 @@ Persistent database، production auth/authorization، secure AI gateway، storag
 | 99 | Certificates | 23 | MISSING | 91 |
 | 100 | Integration Testing | 24 | PARTIALLY IMPLEMENTED | 77–91 |
 | 101 | E2E Testing | 24 | MISSING | 100 |
-| 102 | Security Testing | 19/20/24 | COMPLETED/BASE | 69–79 |
-| 103 | Performance Testing | 24 | MISSING | 77–91 |
-| 104 | Content/Data Validation | 17/18/24 | COMPLETED/BASE | 16–68 |
-| 105 | Observability/Metrics | 26 | MISSING | 77 |
+| 102 | Security Testing | 19/20/24 | COMPLETED/BASE | 69–79 |🟢 | 103 | Performance Testing | 24 | MISSING | 77–91 |
+| 104 | Content/Data Validation | 17/18/24 | COMPLETED/BASE | 16–68 |🟢 | 105 | Observability/Metrics | 26 | MISSING | 77 |
 | 106 | Production Logging | 25/26 | PARTIALLY IMPLEMENTED | 77 |
 | 107 | Unified Error Handling | 22/24 | PARTIALLY IMPLEMENTED | 77–91 |
 | 108 | CI/CD | 25 | PARTIALLY IMPLEMENTED | 100–107 |
@@ -257,6 +227,17 @@ Persistent database، production auth/authorization، secure AI gateway، storag
 | 118 | ABQARI Acceptance | 12/13/24 | MISSING | 116 |
 | 119 | Production Release | 25/26 | MISSING | 117–118 |
 | 120 | TOFAN AL-ABQARI مستقلًا | 26 | FINAL | 119 |
+
+### تدقيق المصفوفة — 2026-10-01
+
+تمت مراجعة المصفوفة مقابل الكود والاختبارات والوثائق الحالية في المستودع، وليس مقابل الخطة النظرية فقط.
+
+- 🟢 = مكتمل/قاعدة مكتملة مثبتة في الكود أو الاختبارات أو وثائق التنفيذ الحالية.
+- 🟡 = PARTIALLY IMPLEMENTED: يوجد تنفيذ فعلي لكن توجد فجوات تمنع اعتبار البند مكتملًا.
+- 🔴 = MISSING: لا يوجد تنفيذ كافٍ مثبت حاليًا.
+- لا يتم تحويل BASE إلى اكتمال إنتاجي؛ العلامة الخضراء تعني أن طبقة الأساس المحددة في البند موجودة، بينما تبقى الطبقات اللاحقة في بنودها المستقلة.
+- تمت مطابقة آخر أعمال تعميق المكتبة، بما فيها Buildability Audit/Report، Project Capability Plan، الأساسيات المشتركة، وتعميق blueprints، مع الكود الفعلي.
+- لا توجد حاجة لإنشاء Roadmap ثانية؛ هذه المصفوفة هي سجل التنفيذ الموحد.
 
 ### قواعد مقارنة المصفوفة بالـRoadmap
 - المراحل الـ26 في القسم 4 هي الإطار الأعلى؛ هذه المصفوفة هي تفصيلها التنفيذي ولا تستبدلها.
