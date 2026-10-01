@@ -77,6 +77,9 @@ class AssessmentResult {
     required this.total,
     required this.completedAt,
     this.wrongQuestionIds = const [],
+    this.attemptNumber = 1,
+    this.isReassessment = false,
+    this.previousAttemptId,
   });
 
   final String assessmentId;
@@ -84,9 +87,28 @@ class AssessmentResult {
   final double total;
   final DateTime completedAt;
   final List<String> wrongQuestionIds;
+  final int attemptNumber;
+  final bool isReassessment;
+  final String? previousAttemptId;
+
+  String get attemptId => '$assessmentId-attempt-$attemptNumber';
 
   double get percentage =>
       total <= 0 ? 0 : (score / total * 100).clamp(0.0, 100.0).toDouble();
 
   bool get passed => percentage >= 60;
+}
+
+class AssessmentAttempt {
+  const AssessmentAttempt({
+    required this.attemptId,
+    required this.assessmentId,
+    required this.attemptNumber,
+    required this.result,
+  });
+
+  final String attemptId;
+  final String assessmentId;
+  final int attemptNumber;
+  final AssessmentResult result;
 }
