@@ -21,6 +21,11 @@ class AcademicProjectCapability {
     required this.conceptIds,
     required this.lessonIds,
     required this.projectTitles,
+    required this.projectIds,
+    required this.projectRequirements,
+    required this.implementationTasks,
+    required this.testCases,
+    required this.evidenceRequirements,
   });
 
   final String courseId;
@@ -35,6 +40,11 @@ class AcademicProjectCapability {
   final List<String> conceptIds;
   final List<String> lessonIds;
   final List<String> projectTitles;
+  final List<String> projectIds;
+  final List<String> projectRequirements;
+  final List<String> implementationTasks;
+  final List<String> testCases;
+  final List<String> evidenceRequirements;
 
   bool get hasBuildEvidence =>
       lessonIds.isNotEmpty &&
@@ -101,8 +111,34 @@ class AcademicProjectCapabilityEngine {
                       lessonIds:
                           selectedLessons.map((lesson) => lesson.id).toList(),
                       projectTitles: {
+                        ...course.projects.map((project) => project.title),
                         for (final lesson in selectedLessons)
                           ...lesson.projects.map((project) => project.title),
+                      }.toList(growable: false),
+                      projectIds: {
+                        ...course.projects.map((project) => project.id),
+                        for (final lesson in selectedLessons)
+                          ...lesson.projects.map((project) => project.id),
+                      }.toList(growable: false),
+                      projectRequirements: {
+                        ...course.projects.expand((project) => project.requirements),
+                        for (final lesson in selectedLessons)
+                          ...lesson.projects.expand((project) => project.requirements),
+                      }.toList(growable: false),
+                      implementationTasks: {
+                        ...course.projects.expand((project) => project.implementationTasks),
+                        for (final lesson in selectedLessons)
+                          ...lesson.projects.expand((project) => project.implementationTasks),
+                      }.toList(growable: false),
+                      testCases: {
+                        ...course.projects.expand((project) => project.testCases),
+                        for (final lesson in selectedLessons)
+                          ...lesson.projects.expand((project) => project.testCases),
+                      }.toList(growable: false),
+                      evidenceRequirements: {
+                        ...course.projects.expand((project) => project.evidenceRequirements),
+                        for (final lesson in selectedLessons)
+                          ...lesson.projects.expand((project) => project.evidenceRequirements),
                       }.toList(growable: false),
                     ),
                   );
@@ -160,7 +196,10 @@ class AcademicProjectCapabilityEngine {
         .firstWhere((course) => course.id == capability.courseId);
     return _score(course, tokens) +
         capability.skillIds.length +
-        capability.projectTitles.length;
+        capability.projectTitles.length +
+        capability.projectRequirements.length +
+        capability.testCases.length +
+        capability.evidenceRequirements.length;
   }
 
   int _score(AcademicCourse course, List<String> tokens) {
@@ -172,6 +211,9 @@ class AcademicProjectCapabilityEngine {
       ...course.lessons.map((lesson) => lesson.content),
       ...course.lessons.expand((lesson) => lesson.keyTerms),
       ...course.lessons.expand((lesson) => lesson.applications),
+      ...course.projects.map((project) => project.title),
+      ...course.projects.map((project) => project.description),
+      ...course.projects.expand((project) => project.requirements),
       ...course.lessons.expand(
         (lesson) => lesson.projects.map((project) => project.title),
       ),
