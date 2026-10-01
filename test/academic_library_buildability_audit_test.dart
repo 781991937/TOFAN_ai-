@@ -45,7 +45,8 @@ void main() {
         (course) => !course.findings.any(
           (finding) =>
               finding.contains('بيانات وزن/تقديم') ||
-              finding.contains('متطلب سابق غير صالح أو ذاتي'),
+              finding.contains('متطلب سابق غير صالح أو ذاتي') ||
+              finding.contains('دورة في Prerequisite Graph'),
         ),
       ),
       isTrue,
