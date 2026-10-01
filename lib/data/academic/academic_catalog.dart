@@ -30,6 +30,12 @@ class AcademicCatalog {
 
   static AcademicUniversity get referenceUniversity => universities.first;
 
+  /// Canonical shared foundation courses. They are referenced by every
+  /// specialization and are intentionally not copied into each curriculum.
+  static List<AcademicCourse> get foundationCourses =>
+      AcademicFoundationCatalog.courses;
+
+
   static final _baseUniversities = <AcademicUniversity>[
     AcademicUniversity(
       id: 'sanaa',
