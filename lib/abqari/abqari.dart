@@ -47,3 +47,5 @@ class TofanAbqari {
 
   AbqariActionPlan plan(String request) => agent.plan(request);
 }
+
+export '../application/abqari/persistent_experience_memory.dart';
