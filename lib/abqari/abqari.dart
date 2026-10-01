@@ -25,6 +25,7 @@ export '../domain/security/agent_authorization_models.dart';
 export '../domain/security/authentication_models.dart';
 export '../application/ai/agent_gateway.dart';
 export '../domain/security/oc_auth_models.dart';
+export '../domain/security/owner_authority.dart';
 export '../domain/security/audit_models.dart';
 export '../domain/learning/student_learning_repository.dart';
 export '../data/persistence/sqlite_student_learning_repository.dart';
