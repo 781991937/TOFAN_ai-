@@ -1,3 +1,4 @@
+import 'package:tofan_ai/domain/learning/analysis_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tofan_ai/application/learning/assessment_analysis_engine.dart';
 import 'package:tofan_ai/domain/learning/learning_models.dart';
