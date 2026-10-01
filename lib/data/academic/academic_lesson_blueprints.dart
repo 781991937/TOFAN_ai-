@@ -1,3 +1,4 @@
+import '../../domain/academic/academic_models.dart';
 import 'academic_knowledge_unit_catalog.dart';
 
 /// Subject-aware lesson blueprints for the global TOFAN academic library.
