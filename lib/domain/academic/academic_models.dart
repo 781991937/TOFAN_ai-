@@ -180,6 +180,9 @@ class AcademicProject {
     this.deliverables = const [],
     this.milestones = const [],
     this.acceptanceCriteria = const [],
+    this.implementationTasks = const [],
+    this.testCases = const [],
+    this.evidenceRequirements = const [],
     this.recommendedToolCategories = const [],
   });
   final String id;
@@ -191,6 +194,9 @@ class AcademicProject {
   final List<String> deliverables;
   final List<String> milestones;
   final List<String> acceptanceCriteria;
+  final List<String> implementationTasks;
+  final List<String> testCases;
+  final List<String> evidenceRequirements;
   final List<String> recommendedToolCategories;
 }
 
