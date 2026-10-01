@@ -19,7 +19,10 @@ export '../application/execution/abqari_execution_coordinator.dart';
 export '../domain/files/academic_document_models.dart';
 export '../application/files/academic_document_mapper.dart';
 export '../domain/security/agent_authorization_models.dart';
+export '../domain/security/authentication_models.dart';
 export '../application/ai/agent_gateway.dart';
+export '../domain/security/oc_auth_models.dart';
+export '../domain/security/audit_models.dart';
 
 class TofanAbqari {
   const TofanAbqari({
@@ -37,5 +40,3 @@ class TofanAbqari {
 
   AbqariActionPlan plan(String request) => agent.plan(request);
 }
-export '../domain/security/oc_auth_models.dart';
-export '../domain/security/audit_models.dart';
