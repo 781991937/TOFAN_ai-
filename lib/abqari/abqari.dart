@@ -20,6 +20,7 @@ export '../application/execution/abqari_execution_coordinator.dart';
 export '../domain/files/academic_document_models.dart';
 export '../application/files/academic_document_mapper.dart';
 export '../application/files/academic_document_extractor.dart';
+export '../application/files/academic_document_pipeline.dart';
 export '../domain/security/agent_authorization_models.dart';
 export '../domain/security/authentication_models.dart';
 export '../application/ai/agent_gateway.dart';
