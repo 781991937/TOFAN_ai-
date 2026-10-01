@@ -1,4 +1,5 @@
 import '../data/academic/academic_catalog.dart';
+import '../data/academic/academic_project_capability_engine.dart';
 import '../domain/academic/academic_models.dart';
 import 'academic_knowledge_engine.dart';
 import 'abqari_models.dart';
@@ -6,20 +7,42 @@ import 'knowledge_graph.dart';
 import 'learning_gap_engine.dart';
 
 class AbqariProjectEngine {
-  const AbqariProjectEngine({this.knowledgeEngine = const AcademicKnowledgeEngine(), this.knowledgeGraph = const AbqariKnowledgeGraph(), this.learningGapEngine = const AbqariLearningGapEngine()});
+  const AbqariProjectEngine({
+    this.knowledgeEngine = const AcademicKnowledgeEngine(),
+    this.knowledgeGraph = const AbqariKnowledgeGraph(),
+    this.learningGapEngine = const AbqariLearningGapEngine(),
+    this.capabilityEngine = const AcademicProjectCapabilityEngine(),
+  });
   final AcademicKnowledgeEngine knowledgeEngine;
   final AbqariKnowledgeGraph knowledgeGraph;
   final AbqariLearningGapEngine learningGapEngine;
+  final AcademicProjectCapabilityEngine capabilityEngine;
 
   AbqariProjectPlan plan(AbqariProjectRequest request) {
     final knowledge = knowledgeEngine.search(request.idea);
     final gap = learningGapEngine.analyze(request.idea);
+    final capabilities = capabilityEngine.capabilitiesFor(request.idea);
     final disciplines = _disciplines(request.idea, knowledge);
-    final skills = <String>{for (final item in knowledge) ...item.skillIds}.toList();
-    final sourceCourseIds = knowledge.map((item) => item.courseId).where((id) => id.isNotEmpty).toSet().toList(growable: false);
-    final sourceProjectTitles = <String>{for (final item in knowledge) ...item.projectTitles}.toList(growable: false);
-    final sourceLessonIds = knowledge.map((item) => item.lessonId).where((id) => id.isNotEmpty).toSet().toList(growable: false);
-    final sourceKnowledgeUnitIds = <String>{for (final item in knowledge) ...item.knowledgeUnitIds}.toList(growable: false);
+    final skills = {
+      ...knowledge.expand((item) => item.skillIds),
+      ...capabilities.expand((item) => item.skillIds),
+    }.toList();
+    final sourceCourseIds = {
+      ...knowledge.map((item) => item.courseId).where((id) => id.isNotEmpty),
+      ...capabilities.map((item) => item.courseId),
+    }.toList(growable: false);
+    final sourceProjectTitles = {
+      ...knowledge.expand((item) => item.projectTitles),
+      ...capabilities.expand((item) => item.projectTitles),
+    }.toList(growable: false);
+    final sourceLessonIds = {
+      ...knowledge.map((item) => item.lessonId).where((id) => id.isNotEmpty),
+      ...capabilities.expand((item) => item.lessonIds),
+    }.toList(growable: false);
+    final sourceKnowledgeUnitIds = {
+      ...knowledge.expand((item) => item.knowledgeUnitIds),
+      ...capabilities.expand((item) => item.knowledgeUnitIds),
+    }.toList(growable: false);
     final matchedProjects = _matchedProjects(sourceCourseIds, sourceProjectTitles);
     return AbqariProjectPlan(
       idea: request.idea,
@@ -27,7 +50,11 @@ class AbqariProjectEngine {
       disciplines: disciplines,
       knowledge: knowledge,
       skills: skills,
-      knowledgeGaps: gap.missing ? ['لا توجد معرفة مطابقة في المكتبة بعد؛ يجب التعلم أو إضافة محتوى أكاديمي قبل التنفيذ.'] : const [],
+      knowledgeGaps: {
+        if (gap.missing)
+          'لا توجد معرفة مطابقة في المكتبة بعد؛ يجب التعلم أو إضافة محتوى أكاديمي قبل التنفيذ.',
+        ...capabilityEngine.missingEvidence(request.idea),
+      }.toList(growable: false),
       phases: const ['تحليل المتطلبات', 'تصميم المعمارية', 'تحديد المكونات والواجهات', 'التنفيذ البرمجي', 'المحاكاة داخل الحاسوب', 'الاختبار وتحليل الأخطاء', 'التصحيح وإعادة الاختبار', 'توثيق المشروع وتحديث الخبرة'],
       softwareOutputs: const ['مخطط معماري', 'هيكل مشروع برمجي', 'كود قابل للاختبار', 'اختبارات آلية ومحاكاة عند توفر نموذج برمجي', 'تقرير نتائج وأخطاء'],
       physicalComponents: _physicalComponents(request.idea),
