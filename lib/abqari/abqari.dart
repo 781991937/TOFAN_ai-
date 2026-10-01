@@ -12,6 +12,7 @@ export 'cyber_command_engine.dart';
 export 'abqari_agent.dart';
 export 'security_lab.dart';
 export 'experience_memory.dart';
+export 'experience_memory_repository.dart';
 export 'assessment_experience_bridge.dart';
 export 'planning_engine.dart';
 export '../application/tools/tool_registry.dart';
@@ -25,6 +26,7 @@ export '../domain/security/oc_auth_models.dart';
 export '../domain/security/audit_models.dart';
 export '../domain/learning/student_learning_repository.dart';
 export '../data/persistence/sqlite_student_learning_repository.dart';
+export '../data/persistence/sqlite_experience_memory_repository.dart';
 
 class TofanAbqari {
   const TofanAbqari({
