@@ -1,5 +1,3 @@
-import '../academic/academic_models.dart';
-
 class AcademicDocument {
   const AcademicDocument({
     required this.id,
