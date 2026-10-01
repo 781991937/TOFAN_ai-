@@ -56,7 +56,10 @@ class AcademicUnit {
 }
 
 class AcademicCourse {
-  const AcademicCourse({required this.id, required this.name, required this.lessons,
+  const AcademicCourse({
+    required this.id,
+    required this.name,
+    required this.lessons,
     this.units = const [],
     this.prerequisiteCourseIds = const [],
     this.knowledgeAreaIds = const [],
@@ -64,22 +67,23 @@ class AcademicCourse {
     this.curriculumProfile,
     this.provenance = const AcademicContentProvenance(),
     this.projects = const [],
+    this.skills = const [],
+    this.capabilities = const [],
   });
   final String id;
   final String name;
   final List<AcademicLesson> lessons;
   final List<AcademicUnit> units;
   final List<String> prerequisiteCourseIds;
-  /// CS2023 knowledge-area references used for global coverage and retrieval.
   final List<String> knowledgeAreaIds;
-  /// Canonical knowledge-unit references used for precise retrieval and graph edges.
   final List<String> knowledgeUnitIds;
-  /// Course weight and delivery metadata. Null means the curriculum designer has not assigned it yet.
   final AcademicCourseProfile? curriculumProfile;
-  /// Provenance and publication state for the course definition.
   final AcademicContentProvenance provenance;
-  /// Course-level capstone/project blueprints that integrate the course lessons.
   final List<AcademicProject> projects;
+  /// Canonical skill definitions owned by this course; lessons reference them by stable id.
+  final List<AcademicSkill> skills;
+  /// Canonical capability definitions owned by this course; capabilities require explicit skills/evidence.
+  final List<AcademicCapability> capabilities;
 
   List<AcademicUnit> get normalizedUnits {
     if (units.isNotEmpty) return units;
@@ -98,6 +102,7 @@ class AcademicLesson {
     this.applications = const [],
     this.errorAnalysisGuidance = '',
     this.learningOutcomes = const [],
+    this.learningOutcomeDefinitions = const [],
     this.keyTerms = const [],
     this.examples = const [],
     this.practices = const [],
@@ -113,26 +118,61 @@ class AcademicLesson {
   final String title;
   final bool isFree;
   final String content;
-  /// The primary definition that should precede dependent explanation.
   final String definition;
-  /// Concrete application contexts that connect the lesson to practice.
   final List<String> applications;
-  /// Guidance used by the analysis stage to explain and correct common errors.
   final String errorAnalysisGuidance;
   final List<String> learningOutcomes;
+  /// Structured outcomes with stable ids and explicit concept alignment.
+  final List<AcademicLearningOutcome> learningOutcomeDefinitions;
   final List<String> keyTerms;
   final List<String> examples;
   final List<LessonPractice> practices;
   final List<LessonAssessment> assessments;
   final List<AcademicProject> projects;
-  /// Stable concept identifiers used by analysis and skill-update layers.
   final List<String> conceptIds;
-  /// Stable skill identifiers that the lesson is expected to develop.
   final List<String> skillIds;
-  /// Observable evidence the learner should produce to demonstrate the skill.
   final List<String> skillEvidence;
-  /// Source, author, version and publication state for this lesson.
   final AcademicContentProvenance provenance;
+}
+
+/// A structured learning outcome. Legacy learningOutcomes remains supported.
+class AcademicLearningOutcome {
+  const AcademicLearningOutcome({
+    required this.id,
+    required this.text,
+    this.conceptIds = const [],
+  });
+  final String id;
+  final String text;
+  final List<String> conceptIds;
+}
+
+/// Canonical skill definition attached to its owning course.
+class AcademicSkill {
+  const AcademicSkill({
+    required this.id,
+    required this.name,
+    this.learningOutcomeIds = const [],
+    this.evidenceRequirements = const [],
+  });
+  final String id;
+  final String name;
+  final List<String> learningOutcomeIds;
+  final List<String> evidenceRequirements;
+}
+
+/// Canonical capability definition. It is never inferred from a project alone.
+class AcademicCapability {
+  const AcademicCapability({
+    required this.id,
+    required this.name,
+    this.requiredSkillIds = const [],
+    this.evidenceRequirements = const [],
+  });
+  final String id;
+  final String name;
+  final List<String> requiredSkillIds;
+  final List<String> evidenceRequirements;
 }
 
 class LessonAssessment {
@@ -156,11 +196,8 @@ class AssessmentQuestion {
   final String text;
   final List<String> options;
   final int correctIndex;
-  /// Zero-based lesson learning-outcome indexes measured by this question.
   final List<int> learningOutcomeIndexes;
-  /// Concepts assessed by this question.
   final List<String> conceptIds;
-  /// Skills evidenced by this question.
   final List<String> skillIds;
 }
 
@@ -208,7 +245,6 @@ class AcademicProject {
   final List<String> recommendedToolCategories;
 }
 
-
 class AcademicKnowledgeUnit {
   const AcademicKnowledgeUnit({
     required this.id,
@@ -218,7 +254,6 @@ class AcademicKnowledgeUnit {
     required this.description,
     required this.learningOutcomes,
   });
-
   final String id;
   final String areaId;
   final String name;
@@ -234,7 +269,6 @@ class AcademicKnowledgeArea {
     required this.arabicName,
     required this.units,
   });
-
   final String id;
   final String name;
   final String arabicName;
