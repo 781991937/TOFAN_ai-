@@ -263,6 +263,50 @@ Knowledge → Concepts → Skills → Prerequisites → Practice → Assessment 
 
 هذا لا يعني أن **محتوى جميع المقررات صار معتمدًا أكاديميًا بالكامل**؛ ما زال تعميق المحتوى ومراجعة العلاقات والمراجع والوزن الدراسي ضمن المرحلة الحالية.
 
+
+## 16-C. مصفوفة حالة المراحل التنفيذية — بعد تدقيق المكتبة
+
+> هذه المصفوفة تصف حالة الكود الفعلية التي يمكن إثباتها من المستودع، وليست ادعاءً بأن المنتج الإنتاجي النهائي مكتمل.
+
+
+| المرحلة | الحالة | الدليل الحالي / الملاحظة |
+|---|---|---|
+| 1. Repository Baseline & Governance | COMPLETED | هذه الـRoadmap هي المرجع التنفيذي، وقواعد عدم إعادة البناء والتغيير المنضبط مثبتة. |
+| 2. Global Academic Library | COMPLETED | Academic Catalog + Knowledge Areas/Units + provenance + security policy موجودة؛ التعميق الأكاديمي نفسه مستمر في المرحلة 4/16-A. |
+| 3. Global Curriculum Engine | PARTIALLY IMPLEMENTED | Course profile وcredits/contact/practical/complexity موجودة، لكن التخزين والوزن الدراسي والإدارة الإنتاجية لم تكتمل. |
+| 4. Specialization Deepening | PARTIALLY IMPLEMENTED | 9 تخصصات و4×8 هيكل مرحلي موجودة، مع مخططات دروس متخصصة؛ تدقيق العمق والعلاقات والمشاريع ما زال جاريًا. |
+| 5. Lesson & Learning Experience | PARTIALLY IMPLEMENTED | الدروس تحتوي outcomes/terms/examples/practice/assessment/error guidance/skills/projects؛ اعتماد العمق المتخصص الكامل لم يكتمل. |
+| 6. Knowledge Graph | PARTIALLY IMPLEMENTED | Knowledge Graph facade موجود، لكنه لم يتحول بعد إلى نموذج علاقات غني قابل للتخزين والاستعلام الشامل. |
+| 7. Skills & Capability Engine | PARTIALLY IMPLEMENTED | skillIds وskillEvidence وProjectCapability موجودة؛ حالات المهارة والقدرة الدائمة على مستوى الطالب لم تكتمل. |
+| 8. Assessment Intelligence | COMPLETED | دورة التقييم والتحليل وربط الأخطاء بالمفاهيم والمهارات واختبارات هذا المسار موجودة. |
+| 9. Project Engine | PARTIALLY IMPLEMENTED | Project Engine + AcademicProjectCapabilityEngine + تتبع المقرر/الدرس/الوحدة/المشروع موجودة؛ التخطيط متعدد التخصصات الكامل ما زال مطلوبًا. |
+| 10. Student Model | PARTIALLY IMPLEMENTED | حالات التعلم وسجل الخبرة موجودة، لكن نموذج الطالب الدائم والشامل يحتاج استكمالًا. |
+| 11. Learning Intelligence | PARTIALLY IMPLEMENTED | تحليل الفجوات والتعلم موجودان في أجزاء متعددة؛ المحرك الشخصي المتكامل لم يكتمل. |
+| 12. TOFAN ABQARI Multi-Task Agent | PARTIALLY IMPLEMENTED | التصنيف، التخطيط، المشاريع، الأمن السيبراني، المختبر والذاكرة موجودة؛ طبقة الأدوات والتنفيذ الخارجي ما زالت محدودة ومحكومة. |
+| 13. Tool Layer | PARTIALLY IMPLEMENTED | أدوات المكتبة/المشاريع وبعض طبقات الأدوات موجودة، لكن عقود الأدوات والتنفيذ الموحد والتدقيق الكامل لم تكتمل. |
+| 14. TOFAN-OCAuth Owner Authority | PARTIALLY IMPLEMENTED | نموذج صلاحيات المالك والمنح والنطاق والتدقيق موجود؛ المصادقة الإنتاجية والتكامل الكامل مع كل أداة لم يكتمل. |
+| 15. Experience Memory | COMPLETED | AbqariExperienceMemory + ربط خبرة التقييم بالذاكرة موجودان مع فصلها عن المعرفة الكانونية. |
+| 16. AI Core & Provider Gateway | PARTIALLY IMPLEMENTED | abstraction لـLocal/OpenAI/Gemini موجود؛ بوابة backend الإنتاجية والحماية/limits/retry/logging ما زالت مطلوبة. |
+| 17. Academic Content Pipeline | PARTIALLY IMPLEMENTED | provenance/validation والبنية الأساسية موجودة؛ خط SOURCE→PUBLISH الكامل مع مراجعة واعتماد إنتاجي لم يكتمل. |
+| 18. Provenance & Governance | PARTIALLY IMPLEMENTED | حالات النشر وsource/version/author وغيرها موجودة؛ دورة المراجعة والإدارة الكاملة لم تكتمل. |
+| 19. Security Architecture | PARTIALLY IMPLEMENTED | Library security وdeny-by-default والسياسات موجودة؛ الأمن الإنتاجي الشامل ما زال مطلوبًا. |
+| 20. Security Lab & Safe Cyber | COMPLETED | سيناريوهات المختبر، النطاق، التفويض، الأدلة، المعالجة وإعادة الاختبار موجودة واختباراتها موجودة. |
+| 21. Data & Persistence | MISSING | لا تزال طبقة التخزين الإنتاجية الدائمة والمهاجرات والنسخ الاحتياطي المطلوبة غير مكتملة. |
+| 22. API & Integration | PARTIALLY IMPLEMENTED | طبقات التطبيق والواجهات موجودة، لكن العقد المتكامل والإصدار والاختبارات التكاملية والإدارة الخلفية لم تكتمل. |
+| 23. User Experience | PARTIALLY IMPLEMENTED | واجهات الطالب وRTL/الهيكل الأساسي موجودة؛ التجربة الإنتاجية الشاملة للمنصة لم تكتمل. |
+| 24. Quality Gate | PARTIALLY IMPLEMENTED | اختبارات وحدات وتدفق متعددة موجودة؛ بوابة جودة شاملة لكل المسارات والأداء والأمن لم تعتمد نهائيًا. |
+| 25. CI/CD & Release | PARTIALLY IMPLEMENTED | GitHub Actions موجود، لكن نتائج التشغيل الحالية لا تكفي لإعلان بوابة CI ناجحة، لذا لا نعتبرها مكتملة. |
+| 26. Production Readiness | MISSING | النشر الإنتاجي الكامل، التخزين، المراقبة، النسخ الاحتياطي، حدود الاستخدام والتحقق النهائي ما زال متبقيًا. |
+
+### نتيجة تدقيق مرحلة تعميق المكتبة
+
+تم في هذه الدورة **تعميق عقد مشاريع المقررات المولدة** بدل الاكتفاء بغلاف مشروع عام:
+- أصبحت المشاريع المولدة تختار متطلبات ومخرجات وأدلة واختبارات وأدوات بحسب مجال المقرر، مثل البرمجة، الشبكات، البيانات، الذكاء الاصطناعي، الأمن، التصميم، والأنظمة.
+- أضيف اختبار يمنع رجوع المقررات العالمية المولدة إلى أسماء الدروس العامة الخاصة بـfallback.
+- تم إصلاح بنية اختبار `academic_project_capability_engine_test.dart` التي كانت تحتوي اختبارًا خارج `main`.
+- لم يتم إنشاء نموذج أكاديمي بديل، ولم يتم حذف المكونات القائمة.
+
+**الحالة بعد هذه الدورة: PARTIALLY IMPLEMENTED.** ما زال المطلوب: تدقيق محتوى كل مقرر ودرس، تعميق العلاقات والمتطلبات السابقة، وقياس بناء الأنظمة متعددة التخصصات قبل اعتماد المرحلة بالكامل.
 ## 10. بروتوكول التقدم
 عند اكتمال كل مرحلة: «انتهينا من مرحلة X — وكان عملها Y.»
 ثم: «والآن نقوم ببناء مرحلة Z — وعملها W.»
