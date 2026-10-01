@@ -41,4 +41,37 @@ void main() {
     expect(plan.sourceTestCases, isNotEmpty);
     expect(plan.sourceEvidenceRequirements, isNotEmpty);
   });
-$add}
+  test('global curriculum gap courses do not use the generic lesson fallback', () {
+    const gapCourses = [
+      'الأنظمة الموزعة',
+      'تحليل المتطلبات',
+      'ضمان الجودة',
+      'تطوير التطبيقات',
+      'أساسيات تقنية المعلومات',
+      'إدارة الأنظمة',
+      'مقدمة نظم المعلومات',
+      'تحليل النظم',
+      'نظم دعم القرار',
+      'إدارة الخدمات',
+      'معالجة البيانات الضخمة',
+      'التجارب وتحليلها',
+      'الذكاء الاصطناعي التطبيقي',
+      'هندسة منصات البيانات',
+      'الاستجابة للحوادث',
+      'تحليل البرمجيات الخبيثة',
+      'التحقيق الجنائي الرقمي',
+      'الحوسبة المتوازية',
+      'النمذجة ثلاثية الأبعاد',
+      'الواقع الافتراضي',
+      'الرؤية الحاسوبية',
+      'الواقع المعزز',
+    ];
+
+    for (final course in gapCourses) {
+      final lessons = AcademicCourseLessonBlueprints.forCourse(course, const []);
+      expect(lessons, isNotEmpty);
+      expect(lessons.first.title, isNot('مدخل إلى $course'));
+    }
+  });
+
+}
