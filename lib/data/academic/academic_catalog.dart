@@ -12,6 +12,27 @@ import 'academic_source_catalog.dart';
 class AcademicCatalog {
   const AcademicCatalog._();
 
+  static int get courseCount => _allCourses().length;
+
+  static int get lessonCount =>
+      _allCourses().fold<int>(0, (sum, course) => sum + course.lessons.length);
+
+  static List<AcademicCourse> _allCourses() {
+    final courses = <AcademicCourse>[
+      ...foundationCourses,
+      ...universities.expand((university) => university.colleges)
+          .expand((college) => college.specializations)
+          .expand((specialization) => specialization.years)
+          .expand((year) => year.semesters)
+          .expand((semester) => semester.courses),
+    ];
+    final unique = <String, AcademicCourse>{};
+    for (final course in courses) {
+      unique[course.id] = course;
+    }
+    return unique.values.toList(growable: false);
+  }
+
   static const _libraryProvenance = AcademicContentProvenance(
     status: AcademicPublicationStatus.draft,
     sourceReferences: [AcademicSourceCatalog.cs2023],
