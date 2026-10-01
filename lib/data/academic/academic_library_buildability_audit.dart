@@ -139,15 +139,51 @@ class AcademicLibraryBuildabilityAudit {
     if (lessons.isEmpty) findings.add('المقرر بلا دروس.');
 
     final weakLessons = lessons.where((lesson) {
+      final hasPractice =
+          lesson.practices.isNotEmpty &&
+          lesson.practices.every((practice) => practice.tasks.isNotEmpty);
+      final hasAssessment = lesson.assessments.isNotEmpty &&
+          lesson.assessments.every((assessment) =>
+              assessment.questions.isNotEmpty &&
+              assessment.questions.every(
+                (question) =>
+                    question.learningOutcomeIndexes.isNotEmpty ||
+                    question.conceptIds.isNotEmpty ||
+                    question.skillIds.isNotEmpty,
+              ));
+      final hasOutcomes = lesson.learningOutcomes.isNotEmpty;
+      final hasConcepts = lesson.conceptIds.isNotEmpty;
+      final hasSkills = lesson.skillIds.isNotEmpty;
+      final hasEvidence = lesson.skillEvidence.isNotEmpty;
+      final hasProjectTrace = lesson.projects.isNotEmpty;
       return _isGenericFallbackLesson(lesson.title) ||
-          lesson.practices.isEmpty ||
-          lesson.assessments.isEmpty ||
-          lesson.skillIds.isEmpty ||
-          lesson.projects.isEmpty;
+          !hasPractice ||
+          !hasAssessment ||
+          !hasOutcomes ||
+          !hasConcepts ||
+          !hasSkills ||
+          !hasEvidence ||
+          !hasProjectTrace;
     }).length;
 
     if (weakLessons > 0) {
-      findings.add('يوجد \$weakLessons درس/دروس تحتاج تعميقًا أو اعتمادًا تخصصيًا.');
+      findings.add('يوجد $weakLessons درس/دروس تحتاج تعميقًا أو اعتمادًا تخصصيًا.');
+    }
+
+    if (course.curriculumProfile == null ||
+        !course.curriculumProfile!.isValid) {
+      findings.add('المقرر بلا بيانات وزن/تقديم أكاديمية صالحة.');
+    }
+
+    final allCourseIds = {
+      for (final item in _allCourses()) item.id,
+    };
+    final danglingPrerequisites = course.prerequisiteCourseIds
+        .where((id) => id == course.id || !allCourseIds.contains(id))
+        .toList(growable: false);
+    if (danglingPrerequisites.isNotEmpty) {
+      findings.add('يوجد متطلب سابق غير صالح أو ذاتي: ' +
+          danglingPrerequisites.join(', ') + '.');
     }
 
     final strongProjects = projects.where(_hasBuildContract).length;
@@ -155,6 +191,14 @@ class AcademicLibraryBuildabilityAudit {
       findings.add('لا يوجد مشروع يحمل عقد بناء قابلًا للتنفيذ والاختبار.');
     }
 
+    final projectTraceWeak = projects.where((project) {
+      return project.skillIds.isEmpty ||
+          project.conceptIds.isEmpty ||
+          project.recommendedToolCategories.isEmpty;
+    }).length;
+    if (projectTraceWeak > 0) {
+      findings.add('يوجد $projectTraceWeak مشروع/مشاريع تحتاج ربطًا أوضح بالمفاهيم والمهارات والأدوات.');
+    }
     final skillIds = {
       for (final lesson in lessons) ...lesson.skillIds,
       for (final project in projects) ...project.skillIds,
@@ -188,6 +232,17 @@ class AcademicLibraryBuildabilityAudit {
       project.implementationTasks.isNotEmpty &&
       project.testCases.isNotEmpty &&
       project.evidenceRequirements.isNotEmpty;
+
+  static Iterable<AcademicCourse> _allCourses() sync* {
+    for (final specialization in _specializations()) {
+      for (final year in specialization.years) {
+        for (final semester in year.semesters) {
+          yield* semester.courses;
+        }
+      }
+    }
+    yield* AcademicCatalog.foundationCourses;
+  }
 
   static bool _isGenericFallbackLesson(String title) {
     const stages = [
