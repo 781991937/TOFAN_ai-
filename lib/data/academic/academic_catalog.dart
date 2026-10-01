@@ -1,6 +1,7 @@
 import '../../domain/academic/academic_models.dart';
 import 'academic_knowledge_unit_catalog.dart';
 import 'academic_lesson_blueprints.dart';
+import 'academic_source_catalog.dart';
 
 /// Reference catalog for the global TOFAN AI STUDENT library.
 /// The structure is independent from any single university.
@@ -8,6 +9,13 @@ import 'academic_lesson_blueprints.dart';
 /// curriculum guidance and is written as original TOFAN academic content.
 class AcademicCatalog {
   const AcademicCatalog._();
+
+  static const _libraryProvenance = AcademicContentProvenance(
+    status: AcademicPublicationStatus.draft,
+    sourceReferences: [AcademicSourceCatalog.cs2023],
+    author: 'TOFAN',
+    version: '0.2.0',
+  );
 
   /// Single global academic field containing the reference university catalog.
   /// The university is organizational reference data; the library remains global.
@@ -488,16 +496,20 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
   }
 
   static AcademicCourse _deepenCourse(AcademicCourse course) {
-    if (course.lessons.length >= 6) return course;
+    // Normalize provenance for existing hand-authored content as well as
+    // generated content. This completes the provenance layer without
+    // duplicating or replacing existing academic material.
+    final normalizedLessons = course.lessons.map(_withLibraryProvenance).toList(growable: false);
+    final lessons = <AcademicLesson>[...normalizedLessons];
 
-    final existing = course.lessons;
-    final lessons = <AcademicLesson>[...existing];
-    for (var number = lessons.length + 1; number <= 6; number++) {
-      lessons.add(_deepCurriculumLesson(
-        courseId: course.id,
-        courseName: course.name,
-        lessonNumber: number,
-      ));
+    if (lessons.length < 6) {
+      for (var number = lessons.length + 1; number <= 6; number++) {
+        lessons.add(_deepCurriculumLesson(
+          courseId: course.id,
+          courseName: course.name,
+          lessonNumber: number,
+        ));
+      }
     }
 
     final units = <AcademicUnit>[
@@ -524,6 +536,31 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
       knowledgeUnitIds: course.knowledgeUnitIds.isNotEmpty
           ? course.knowledgeUnitIds
           : _knowledgeUnitsFor(course.name),
+      curriculumProfile: course.curriculumProfile,
+      provenance: course.provenance.hasSource ? course.provenance : _libraryProvenance,
+    );
+  }
+
+  static AcademicLesson _withLibraryProvenance(AcademicLesson lesson) {
+    if (lesson.provenance.hasSource) return lesson;
+    return AcademicLesson(
+      id: lesson.id,
+      title: lesson.title,
+      isFree: lesson.isFree,
+      content: lesson.content,
+      definition: lesson.definition,
+      applications: lesson.applications,
+      errorAnalysisGuidance: lesson.errorAnalysisGuidance,
+      learningOutcomes: lesson.learningOutcomes,
+      keyTerms: lesson.keyTerms,
+      examples: lesson.examples,
+      practices: lesson.practices,
+      assessments: lesson.assessments,
+      projects: lesson.projects,
+      conceptIds: lesson.conceptIds,
+      skillIds: lesson.skillIds,
+      skillEvidence: lesson.skillEvidence,
+      provenance: _libraryProvenance,
     );
   }
 
@@ -688,6 +725,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
         AcademicUnit(id: '$courseId-unit-5', title: 'الوحدة الخامسة: التحليل والتطبيق المتقدم', lessons: [lessons[4]]),
         AcademicUnit(id: '$courseId-unit-6', title: 'الوحدة السادسة: التكامل والمشروع المصغر', lessons: [lessons[5]]),
       ],
+      provenance: _libraryProvenance,
     );
   }
 
@@ -806,6 +844,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
         'يطبقه على حالة جديدة ويوثق خطواته.',
         'يحلل نتيجة أو خطأ ويقترح تحققًا أو تحسينًا قابلًا للقياس.',
       ],
+      provenance: _libraryProvenance,
     );
   }
 
