@@ -32,17 +32,32 @@ class LearningIntelligenceEngine {
     required List<String> targetSkillIds,
     required List<String> targetCourseIds,
   }) {
-    final conceptGaps = targetConceptIds.where((id) {
+    final courses = _allCourses();
+    final byId = {for (final course in courses) course.id: course};
+    final expandedConceptIds = <String>{
+      ...targetConceptIds,
+      ...targetCourseIds
+          .map((id) => byId[id])
+          .whereType<AcademicCourse>()
+          .expand((course) => course.lessons.expand((lesson) => lesson.conceptIds)),
+    };
+    final expandedSkillIds = <String>{
+      ...targetSkillIds,
+      ...targetCourseIds
+          .map((id) => byId[id])
+          .whereType<AcademicCourse>()
+          .expand((course) => course.lessons.expand((lesson) => lesson.skillIds)),
+    };
+
+    final conceptGaps = expandedConceptIds.where((id) {
       final item = state.concepts[id];
       return item == null || item.knowledgeLevel < 60;
     }).toSet();
-    final skillGaps = targetSkillIds.where((id) {
+    final skillGaps = expandedSkillIds.where((id) {
       final item = state.skills[id];
       return item == null || item.level < 60 || item.status == StudentSkillStatus.missing;
     }).toSet();
     final prerequisiteGaps = <String>{};
-    final courses = _allCourses();
-    final byId = {for (final course in courses) course.id: course};
     for (final courseId in targetCourseIds) {
       final course = byId[courseId];
       if (course == null) continue;
