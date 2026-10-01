@@ -5,6 +5,7 @@ import '../../domain/learning/learning_models.dart';
 import 'assessment_analysis_engine.dart';
 import 'assessment_remediation_engine.dart';
 import 'skill_update_state.dart';
+import '../student/student_state.dart';
 
 final assessmentResultProvider =
     NotifierProvider<AssessmentController, AssessmentResult?>(
@@ -65,6 +66,10 @@ class AssessmentController extends Notifier<AssessmentResult?> {
     ref.read(assessmentRemediationProvider.notifier).plan(
       result: result,
       analysis: analysis,
+    );
+    ref.read(studentLearningStateProvider.notifier).recordAssessmentAnalysis(
+      analysis: analysis,
+      sourceId: result.attemptId,
     );
 
     if (result.passed) {
