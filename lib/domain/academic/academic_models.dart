@@ -55,6 +55,7 @@ class AcademicCourse {
     this.knowledgeUnitIds = const [],
     this.curriculumProfile,
     this.provenance = const AcademicContentProvenance(),
+    this.projects = const [],
   });
   final String id;
   final String name;
@@ -69,6 +70,8 @@ class AcademicCourse {
   final AcademicCourseProfile? curriculumProfile;
   /// Provenance and publication state for the course definition.
   final AcademicContentProvenance provenance;
+  /// Course-level capstone/project blueprints that integrate the course lessons.
+  final List<AcademicProject> projects;
 
   List<AcademicUnit> get normalizedUnits {
     if (units.isNotEmpty) return units;
@@ -173,12 +176,22 @@ class AcademicProject {
     required this.description,
     this.skillIds = const [],
     this.conceptIds = const [],
+    this.requirements = const [],
+    this.deliverables = const [],
+    this.milestones = const [],
+    this.acceptanceCriteria = const [],
+    this.recommendedToolCategories = const [],
   });
   final String id;
   final String title;
   final String description;
   final List<String> skillIds;
   final List<String> conceptIds;
+  final List<String> requirements;
+  final List<String> deliverables;
+  final List<String> milestones;
+  final List<String> acceptanceCriteria;
+  final List<String> recommendedToolCategories;
 }
 
 
