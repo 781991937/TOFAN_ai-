@@ -186,6 +186,10 @@ class AcademicLibraryBuildabilityAudit {
           danglingPrerequisites.join(', ') + '.');
     }
 
+    if (_prerequisiteCycleCourseIds().contains(course.id)) {
+      findings.add('المقرر داخل دورة في Prerequisite Graph ويحتاج تصحيح التسلسل الأكاديمي.');
+    }
+
     final strongProjects = projects.where(_hasBuildContract).length;
     if (strongProjects == 0) {
       findings.add('لا يوجد مشروع يحمل عقد بناء قابلًا للتنفيذ والاختبار.');
@@ -232,6 +236,38 @@ class AcademicLibraryBuildabilityAudit {
       project.implementationTasks.isNotEmpty &&
       project.testCases.isNotEmpty &&
       project.evidenceRequirements.isNotEmpty;
+
+  static Set<String> _prerequisiteCycleCourseIds() {
+    final courses = _allCourses().toList(growable: false);
+    final byId = {for (final item in courses) item.id: item};
+    final visiting = <String>{};
+    final visited = <String>{};
+    final cyclic = <String>{};
+
+    void visit(String id, List<String> path) {
+      if (visiting.contains(id)) {
+        final start = path.indexOf(id);
+        if (start >= 0) cyclic.addAll(path.sublist(start));
+        return;
+      }
+      if (visited.contains(id)) return;
+      final current = byId[id];
+      if (current == null) return;
+      visiting.add(id);
+      for (final prerequisiteId in current.prerequisiteCourseIds) {
+        if (byId.containsKey(prerequisiteId)) {
+          visit(prerequisiteId, [...path, prerequisiteId]);
+        }
+      }
+      visiting.remove(id);
+      visited.add(id);
+    }
+
+    for (final course in courses) {
+      visit(course.id, [course.id]);
+    }
+    return cyclic;
+  }
 
   static Iterable<AcademicCourse> _allCourses() sync* {
     for (final specialization in _specializations()) {
