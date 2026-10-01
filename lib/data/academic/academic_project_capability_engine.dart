@@ -304,13 +304,15 @@ class AcademicProjectCapabilityEngine {
     AcademicProjectCapability capability,
     List<String> tokens,
   ) {
-    final course = AcademicCatalog.universities
-        .expand((university) => university.colleges)
-        .expand((college) => college.specializations)
-        .expand((specialization) => specialization.years)
-        .expand((year) => year.semesters)
-        .expand((semester) => semester.courses)
-        .firstWhere((course) => course.id == capability.courseId);
+    final course = <AcademicCourse>[
+      ...AcademicCatalog.foundationCourses,
+      ...AcademicCatalog.universities
+          .expand((university) => university.colleges)
+          .expand((college) => college.specializations)
+          .expand((specialization) => specialization.years)
+          .expand((year) => year.semesters)
+          .expand((semester) => semester.courses),
+    ].firstWhere((course) => course.id == capability.courseId);
     return _score(course, tokens) +
         capability.skillIds.length +
         capability.projectTitles.length +
