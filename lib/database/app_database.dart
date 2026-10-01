@@ -152,6 +152,43 @@ class AppDatabase {
     )).toList(growable: false);
   }
 
+  Future<void> saveStudentLearningState(
+    String studentId,
+    String payload,
+  ) async {
+    final db = await database;
+    await db.insert(
+      AppConstants.studentLearningTable,
+      {
+        'student_id': studentId,
+        'payload': payload,
+        'updated_at': DateTime.now().millisecondsSinceEpoch,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<String?> loadStudentLearningState(String studentId) async {
+    final db = await database;
+    final rows = await db.query(
+      AppConstants.studentLearningTable,
+      columns: ['payload'],
+      where: 'student_id = ?',
+      whereArgs: [studentId],
+      limit: 1,
+    );
+    return rows.isEmpty ? null : rows.first['payload'] as String;
+  }
+
+  Future<void> clearStudentLearningState(String studentId) async {
+    final db = await database;
+    await db.delete(
+      AppConstants.studentLearningTable,
+      where: 'student_id = ?',
+      whereArgs: [studentId],
+    );
+  }
+
   Future<void> upsertConversation(Conversation conversation) async {
     final db = await database;
     await db.insert(AppConstants.conversationsTable, conversation.toMap(),
