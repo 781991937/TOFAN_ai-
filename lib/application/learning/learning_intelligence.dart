@@ -11,6 +11,17 @@ class LearningGapReport {
   bool get hasGaps => conceptGapIds.isNotEmpty || skillGapIds.isNotEmpty || prerequisiteCourseIds.isNotEmpty;
 }
 
+class PersonalizedLearningPlan {
+  const PersonalizedLearningPlan({
+    required this.priorityConceptIds,
+    required this.prioritySkillIds,
+    required this.prerequisiteCourseIds,
+  });
+  final List<String> priorityConceptIds;
+  final List<String> prioritySkillIds;
+  final List<String> prerequisiteCourseIds;
+}
+
 class LearningIntelligenceEngine {
   const LearningIntelligenceEngine({this.skillEngine = const AcademicSkillCapabilityEngine()});
   final AcademicSkillCapabilityEngine skillEngine;
@@ -47,6 +58,14 @@ class LearningIntelligenceEngine {
       conceptGapIds: List.unmodifiable(conceptGaps),
       skillGapIds: List.unmodifiable(skillGaps),
       prerequisiteCourseIds: List.unmodifiable(prerequisiteGaps),
+    );
+  }
+
+  PersonalizedLearningPlan planFor(LearningGapReport gaps) {
+    return PersonalizedLearningPlan(
+      priorityConceptIds: List.unmodifiable(gaps.conceptGapIds),
+      prioritySkillIds: List.unmodifiable(gaps.skillGapIds),
+      prerequisiteCourseIds: List.unmodifiable(gaps.prerequisiteCourseIds),
     );
   }
 
