@@ -41,7 +41,11 @@ class AcademicCourseLessonBlueprints {
     if (n.contains('ذكاء اصطناعي') || n.contains('ai')) return _ai(courseName);
     if (n.contains('شبك')) return _network(courseName);
     if (n.contains('نظم التشغيل') || n.contains('أنظمة التشغيل')) return _os(courseName);
-    if (n.contains('أمن') || n.contains('تشفير') || n.contains('cyber')) return _security(courseName);
+    if (n.contains('أمن') || n.contains('تشفير') || n.contains('cyber') ||
+        n.contains('اختبار الاختراق') || n.contains('الهجوم والدفاع') ||
+        n.contains('تقييم الاختراق') || n.contains('الفريق الأحمر')) {
+      return _security(courseName);
+    }
     if (n.contains('مترجمات') || n.contains('compiler')) return _compilers(courseName);
     if (n.contains('أساسيات الحوسبة') || n.contains('موضوعات متقدمة')) return _systemsFundamentals(courseName);
     if (n.contains('هندسة البرمجيات') || n.contains('اختبار البرمجيات') || n.contains('devops') || n.contains('إدارة الإصدارات')) return _software(courseName);
