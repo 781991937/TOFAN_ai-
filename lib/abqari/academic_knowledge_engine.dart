@@ -1,58 +1,75 @@
-import 'academic_knowledge_engine.dart';
+import '../data/academic/academic_catalog.dart';
+import '../data/academic/academic_knowledge_unit_catalog.dart';
 import 'abqari_models.dart';
-import 'knowledge_graph.dart';
-import 'learning_gap_engine.dart';
 
-class AbqariProjectEngine {
-  const AbqariProjectEngine({this.knowledgeEngine = const AcademicKnowledgeEngine(), this.knowledgeGraph = const AbqariKnowledgeGraph(), this.learningGapEngine = const AbqariLearningGapEngine()});
-  final AcademicKnowledgeEngine knowledgeEngine;
-  final AbqariKnowledgeGraph knowledgeGraph;
-  final AbqariLearningGapEngine learningGapEngine;
+class AcademicKnowledgeEngine {
+  const AcademicKnowledgeEngine();
 
-  AbqariProjectPlan plan(AbqariProjectRequest request) {
-    final knowledge = knowledgeEngine.search(request.idea);
-    final gap = learningGapEngine.analyze(request.idea);
-    final disciplines = _disciplines(request.idea, knowledge);
-    final skills = <String>{for (final item in knowledge) ...item.skillIds}.toList();
-    final sourceCourseIds = knowledge.map((item) => item.courseId).where((id) => id.isNotEmpty).toSet().toList(growable: false);
-    final sourceProjectTitles = <String>{for (final item in knowledge) ...item.projectTitles}.toList(growable: false);
-    final sourceLessonIds = knowledge.map((item) => item.lessonId).where((id) => id.isNotEmpty).toSet().toList(growable: false);
-    final sourceKnowledgeUnitIds = <String>{for (final item in knowledge) ...item.knowledgeUnitIds}.toList(growable: false);
-    return AbqariProjectPlan(
-      idea: request.idea,
-      requirements: ['تحديد الهدف ومعيار النجاح: ' + request.idea, 'تحديد المدخلات والمخرجات والقيود.', 'تحديد المخاطر وحالات الفشل قبل التنفيذ.'],
-      disciplines: disciplines,
-      knowledge: knowledge,
-      skills: skills,
-      knowledgeGaps: gap.missing ? ['لا توجد معرفة مطابقة في المكتبة بعد؛ يجب التعلم أو إضافة محتوى أكاديمي قبل التنفيذ.'] : const [],
-      phases: const ['تحليل المتطلبات', 'تصميم المعمارية', 'تحديد المكونات والواجهات', 'التنفيذ البرمجي', 'المحاكاة داخل الحاسوب', 'الاختبار وتحليل الأخطاء', 'التصحيح وإعادة الاختبار', 'توثيق المشروع وتحديث الخبرة'],
-      softwareOutputs: const ['مخطط معماري', 'هيكل مشروع برمجي', 'كود قابل للاختبار', 'اختبارات آلية ومحاكاة عند توفر نموذج برمجي', 'تقرير نتائج وأخطاء'],
-      physicalComponents: _physicalComponents(request.idea),
-      sourceCourseIds: sourceCourseIds,
-      sourceProjectTitles: sourceProjectTitles,
-      sourceLessonIds: sourceLessonIds,
-      sourceKnowledgeUnitIds: sourceKnowledgeUnitIds,
-    );
+  List<AbqariKnowledgeItem> search(String query) {
+    final tokens = _tokens(query);
+    final results = <AbqariKnowledgeItem>[];
+    for (final field in AcademicCatalog.fields) {
+      for (final university in field.universities) {
+        for (final college in university.colleges) {
+          for (final specialization in college.specializations) {
+            for (final year in specialization.years) {
+              for (final semester in year.semesters) {
+                for (final course in semester.courses) {
+                  for (final unit in course.normalizedUnits) {
+                    for (final lesson in unit.lessons) {
+                      final canonicalUnits = AcademicKnowledgeUnitCatalog.forCourse(course);
+                      final canonicalUnitText = canonicalUnits.map((item) => '${item.name} ${item.arabicName} ${item.description}').join(' ');
+                      final haystack = <String>[field.name, university.name, college.name, specialization.name, course.name, unit.title, canonicalUnitText, lesson.title, lesson.definition, lesson.content, ...lesson.applications, ...lesson.keyTerms, ...lesson.learningOutcomes].join(' ').toLowerCase();
+                      if (tokens.any(haystack.contains)) {
+                        results.add(AbqariKnowledgeItem(
+                          id: lesson.id,
+                          title: lesson.title,
+                          sourcePath: 'field/${field.id}/university/${university.id}/college/${college.id}/specialization/${specialization.id}/year/${year.number}/semester/${semester.number}/course/${course.id}/unit/${unit.id}',
+                          content: lesson.content,
+                          definition: lesson.definition,
+                          applications: lesson.applications,
+                          learningOutcomes: lesson.learningOutcomes,
+                          terms: lesson.keyTerms,
+                          conceptIds: lesson.conceptIds,
+                          skillIds: lesson.skillIds,
+                          knowledgeAreaIds: course.knowledgeAreaIds,
+                          knowledgeUnitIds: course.knowledgeUnitIds,
+                          courseId: course.id,
+                          unitId: unit.id,
+                          lessonId: lesson.id,
+                          projectTitles: lesson.projects.map((p) => p.title).toList(growable: false),
+                        ));
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    results.sort((a, b) => _score(b, tokens).compareTo(_score(a, tokens)));
+    return results.take(20).toList(growable: false);
   }
 
-  List<String> _disciplines(String idea, List<AbqariKnowledgeItem> knowledge) {
-    final text = idea + ' ' + knowledge.map((e) => e.title).join(' ');
-    final result = <String>['هندسة البرمجيات'];
-    void add(String value, List<String> terms) { if (terms.any(text.contains)) result.add(value); }
-    add('الذكاء الاصطناعي', ['ذكاء اصطناعي', 'تعلم آلي', 'رؤية حاسوبية', 'وكيل']);
-    add('إنترنت الأشياء والأنظمة المضمنة', ['iot', 'إنترنت الأشياء', 'مضمنة', 'embedded', 'حساس']);
-    add('الشبكات', ['شبكة', 'network', 'اتصال']);
-    add('قواعد البيانات', ['قاعدة بيانات', 'database', 'بيانات']);
-    add('الأمن السيبراني', ['أمن', 'تشفير', 'security', 'مصادقة']);
-    add('الروبوتات والتحكم', ['روبوت', 'مركبة', 'تحكم', 'actuator']);
-    return result.toSet().toList(growable: false);
-  }
+  List<String> _tokens(String text) => text.toLowerCase().split(RegExp(r'[^\\p{L}\\p{N}_]+', unicode: true)).where((token) => token.length > 1).toList(growable: false);
 
-  List<String> _physicalComponents(String idea) {
-    final text = idea.toLowerCase();
-    final result = <String>[];
-    if (['باب', 'نافذة', 'حريق', 'حساس', 'منزل'].any(text.contains)) result.addAll(['حساسات مناسبة', 'وحدة تحكم', 'مشغلات كهربائية', 'مصدر طاقة', 'وسائل اتصال']);
-    if (['مركبة', 'سيارة', 'روبوت'].any(text.contains)) result.addAll(['حساسات موقع/مسافة حسب التصميم', 'وحدة معالجة', 'مشغلات الحركة', 'مصدر طاقة', 'وسائل اتصال']);
-    return result.toSet().toList(growable: false);
+  int _score(AbqariKnowledgeItem item, List<String> tokens) {
+    final haystack = [
+      item.title,
+      item.definition,
+      item.content,
+      item.applications.join(' '),
+      item.learningOutcomes.join(' '),
+      item.terms.join(' '),
+      item.knowledgeAreaIds.join(' '),
+      item.knowledgeUnitIds.join(' '),
+      item.projectTitles.join(' '),
+    ].join(' ').toLowerCase();
+    var score = tokens.where(haystack.contains).length;
+    score += tokens.where((token) => item.title.toLowerCase().contains(token)).length;
+    score += tokens.where((token) => item.projectTitles.join(' ').toLowerCase().contains(token)).length;
+    return score;
   }
 }
