@@ -20,6 +20,21 @@ void main() {
     expect(graph.danglingPrerequisiteEdges(), isEmpty);
   });
 
+  test('rich graph exposes canonical lesson, skill, assessment and project relations', () {
+    const graph = AbqariKnowledgeGraph();
+    final edges = graph.academicEdges();
+    expect(edges, isNotEmpty);
+    expect(edges.any((e) => e.relation == AcademicGraphRelation.courseToKnowledgeUnit), isTrue);
+    expect(edges.any((e) => e.relation == AcademicGraphRelation.lessonToConcept), isTrue);
+    expect(edges.any((e) => e.relation == AcademicGraphRelation.lessonToSkill), isTrue);
+    expect(edges.any((e) => e.relation == AcademicGraphRelation.assessmentToSkill), isTrue);
+    expect(edges.any((e) => e.relation == AcademicGraphRelation.projectToSkill), isTrue);
+    final skillEdge = edges.firstWhere((e) => e.relation == AcademicGraphRelation.lessonToSkill);
+    expect(graph.lessonsForSkill(skillEdge.toId), contains(skillEdge.fromId));
+    final projectEdge = edges.firstWhere((e) => e.relation == AcademicGraphRelation.projectToSkill);
+    expect(graph.projectsForSkill(projectEdge.toId), contains(projectEdge.fromId));
+  });
+
   test('prerequisite closure and reverse traversal are consistent', () {
     const graph = AbqariKnowledgeGraph();
     final edges = graph.prerequisiteEdges();
