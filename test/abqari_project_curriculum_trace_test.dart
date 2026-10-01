@@ -15,5 +15,9 @@ void main() {
     expect(plan.sourceKnowledgeUnitIds, isNotEmpty);
     expect(plan.sourceProjectTitles, isNotEmpty);
     expect(plan.skills, isNotEmpty);
+    expect(plan.sourceProjectRequirements, isNotEmpty);
+    expect(plan.sourceImplementationTasks, isNotEmpty);
+    expect(plan.sourceTestCases, isNotEmpty);
+    expect(plan.sourceEvidenceRequirements, isNotEmpty);
   });
 }
