@@ -11,6 +11,11 @@ final assessmentResultProvider =
   AssessmentController.new,
 );
 
+final assessmentHistoryProvider =
+    NotifierProvider<AssessmentHistoryController, List<AssessmentAttempt>>(
+  AssessmentHistoryController.new,
+);
+
 final learningAnalysisProvider =
     NotifierProvider<LearningAnalysisController, LearningAnalysis?>(
   LearningAnalysisController.new,
@@ -35,14 +40,24 @@ class AssessmentController extends Notifier<AssessmentResult?> {
         .where((entry) => !entry.value)
         .map((entry) => entry.key)
         .toList(growable: false);
+    final previousAttempts = ref
+        .read(assessmentHistoryProvider)
+        .where((attempt) => attempt.assessmentId == assessmentId)
+        .toList(growable: false);
+    final previousAttempt =
+        previousAttempts.isEmpty ? null : previousAttempts.last;
     final result = AssessmentResult(
       assessmentId: assessmentId,
       score: score.toDouble(),
       total: total.toDouble(),
       completedAt: DateTime.now(),
       wrongQuestionIds: wrongQuestionIds,
+      attemptNumber: previousAttempts.length + 1,
+      isReassessment: previousAttempt != null,
+      previousAttemptId: previousAttempt?.attemptId,
     );
     state = result;
+    ref.read(assessmentHistoryProvider.notifier).record(result);
 
     final analysis = ref.read(learningAnalysisProvider.notifier).analyze(result);
     ref.read(assessmentRemediationProvider.notifier).plan(
@@ -66,6 +81,28 @@ class AssessmentController extends Notifier<AssessmentResult?> {
     ref.read(learningAnalysisProvider.notifier).clear();
     ref.read(assessmentRemediationProvider.notifier).clear();
   }
+}
+
+class AssessmentHistoryController extends Notifier<List<AssessmentAttempt>> {
+  @override
+  List<AssessmentAttempt> build() => const [];
+
+  void record(AssessmentResult result) {
+    final attempt = AssessmentAttempt(
+      attemptId: result.attemptId,
+      assessmentId: result.assessmentId,
+      attemptNumber: result.attemptNumber,
+      result: result,
+    );
+    state = List.unmodifiable([...state, attempt]);
+  }
+
+  List<AssessmentAttempt> forAssessment(String assessmentId) =>
+      state.where((attempt) => attempt.assessmentId == assessmentId).toList(
+            growable: false,
+          );
+
+  void clear() => state = const [];
 }
 
 class LearningAnalysisController extends Notifier<LearningAnalysis?> {
