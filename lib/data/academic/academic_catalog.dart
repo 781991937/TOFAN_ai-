@@ -61,7 +61,13 @@ class AcademicCatalog {
                           name: 'أساسيات البرمجة — Python',
                           knowledgeAreaIds: ['SDF','FPL'],
                           knowledgeUnitIds: ['sdf-01','fpl-01'],
-                          lessons: [
+                                                    curriculumProfile: AcademicCourseProfile(
+                            credits: 3.0,
+                            contactHours: 3.0,
+                            practicalHours: 1.5,
+                            complexity: AcademicCourseComplexity.foundation,
+                          ),
+lessons: [
                             AcademicLesson(
                               id: 'python-1',
                               definition: 'Python لغة برمجة تُستخدم لكتابة تعليمات قابلة للتنفيذ لحل المشكلات.',
@@ -205,7 +211,13 @@ skillEvidence: ['يبني برنامجًا تفاعليًا بسيطًا.', 'ي�
                           knowledgeAreaIds: ['MSF','AL'],
                           knowledgeUnitIds: ['msf-01','msf-02','al-01'],
                           prerequisiteCourseIds: const [],
-                          lessons: [
+                                                    curriculumProfile: AcademicCourseProfile(
+                            credits: 3.0,
+                            contactHours: 3.0,
+                            practicalHours: 1.5,
+                            complexity: AcademicCourseComplexity.foundation,
+                          ),
+lessons: [
                             AcademicLesson(
                               id: 'sets',
                               definition: 'المجموعة تجميع محدد من عناصر مميزة يمكن وصفها بدقة.',
@@ -303,7 +315,13 @@ skillEvidence: ['يمثل علاقة صحيحة.', 'يفسر كل زوج مرت�
                           name: 'مقدمة في الذكاء الاصطناعي',
                           knowledgeAreaIds: ['AI','MSF'],
                           knowledgeUnitIds: ['ai-01','ai-03','msf-02'],
-                          lessons: [
+                                                    curriculumProfile: AcademicCourseProfile(
+                            credits: 3.0,
+                            contactHours: 3.0,
+                            practicalHours: 1.5,
+                            complexity: AcademicCourseComplexity.foundation,
+                          ),
+lessons: [
                             AcademicLesson(
                               id: 'ai-foundations',
                               definition: 'الذكاء الاصطناعي مجال من علوم الحاسوب يهتم ببناء أنظمة تنفذ مهامًا تتطلب الاستدلال أو التعلم أو التخطيط أو الإدراك.',
@@ -407,7 +425,13 @@ skillEvidence: ['يحدد مكونات نموذج وكيل.', 'يربط المل
                           knowledgeAreaIds: ['AL','SDF'],
                           knowledgeUnitIds: ['al-02','sdf-02'],
                           prerequisiteCourseIds: const ['python', 'discrete-math'],
-                          lessons: [
+                                                    curriculumProfile: AcademicCourseProfile(
+                            credits: 3.0,
+                            contactHours: 3.0,
+                            practicalHours: 1.5,
+                            complexity: AcademicCourseComplexity.foundation,
+                          ),
+lessons: [
                             AcademicLesson(
                               id: 'arrays',
                               definition: 'القائمة بنية بيانات مرتبة تخزن مجموعة من القيم ويمكن الوصول إلى عناصرها باستخدام الفهارس.',
