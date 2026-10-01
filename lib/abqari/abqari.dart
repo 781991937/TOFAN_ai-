@@ -16,6 +16,8 @@ export 'assessment_experience_bridge.dart';
 export 'planning_engine.dart';
 export '../application/tools/tool_registry.dart';
 export '../application/execution/abqari_execution_coordinator.dart';
+export '../domain/files/academic_document_models.dart';
+export '../application/files/academic_document_mapper.dart';
 
 class TofanAbqari {
   const TofanAbqari({
