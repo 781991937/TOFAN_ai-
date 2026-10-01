@@ -1,3 +1,5 @@
+import 'academic_metadata.dart';
+
 class AcademicField {
   const AcademicField({required this.id, required this.name, required this.universities});
   final String id;
@@ -50,7 +52,10 @@ class AcademicCourse {
     this.units = const [],
     this.prerequisiteCourseIds = const [],
     this.knowledgeAreaIds = const [],
-    this.knowledgeUnitIds = const []});
+    this.knowledgeUnitIds = const [],
+    this.curriculumProfile,
+    this.provenance = const AcademicContentProvenance(),
+  });
   final String id;
   final String name;
   final List<AcademicLesson> lessons;
@@ -60,6 +65,10 @@ class AcademicCourse {
   final List<String> knowledgeAreaIds;
   /// Canonical knowledge-unit references used for precise retrieval and graph edges.
   final List<String> knowledgeUnitIds;
+  /// Course weight and delivery metadata. Null means the curriculum designer has not assigned it yet.
+  final AcademicCourseProfile? curriculumProfile;
+  /// Provenance and publication state for the course definition.
+  final AcademicContentProvenance provenance;
 
   List<AcademicUnit> get normalizedUnits {
     if (units.isNotEmpty) return units;
@@ -86,6 +95,7 @@ class AcademicLesson {
     this.conceptIds = const [],
     this.skillIds = const [],
     this.skillEvidence = const [],
+    this.provenance = const AcademicContentProvenance(),
   });
 
   final String id;
@@ -110,6 +120,8 @@ class AcademicLesson {
   final List<String> skillIds;
   /// Observable evidence the learner should produce to demonstrate the skill.
   final List<String> skillEvidence;
+  /// Source, author, version and publication state for this lesson.
+  final AcademicContentProvenance provenance;
 }
 
 class LessonAssessment {
