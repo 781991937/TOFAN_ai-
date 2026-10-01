@@ -53,12 +53,26 @@ class AppDatabase {
     ''');
 
     await _createAuditTable(db);
+    await _createStudentLearningTable(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       await _createAuditTable(db);
     }
+    if (oldVersion < 3) {
+      await _createStudentLearningTable(db);
+    }
+  }
+
+  Future<void> _createStudentLearningTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS ${AppConstants.studentLearningTable} (
+        student_id TEXT PRIMARY KEY,
+        payload TEXT NOT NULL,
+        updated_at INTEGER NOT NULL
+      )
+    ''');
   }
 
   Future<void> _createAuditTable(Database db) async {
