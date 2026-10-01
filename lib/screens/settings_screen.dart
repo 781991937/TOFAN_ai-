@@ -13,7 +13,6 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  const _SettingsScreenState();
 
   @override
   Widget build(BuildContext context) {
