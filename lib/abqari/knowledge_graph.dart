@@ -98,6 +98,13 @@ class AbqariKnowledgeGraph {
       for (final unitId in course.knowledgeUnitIds) edges.add(AcademicKnowledgeGraphEdge(fromType: AcademicGraphNodeType.course, fromId: course.id, relation: AcademicGraphRelation.courseToKnowledgeUnit, toType: AcademicGraphNodeType.knowledgeUnit, toId: unitId));
       for (final prerequisiteId in course.prerequisiteCourseIds) edges.add(AcademicKnowledgeGraphEdge(fromType: AcademicGraphNodeType.course, fromId: course.id, relation: AcademicGraphRelation.courseToPrerequisite, toType: AcademicGraphNodeType.course, toId: prerequisiteId));
       for (final unit in course.normalizedUnits) for (final lesson in unit.lessons) {
+        for (final skillId in lesson.skillIds) edges.add(AcademicKnowledgeGraphEdge(
+          fromType: AcademicGraphNodeType.skill,
+          fromId: skillId,
+          relation: AcademicGraphRelation.skillToCourse,
+          toType: AcademicGraphNodeType.course,
+          toId: course.id,
+        ));
         for (final conceptId in lesson.conceptIds) edges.add(AcademicKnowledgeGraphEdge(fromType: AcademicGraphNodeType.lesson, fromId: lesson.id, relation: AcademicGraphRelation.lessonToConcept, toType: AcademicGraphNodeType.concept, toId: conceptId));
         for (final skillId in lesson.skillIds) edges.add(AcademicKnowledgeGraphEdge(fromType: AcademicGraphNodeType.lesson, fromId: lesson.id, relation: AcademicGraphRelation.lessonToSkill, toType: AcademicGraphNodeType.skill, toId: skillId));
         for (final assessment in lesson.assessments) for (final question in assessment.questions) {
@@ -195,6 +202,7 @@ class AbqariKnowledgeGraph {
   List<String> lessonsForSkill(String id) => _relatedIds(AcademicGraphNodeType.lesson, AcademicGraphNodeType.skill, AcademicGraphRelation.lessonToSkill, id);
   List<String> coursesForKnowledgeUnit(String id) => _relatedIds(AcademicGraphNodeType.course, AcademicGraphNodeType.knowledgeUnit, AcademicGraphRelation.courseToKnowledgeUnit, id);
   List<String> coursesForKnowledgeArea(String id) => _relatedIds(AcademicGraphNodeType.course, AcademicGraphNodeType.knowledgeArea, AcademicGraphRelation.courseToKnowledgeArea, id);
+  List<String> coursesForSkill(String id) => _relatedIds(AcademicGraphNodeType.skill, AcademicGraphNodeType.course, AcademicGraphRelation.skillToCourse, id);
   List<String> projectsForSkill(String id) => _relatedIds(AcademicGraphNodeType.project, AcademicGraphNodeType.skill, AcademicGraphRelation.projectToSkill, id);
   List<String> projectsForConcept(String id) => _relatedIds(AcademicGraphNodeType.project, AcademicGraphNodeType.concept, AcademicGraphRelation.projectToConcept, id);
   List<String> assessmentQuestionsForSkill(String id) => _relatedIds(AcademicGraphNodeType.assessmentQuestion, AcademicGraphNodeType.skill, AcademicGraphRelation.assessmentToSkill, id);
