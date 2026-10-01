@@ -5,6 +5,7 @@ import '../../data/academic/academic_catalog.dart';
 import '../../domain/academic/academic_models.dart';
 import '../../domain/learning/learning_models.dart';
 import 'skill_update_state.dart';
+import 'assessment_state.dart';
 import 'diagnostic_state.dart';
 import '../../application/student/student_state.dart';
 import 'progress_state.dart';
@@ -105,6 +106,8 @@ class LearningSessionController extends Notifier<LearningSession?> {
   void retryAssessment() {
     final session = state;
     if (session == null || session.stage != LearningStage.analysis) return;
+    final remediation = ref.read(assessmentRemediationProvider);
+    if (remediation == null || !remediation.reassessmentAllowed) return;
     state = LearningSession(
       lessonId: session.lessonId,
       stage: LearningStage.practice,
