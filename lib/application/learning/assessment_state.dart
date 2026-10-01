@@ -46,6 +46,8 @@ class AssessmentController extends Notifier<AssessmentResult?> {
         .toList(growable: false);
     final previousAttempt =
         previousAttempts.isEmpty ? null : previousAttempts.last;
+    if (previousAttempt?.result.passed == true) return;
+
     final result = AssessmentResult(
       assessmentId: assessmentId,
       score: score.toDouble(),
