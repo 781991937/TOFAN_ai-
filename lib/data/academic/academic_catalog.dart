@@ -482,16 +482,79 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
 
   static AcademicSpecialization _deepenSpecialization(
       AcademicSpecialization specialization) {
+    final previousSemesterCourses = <AcademicCourse>[];
+    final years = <AcademicYear>[];
+
+    for (final year in specialization.years) {
+      final semesters = <AcademicSemester>[];
+      for (final semester in year.semesters) {
+        final normalized = semester.courses
+            .map(_deepenCourse)
+            .toList(growable: false);
+        final linked = normalized
+            .map((course) => _withDerivedPrerequisites(
+                  course,
+                  previousSemesterCourses,
+                ))
+            .toList(growable: false);
+        semesters.add(AcademicSemester(
+          number: semester.number,
+          courses: linked,
+        ));
+        previousSemesterCourses
+          ..clear()
+          ..addAll(linked);
+      }
+      years.add(AcademicYear(number: year.number, semesters: semesters));
+    }
+
     return AcademicSpecialization(
       id: specialization.id,
       name: specialization.name,
-      years: specialization.years.map((year) => AcademicYear(
-        number: year.number,
-        semesters: year.semesters.map((semester) => AcademicSemester(
-          number: semester.number,
-          courses: semester.courses.map(_deepenCourse).toList(growable: false),
-        )).toList(growable: false),
-      )).toList(growable: false),
+      years: years,
+    );
+  }
+
+  static AcademicCourse _withDerivedPrerequisites(
+    AcademicCourse course,
+    List<AcademicCourse> previousSemesterCourses,
+  ) {
+    if (course.prerequisiteCourseIds.isNotEmpty ||
+        previousSemesterCourses.isEmpty) {
+      return course;
+    }
+
+    final ranked = previousSemesterCourses
+        .map((candidate) {
+          final unitOverlap = course.knowledgeUnitIds
+              .where(candidate.knowledgeUnitIds.contains)
+              .length;
+          final areaOverlap = course.knowledgeAreaIds
+              .where(candidate.knowledgeAreaIds.contains)
+              .length;
+          return (candidate: candidate, score: unitOverlap * 3 + areaOverlap);
+        })
+        .where((item) => item.score > 0)
+        .toList()
+      ..sort((a, b) => b.score.compareTo(a.score));
+
+    final prerequisites = ranked
+        .take(2)
+        .map((item) => item.candidate.id)
+        .toList(growable: false);
+    if (prerequisites.isEmpty) return course;
+
+    return AcademicCourse(
+      id: course.id,
+      name: course.name,
+      lessons: course.lessons,
+      units: course.units,
+      prerequisiteCourseIds: prerequisites,
+      knowledgeAreaIds: course.knowledgeAreaIds,
+      knowledgeUnitIds: course.knowledgeUnitIds,
+      curriculumProfile: course.curriculumProfile,
+      provenance: course.provenance,
+      projects: course.projects,
     );
   }
 
