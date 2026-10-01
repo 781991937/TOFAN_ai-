@@ -14,6 +14,10 @@ class AbqariProjectEngine {
     final gap = learningGapEngine.analyze(request.idea);
     final disciplines = _disciplines(request.idea, knowledge);
     final skills = <String>{for (final item in knowledge) ...item.skillIds}.toList();
+    final sourceCourseIds = knowledge.map((item) => item.courseId).where((id) => id.isNotEmpty).toSet().toList(growable: false);
+    final sourceProjectTitles = <String>{for (final item in knowledge) ...item.projectTitles}.toList(growable: false);
+    final sourceLessonIds = knowledge.map((item) => item.lessonId).where((id) => id.isNotEmpty).toSet().toList(growable: false);
+    final sourceKnowledgeUnitIds = <String>{for (final item in knowledge) ...item.knowledgeUnitIds}.toList(growable: false);
     return AbqariProjectPlan(
       idea: request.idea,
       requirements: ['تحديد الهدف ومعيار النجاح: ' + request.idea, 'تحديد المدخلات والمخرجات والقيود.', 'تحديد المخاطر وحالات الفشل قبل التنفيذ.'],
@@ -24,6 +28,10 @@ class AbqariProjectEngine {
       phases: const ['تحليل المتطلبات', 'تصميم المعمارية', 'تحديد المكونات والواجهات', 'التنفيذ البرمجي', 'المحاكاة داخل الحاسوب', 'الاختبار وتحليل الأخطاء', 'التصحيح وإعادة الاختبار', 'توثيق المشروع وتحديث الخبرة'],
       softwareOutputs: const ['مخطط معماري', 'هيكل مشروع برمجي', 'كود قابل للاختبار', 'اختبارات آلية ومحاكاة عند توفر نموذج برمجي', 'تقرير نتائج وأخطاء'],
       physicalComponents: _physicalComponents(request.idea),
+      sourceCourseIds: sourceCourseIds,
+      sourceProjectTitles: sourceProjectTitles,
+      sourceLessonIds: sourceLessonIds,
+      sourceKnowledgeUnitIds: sourceKnowledgeUnitIds,
     );
   }
 
