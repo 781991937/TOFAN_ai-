@@ -22,10 +22,18 @@ class AcademicCollege {
 }
 
 class AcademicSpecialization {
-  const AcademicSpecialization({required this.id, required this.name, required this.years});
+  const AcademicSpecialization({
+    required this.id,
+    required this.name,
+    required this.years,
+    this.foundationCourseIds = const [],
+  });
   final String id;
   final String name;
   final List<AcademicYear> years;
+  /// Shared canonical foundation courses required before or alongside specialization study.
+  /// These are referenced, not copied into each specialization curriculum.
+  final List<String> foundationCourseIds;
 }
 
 class AcademicYear {
