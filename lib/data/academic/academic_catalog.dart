@@ -752,6 +752,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
       prerequisiteCourseIds: const [],
       knowledgeAreaIds: _knowledgeAreasFor(name),
       knowledgeUnitIds: _knowledgeUnitsFor(name),
+      curriculumProfile: _generatedCourseProfile(year, semester, name),
       projects: [_courseProject(courseId: courseId, courseName: name, lessons: lessons)],
       units: [
         AcademicUnit(id: '$courseId-unit-1', title: 'الوحدة الأولى: المدخل والمفاهيم الأساسية', lessons: [lessons[0]]),
@@ -762,6 +763,38 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
         AcademicUnit(id: '$courseId-unit-6', title: 'الوحدة السادسة: التكامل والمشروع المصغر', lessons: [lessons[5]]),
       ],
       provenance: _libraryProvenance,
+    );
+  }
+
+  static AcademicCourseProfile _generatedCourseProfile(
+    int year,
+    int semester,
+    String courseName,
+  ) {
+    final name = courseName.toLowerCase();
+    final isCapstone = name.contains('مشروع التخرج') || name.contains('مشروع التخرج الأمني');
+    final isAdvanced = year >= 3;
+    final complexity = isCapstone
+        ? AcademicCourseComplexity.capstone
+        : isAdvanced
+            ? AcademicCourseComplexity.advanced
+            : year == 1
+                ? AcademicCourseComplexity.foundation
+                : AcademicCourseComplexity.core;
+
+    // Transitional TOFAN curriculum metadata: these values are planning
+    // defaults for the generated global skeleton, not a universal academic
+    // credit standard. Final weights must be reviewed against the chosen
+    // institution/program before publication.
+    final credits = isCapstone ? 4.0 : 3.0;
+    final contactHours = isCapstone ? 4.0 : 3.0;
+    final practicalHours = isCapstone ? 3.0 : 1.5;
+
+    return AcademicCourseProfile(
+      credits: credits,
+      contactHours: contactHours,
+      practicalHours: practicalHours,
+      complexity: complexity,
     );
   }
 
