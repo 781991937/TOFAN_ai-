@@ -2,6 +2,26 @@ import '../data/academic/academic_catalog.dart';
 import 'academic_knowledge_engine.dart';
 import 'abqari_models.dart';
 
+enum AcademicGraphNodeType { course, knowledgeArea, knowledgeUnit, lesson, concept, skill, project, assessmentQuestion, learningOutcome }
+
+enum AcademicGraphRelation {
+  courseToKnowledgeArea, courseToKnowledgeUnit, courseToPrerequisite,
+  lessonToConcept, lessonToSkill, assessmentToOutcome, assessmentToConcept,
+  assessmentToSkill, projectToSkill, projectToConcept,
+}
+
+class AcademicKnowledgeGraphEdge {
+  const AcademicKnowledgeGraphEdge({
+    required this.fromType, required this.fromId, required this.relation,
+    required this.toType, required this.toId,
+  });
+  final AcademicGraphNodeType fromType;
+  final String fromId;
+  final AcademicGraphRelation relation;
+  final AcademicGraphNodeType toType;
+  final String toId;
+}
+
 class AbqariKnowledgeEvidence {
   const AbqariKnowledgeEvidence({
     required this.item,
@@ -70,6 +90,29 @@ class AbqariKnowledgeGraph {
     return <String>{for (final item in items) ...item.knowledgeUnitIds}.toList(growable: false);
   }
 
+  /// Rich relationships derived only from canonical academic models.
+  List<AcademicKnowledgeGraphEdge> academicEdges() {
+    final edges = <AcademicKnowledgeGraphEdge>[];
+    for (final course in _allCourses()) {
+      for (final areaId in course.knowledgeAreaIds) edges.add(AcademicKnowledgeGraphEdge(fromType: AcademicGraphNodeType.course, fromId: course.id, relation: AcademicGraphRelation.courseToKnowledgeArea, toType: AcademicGraphNodeType.knowledgeArea, toId: areaId));
+      for (final unitId in course.knowledgeUnitIds) edges.add(AcademicKnowledgeGraphEdge(fromType: AcademicGraphNodeType.course, fromId: course.id, relation: AcademicGraphRelation.courseToKnowledgeUnit, toType: AcademicGraphNodeType.knowledgeUnit, toId: unitId));
+      for (final prerequisiteId in course.prerequisiteCourseIds) edges.add(AcademicKnowledgeGraphEdge(fromType: AcademicGraphNodeType.course, fromId: course.id, relation: AcademicGraphRelation.courseToPrerequisite, toType: AcademicGraphNodeType.course, toId: prerequisiteId));
+      for (final unit in course.normalizedUnits) for (final lesson in unit.lessons) {
+        for (final conceptId in lesson.conceptIds) edges.add(AcademicKnowledgeGraphEdge(fromType: AcademicGraphNodeType.lesson, fromId: lesson.id, relation: AcademicGraphRelation.lessonToConcept, toType: AcademicGraphNodeType.concept, toId: conceptId));
+        for (final skillId in lesson.skillIds) edges.add(AcademicKnowledgeGraphEdge(fromType: AcademicGraphNodeType.lesson, fromId: lesson.id, relation: AcademicGraphRelation.lessonToSkill, toType: AcademicGraphNodeType.skill, toId: skillId));
+        for (final assessment in lesson.assessments) for (final question in assessment.questions) {
+          for (final index in question.learningOutcomeIndexes) edges.add(AcademicKnowledgeGraphEdge(fromType: AcademicGraphNodeType.assessmentQuestion, fromId: question.id, relation: AcademicGraphRelation.assessmentToOutcome, toType: AcademicGraphNodeType.learningOutcome, toId: lesson.id+':outcome:'+index.toString()));
+          for (final conceptId in question.conceptIds) edges.add(AcademicKnowledgeGraphEdge(fromType: AcademicGraphNodeType.assessmentQuestion, fromId: question.id, relation: AcademicGraphRelation.assessmentToConcept, toType: AcademicGraphNodeType.concept, toId: conceptId));
+          for (final skillId in question.skillIds) edges.add(AcademicKnowledgeGraphEdge(fromType: AcademicGraphNodeType.assessmentQuestion, fromId: question.id, relation: AcademicGraphRelation.assessmentToSkill, toType: AcademicGraphNodeType.skill, toId: skillId));
+        }
+        for (final project in [...lesson.projects, ...course.projects]) {
+          for (final skillId in project.skillIds) edges.add(AcademicKnowledgeGraphEdge(fromType: AcademicGraphNodeType.project, fromId: project.id, relation: AcademicGraphRelation.projectToSkill, toType: AcademicGraphNodeType.skill, toId: skillId));
+          for (final conceptId in project.conceptIds) edges.add(AcademicKnowledgeGraphEdge(fromType: AcademicGraphNodeType.project, fromId: project.id, relation: AcademicGraphRelation.projectToConcept, toType: AcademicGraphNodeType.concept, toId: conceptId));
+        }
+      }
+    }
+    return List.unmodifiable(edges);
+  }
   /// Returns every explicit course prerequisite edge in the canonical catalog.
   List<AcademicPrerequisiteEdge> prerequisiteEdges() {
     final courses = _allCourses();
@@ -147,6 +190,18 @@ class AbqariKnowledgeGraph {
         .where((edge) => !courseIds.contains(edge.prerequisiteCourseId))
         .toList(growable: false);
   }
+
+  List<String> lessonsForConcept(String id) => _relatedIds(AcademicGraphNodeType.lesson, AcademicGraphNodeType.concept, AcademicGraphRelation.lessonToConcept, id);
+  List<String> lessonsForSkill(String id) => _relatedIds(AcademicGraphNodeType.lesson, AcademicGraphNodeType.skill, AcademicGraphRelation.lessonToSkill, id);
+  List<String> coursesForKnowledgeUnit(String id) => _relatedIds(AcademicGraphNodeType.course, AcademicGraphNodeType.knowledgeUnit, AcademicGraphRelation.courseToKnowledgeUnit, id);
+  List<String> coursesForKnowledgeArea(String id) => _relatedIds(AcademicGraphNodeType.course, AcademicGraphNodeType.knowledgeArea, AcademicGraphRelation.courseToKnowledgeArea, id);
+  List<String> projectsForSkill(String id) => _relatedIds(AcademicGraphNodeType.project, AcademicGraphNodeType.skill, AcademicGraphRelation.projectToSkill, id);
+  List<String> projectsForConcept(String id) => _relatedIds(AcademicGraphNodeType.project, AcademicGraphNodeType.concept, AcademicGraphRelation.projectToConcept, id);
+  List<String> assessmentQuestionsForSkill(String id) => _relatedIds(AcademicGraphNodeType.assessmentQuestion, AcademicGraphNodeType.skill, AcademicGraphRelation.assessmentToSkill, id);
+  List<String> assessmentQuestionsForConcept(String id) => _relatedIds(AcademicGraphNodeType.assessmentQuestion, AcademicGraphNodeType.concept, AcademicGraphRelation.assessmentToConcept, id);
+
+  List<String> _relatedIds(AcademicGraphNodeType from, AcademicGraphNodeType to, AcademicGraphRelation relation, String target) =>
+      academicEdges().where((e) => e.fromType == from && e.toType == to && e.relation == relation && e.toId == target).map((e) => e.fromId).toSet().toList(growable: false);
 
   bool containsKnowledge(String query) => engine.search(query).isNotEmpty;
 
