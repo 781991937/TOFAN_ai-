@@ -11,6 +11,10 @@ class LearningAnalysis {
     required this.message,
     this.errorQuestionIds = const [],
     this.errorAnalysis = const [],
+    this.conceptGapIds = const [],
+    this.learningOutcomeGapIds = const [],
+    this.skillGapIds = const [],
+    this.remediationTargets = const [],
   });
 
   final String assessmentId;
@@ -22,4 +26,10 @@ class LearningAnalysis {
   final String message;
   final List<String> errorQuestionIds;
   final List<String> errorAnalysis;
+  /// Academic identifiers implicated by incorrect answers.
+  final List<String> conceptGapIds;
+  final List<String> learningOutcomeGapIds;
+  final List<String> skillGapIds;
+  /// Human-readable remediation targets derived from explicit academic links.
+  final List<String> remediationTargets;
 }
