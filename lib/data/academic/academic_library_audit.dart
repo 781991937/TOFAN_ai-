@@ -297,3 +297,140 @@ class AcademicLibraryAuditReport {
   bool get isHealthy => issues.isEmpty;
   bool get isCurriculumReady => isHealthy && curriculumMetadataGaps.isEmpty;
 }
+
+
+enum AcademicBuildabilityStatus { complete, partial, missing }
+
+class AcademicCourseBuildability {
+  const AcademicCourseBuildability({
+    required this.courseId,
+    required this.courseName,
+    required this.status,
+    required this.reasons,
+  });
+
+  final String courseId;
+  final String courseName;
+  final AcademicBuildabilityStatus status;
+  final List<String> reasons;
+}
+
+class AcademicSpecializationBuildability {
+  const AcademicSpecializationBuildability({
+    required this.specializationId,
+    required this.specializationName,
+    required this.status,
+    required this.courses,
+  });
+
+  final String specializationId;
+  final String specializationName;
+  final AcademicBuildabilityStatus status;
+  final List<AcademicCourseBuildability> courses;
+}
+
+/// Project-buildability view used by later curriculum approval gates.
+///
+/// This is a reporting layer over the canonical catalog; it does not create
+/// another academic knowledge store.
+class AcademicLibraryBuildabilityReport {
+  const AcademicLibraryBuildabilityReport._();
+
+  static List<AcademicSpecializationBuildability> run() {
+    final results = <AcademicSpecializationBuildability>[];
+    for (final university in AcademicCatalog.universities) {
+      for (final college in university.colleges) {
+        for (final specialization in college.specializations) {
+          final courses = <AcademicCourseBuildability>[];
+          for (final year in specialization.years) {
+            for (final semester in year.semesters) {
+              for (final course in semester.courses) {
+                courses.add(_course(course));
+              }
+            }
+          }
+          final status = courses.any((item) => item.status == AcademicBuildabilityStatus.missing)
+              ? AcademicBuildabilityStatus.missing
+              : courses.any((item) => item.status == AcademicBuildabilityStatus.partial)
+                  ? AcademicBuildabilityStatus.partial
+                  : AcademicBuildabilityStatus.complete;
+          results.add(AcademicSpecializationBuildability(
+            specializationId: specialization.id,
+            specializationName: specialization.name,
+            status: status,
+            courses: List.unmodifiable(courses),
+          ));
+        }
+      }
+    }
+    return List.unmodifiable(results);
+  }
+
+  static AcademicCourseBuildability _course(AcademicCourse course) {
+    final reasons = <String>[];
+    if (course.knowledgeAreaIds.isEmpty || course.knowledgeUnitIds.isEmpty) {
+      reasons.add('لا توجد خريطة معرفة مكتملة للمقرر.');
+    }
+    if (course.lessons.isEmpty) reasons.add('لا توجد دروس.');
+    if (course.projects.isEmpty) reasons.add('لا يوجد مشروع على مستوى المقرر.');
+
+    final lessons = course.lessons;
+    if (lessons.isNotEmpty) {
+      if (lessons.any((lesson) =>
+          lesson.content.trim().isEmpty ||
+          lesson.learningOutcomes.isEmpty ||
+          lesson.practices.isEmpty ||
+          lesson.assessments.isEmpty ||
+          lesson.skillIds.isEmpty ||
+          lesson.conceptIds.isEmpty)) {
+        reasons.add('يوجد درس ناقص في سلسلة المعرفة→المهارة→التدريب→التقييم.');
+      }
+      if (lessons.any((lesson) => lesson.projects.isEmpty)) {
+        reasons.add('يوجد درس بلا أثر مشروع.');
+      }
+    }
+
+    if (course.projects.isNotEmpty) {
+      if (course.projects.any((project) =>
+          project.requirements.isEmpty ||
+          project.deliverables.isEmpty ||
+          project.milestones.isEmpty ||
+          project.acceptanceCriteria.isEmpty ||
+          project.implementationTasks.isEmpty ||
+          project.testCases.isEmpty ||
+          project.evidenceRequirements.isEmpty)) {
+        reasons.add('يوجد مشروع بلا عقد تنفيذ كامل.');
+      }
+    }
+
+    // A completely generic six-stage lesson set is a depth gap even when
+    // structural fields are populated by normalization.
+    final genericTitles = {
+      'الأساس المفاهيمي',
+      'البنية والمكونات',
+      'التطبيق الموجه',
+      'التحليل والمقارنة',
+      'التصميم والتحقق',
+      'التكامل والمشروع',
+    };
+    final genericCount = lessons.where((lesson) =>
+        genericTitles.any((title) => lesson.title.startsWith(title))).length;
+    if (lessons.length >= 6 && genericCount == lessons.length) {
+      reasons.add('الدروس تعتمد على قالب عام ولا تمثل عمقًا تخصصيًا كافيًا.');
+    }
+
+    final status = reasons.any((reason) =>
+            reason.contains('لا توجد') || reason.contains('بلا'))
+        ? AcademicBuildabilityStatus.missing
+        : reasons.isEmpty
+            ? AcademicBuildabilityStatus.complete
+            : AcademicBuildabilityStatus.partial;
+
+    return AcademicCourseBuildability(
+      courseId: course.id,
+      courseName: course.name,
+      status: status,
+      reasons: List.unmodifiable(reasons),
+    );
+  }
+}
