@@ -65,6 +65,12 @@ void main() {
       'الواقع الافتراضي',
       'الرؤية الحاسوبية',
       'الواقع المعزز',
+      'تصميم البرمجيات',
+      'تصميم النظم',
+      'تصميم الأنظمة',
+      'برمجة واجهات المستخدم',
+      'معالجة اللغة للبيانات',
+      'رياضيات وأسس التشفير',
     ];
 
     for (final course in gapCourses) {
@@ -75,3 +81,28 @@ void main() {
   });
 
 }
+
+
+  test('specialized routing uses deep project blueprints for previously ambiguous courses', () {
+    const courses = [
+      'تصميم البرمجيات',
+      'تصميم النظم',
+      'تصميم الأنظمة',
+      'برمجة واجهات المستخدم',
+      'معالجة اللغة للبيانات',
+      'رياضيات وأسس التشفير',
+    ];
+
+    for (final course in courses) {
+      final lessons = AcademicCourseLessonBlueprints.forCourse(course, const []);
+      expect(lessons, hasLength(6));
+      expect(
+        lessons.every((lesson) =>
+            !lesson.title.startsWith('الأساس المفاهيمي') &&
+            !lesson.title.startsWith('البنية والمكونات') &&
+            !lesson.title.startsWith('التطبيق الموجه')),
+        isTrue,
+      );
+      expect(lessons.last.title, contains('بناء'));
+    }
+  });
