@@ -772,7 +772,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
     String courseName,
   ) {
     final name = courseName.toLowerCase();
-    final isCapstone = name.contains('مشروع التخرج') || name.contains('مشروع التخرج الأمني');
+    final isCapstone = year == 4 && (semester == 1 || semester == 2) && name.contains('مشروع التخرج');
     final isAdvanced = year >= 3;
     final complexity = isCapstone
         ? AcademicCourseComplexity.capstone
