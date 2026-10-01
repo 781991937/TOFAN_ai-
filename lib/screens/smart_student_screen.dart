@@ -15,7 +15,6 @@ class SmartStudentScreen extends ConsumerWidget {
     final profile = ref.watch(studentProfileProvider);
     final smart = ref.watch(smartStudentProvider);
     final plan = ref.watch(learningPlanProvider);
-    final progress = ref.watch(learningProgressProvider);
     final overallProgress = ref.watch(learningProgressProvider.notifier).overallProgress();
     final diagnostic = ref.watch(diagnosticProvider);
     final theme = Theme.of(context);
