@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/learning/analysis_models.dart';
 import '../../domain/learning/learning_models.dart';
+import 'assessment_analysis_engine.dart';
+import 'assessment_remediation_engine.dart';
 import 'skill_update_state.dart';
 
 final assessmentResultProvider =
@@ -12,6 +14,11 @@ final assessmentResultProvider =
 final learningAnalysisProvider =
     NotifierProvider<LearningAnalysisController, LearningAnalysis?>(
   LearningAnalysisController.new,
+);
+
+final assessmentRemediationProvider =
+    NotifierProvider<AssessmentRemediationController, AssessmentRemediationPlan?>(
+  AssessmentRemediationController.new,
 );
 
 class AssessmentController extends Notifier<AssessmentResult?> {
@@ -38,6 +45,11 @@ class AssessmentController extends Notifier<AssessmentResult?> {
     state = result;
 
     final analysis = ref.read(learningAnalysisProvider.notifier).analyze(result);
+    ref.read(assessmentRemediationProvider.notifier).plan(
+      result: result,
+      analysis: analysis,
+    );
+
     if (result.passed) {
       ref.read(skillUpdateHistoryProvider.notifier).apply(
         sourceId: result.assessmentId,
@@ -49,47 +61,44 @@ class AssessmentController extends Notifier<AssessmentResult?> {
     }
   }
 
-  void clear() => state = null;
+  void clear() {
+    state = null;
+    ref.read(learningAnalysisProvider.notifier).clear();
+    ref.read(assessmentRemediationProvider.notifier).clear();
+  }
 }
 
 class LearningAnalysisController extends Notifier<LearningAnalysis?> {
+  final AssessmentAnalysisEngine _engine = const AssessmentAnalysisEngine();
+
   @override
   LearningAnalysis? build() => null;
 
   LearningAnalysis analyze(AssessmentResult result) {
-    final p = result.percentage;
-    final performance = p < 60
-        ? LearningPerformance.needsSupport
-        : p < 70
-            ? LearningPerformance.developing
-            : p < 85
-                ? LearningPerformance.proficient
-                : LearningPerformance.advanced;
-
-    final errorAnalysis = result.wrongQuestionIds.isEmpty
-        ? const <String>[]
-        : result.wrongQuestionIds
-            .map((id) => 'مراجعة السؤال «$id»: أعد قراءة المفهوم المرتبط به، ثم حل مثالًا جديدًا قبل إعادة التقييم.')
-            .toList(growable: false);
-
-    final analysis = LearningAnalysis(
-      assessmentId: result.assessmentId,
-      percentage: p,
-      performance: performance,
-      knowledgeDelta: p < 60 ? 0 : p >= 85 ? 3 : 2,
-      skillDelta: p < 60 ? 0 : p >= 85 ? 2 : 1,
-      capabilityDelta: p < 60 ? 0 : p >= 85 ? 2 : 1,
-      errorQuestionIds: result.wrongQuestionIds,
-      errorAnalysis: errorAnalysis,
-      message: p < 60
-          ? 'راجع الدرس ثم أعد التدريب.'
-          : p < 70
-              ? 'المستوى يتطور؛ واصل التدريب.'
-              : p < 85
-                  ? 'أداء جيد؛ انتقل تدريجيًا إلى التطبيق.'
-                  : 'أداء متقدم؛ انتقل إلى تطبيقات أكثر تحديًا.',
-    );
+    final analysis = _engine.analyze(result);
     state = analysis;
     return analysis;
   }
+
+  void clear() => state = null;
+}
+
+class AssessmentRemediationController
+    extends Notifier<AssessmentRemediationPlan?> {
+  final AssessmentRemediationEngine _engine =
+      const AssessmentRemediationEngine();
+
+  @override
+  AssessmentRemediationPlan? build() => null;
+
+  AssessmentRemediationPlan plan({
+    required AssessmentResult result,
+    required LearningAnalysis analysis,
+  }) {
+    final plan = _engine.plan(result: result, analysis: analysis);
+    state = plan;
+    return plan;
+  }
+
+  void clear() => state = null;
 }
