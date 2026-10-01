@@ -33,3 +33,15 @@ class AuditLog {
   List<AuditEvent> forResource(String resourceId) =>
       List.unmodifiable(events.where((event) => event.resourceId == resourceId));
 }
+
+/// In-memory audit sink for the application boundary.
+/// Persistence can be attached later without changing authorization callers.
+class AuditRecorder {
+  final List<AuditEvent> _events = [];
+
+  List<AuditEvent> get events => List.unmodifiable(_events);
+
+  void record(AuditEvent event) => _events.add(event);
+
+  AuditLog snapshot() => AuditLog(events);
+}
