@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tofan_ai/application/learning/assessment_state.dart';
+import 'package:tofan_ai/application/learning/skill_update_state.dart';
 
 void main() {
   test('assessment attempts are numbered and linked as reassessments', () {
@@ -31,6 +32,14 @@ void main() {
     expect(
       container.read(assessmentHistoryProvider),
       hasLength(2),
+    );
+    expect(
+      container.read(skillUpdateHistoryProvider),
+      hasLength(1),
+    );
+    expect(
+      container.read(skillUpdateHistoryProvider).single.sourceId,
+      second.attemptId,
     );
   });
 }
