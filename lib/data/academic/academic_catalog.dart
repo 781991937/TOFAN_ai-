@@ -538,7 +538,41 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
           : _knowledgeUnitsFor(course.name),
       curriculumProfile: course.curriculumProfile,
       provenance: course.provenance.hasSource ? course.provenance : _libraryProvenance,
-      projects: course.projects.isNotEmpty ? course.projects : [_courseProject(courseId: course.id, courseName: course.name, lessons: lessons)],
+      projects: course.projects.isNotEmpty
+          ? course.projects.map(_normalizeProject).toList(growable: false)
+          : [_courseProject(courseId: course.id, courseName: course.name, lessons: lessons)],
+    );
+  }
+
+  static AcademicProject _normalizeProject(AcademicProject project) {
+    return AcademicProject(
+      id: project.id,
+      title: project.title,
+      description: project.description,
+      skillIds: project.skillIds,
+      conceptIds: project.conceptIds,
+      requirements: project.requirements.isNotEmpty
+          ? project.requirements
+          : const ['تحديد المشكلة والهدف والنطاق.', 'ربط التنفيذ بالمفاهيم والمهارات.'],
+      deliverables: project.deliverables.isNotEmpty
+          ? project.deliverables
+          : const ['تنفيذ أو نموذج أولي.', 'اختبارات ونتائج موثقة.', 'توثيق المشروع.'],
+      milestones: project.milestones.isNotEmpty
+          ? project.milestones
+          : const ['تحليل', 'تنفيذ', 'اختبار وتصحيح', 'توثيق'],
+      acceptanceCriteria: project.acceptanceCriteria.isNotEmpty
+          ? project.acceptanceCriteria
+          : const ['تحقيق المتطلبات الأساسية.', 'وجود دليل اختبار قابل للمراجعة.'],
+      implementationTasks: project.implementationTasks.isNotEmpty
+          ? project.implementationTasks
+          : const ['تحويل المتطلبات إلى خطوات تنفيذية.', 'تنفيذ الحل.', 'اختبار وتصحيح السبب.'],
+      testCases: project.testCases.isNotEmpty
+          ? project.testCases
+          : const ['حالة طبيعية.', 'حالة حدية أو غير متوقعة.', 'حالة فشل متوقعة.'],
+      evidenceRequirements: project.evidenceRequirements.isNotEmpty
+          ? project.evidenceRequirements
+          : const ['دليل تنفيذ أو تحليل.', 'سجل الاختبارات والنتائج.', 'توثيق القيود والقرارات.'],
+      recommendedToolCategories: project.recommendedToolCategories,
     );
   }
 
@@ -557,7 +591,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
       examples: lesson.examples,
       practices: lesson.practices,
       assessments: lesson.assessments,
-      projects: lesson.projects,
+      projects: lesson.projects.map(_normalizeProject).toList(growable: false),
       conceptIds: lesson.conceptIds,
       skillIds: lesson.skillIds,
       skillEvidence: lesson.skillEvidence,
