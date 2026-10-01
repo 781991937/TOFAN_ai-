@@ -15,11 +15,24 @@ void main() {
     final reports = AcademicLibraryBuildabilityAudit.run();
 
     expect(reports, isNotEmpty);
-    expect(reports.every((report) => report.isComplete), isTrue);
+    expect(
+      reports.every((report) => report.isComplete),
+      isTrue,
+      reason: reports
+          .where((report) => !report.isComplete)
+          .map((report) => '${report.specializationName}: ${report.findings.join(' | ')}')
+          .join('\n'),
+    );
     expect(
       reports.every((report) =>
           report.partialCourses == 0 && report.missingCourses == 0),
       isTrue,
+      reason: reports
+          .where((report) =>
+              report.partialCourses != 0 || report.missingCourses != 0)
+          .map((report) =>
+              '${report.specializationName}: partial=${report.partialCourses}, missing=${report.missingCourses}')
+          .join('\n'),
     );
   });
 
