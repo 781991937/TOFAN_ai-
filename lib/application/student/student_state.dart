@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/student/student_models.dart';
 import '../../domain/learning/student_learning_models.dart';
+import '../../domain/learning/analysis_models.dart';
 
 final studentProfileProvider = StateProvider<StudentProfile?>((ref) => null);
 
@@ -82,6 +83,21 @@ class StudentLearningStateController extends Notifier<StudentLearningState> {
 
   double _bounded(double current, double delta) =>
       (current + delta).clamp(0.0, 100.0).toDouble();
+
+  void recordAssessmentAnalysis({
+    required LearningAnalysis analysis,
+    required String sourceId,
+  }) {
+    recordKnowledge(
+      sourceId: sourceId,
+      sourceType: 'assessment_analysis',
+      conceptIds: analysis.conceptGapIds,
+      skillIds: analysis.skillGapIds,
+      capabilityIds: const [],
+      knowledgeLevel: analysis.knowledgeDelta,
+      skillLevel: analysis.skillDelta,
+    );
+  }
 
   void clear() => state = const StudentLearningState();
 }
