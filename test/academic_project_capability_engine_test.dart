@@ -31,7 +31,6 @@ void main() {
       isNotEmpty,
     );
   });
-}
 
   test('course-level project blueprints are consumed even without lesson project titles', () {
     const engine = AcademicProjectCapabilityEngine();
@@ -44,3 +43,4 @@ void main() {
       isTrue,
     );
   });
+}
