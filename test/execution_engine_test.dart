@@ -19,7 +19,7 @@ void main() {
       resource: 'workspace:student-1',
       permissions: [ToolPermission.execute],
     );
-    const denied = ToolAuthorization(actorId: 'student-1');
+    const denied = ToolAuthorization(actorId: 'student-1', permissions: [], resourceScope: []);
     const allowed = ToolAuthorization(
       actorId: 'student-1',
       permissions: [ToolPermission.execute],
@@ -33,7 +33,7 @@ void main() {
     final result = engine.verifyCapability(
       capabilityId: 'cap-1',
       requiredSkillIds: ['skill-1', 'skill-2'],
-      evidence: const [TestEvidence(testId: 'test-1', passed: true, observation: 'ok')],
+      evidence: const [TestEvidence(testId: 'test-1', passed: true, observation: 'ok', skillId: 'skill-1')],
     );
     expect(result.verified, isFalse);
   });
@@ -43,8 +43,8 @@ void main() {
       capabilityId: 'cap-1',
       requiredSkillIds: ['skill-1', 'skill-2'],
       evidence: const [
-        TestEvidence(testId: 'test-1', passed: true, observation: 'ok'),
-        TestEvidence(testId: 'test-2', passed: true, observation: 'ok'),
+        TestEvidence(testId: 'test-1', passed: true, observation: 'ok', skillId: 'skill-1'),
+        TestEvidence(testId: 'test-2', passed: true, observation: 'ok', skillId: 'skill-2'),
       ],
     );
     expect(result.verified, isTrue);
