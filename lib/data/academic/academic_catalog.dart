@@ -1,4 +1,5 @@
 import '../../domain/academic/academic_models.dart';
+import '../../domain/academic/academic_metadata.dart';
 import 'academic_knowledge_unit_catalog.dart';
 import 'academic_lesson_blueprints.dart';
 import 'academic_foundation_catalog.dart';
