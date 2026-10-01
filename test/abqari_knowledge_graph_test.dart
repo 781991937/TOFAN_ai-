@@ -10,4 +10,21 @@ void main() {
     expect(graph.knowledgeUnitsFor('الذكاء الاصطناعي'), isNotEmpty);
     expect(graph.skillsFor('الذكاء الاصطناعي'), isNotEmpty);
   });
+
+  test('prerequisite graph exposes canonical edges without duplicating curriculum', () {
+    const graph = AbqariKnowledgeGraph();
+    final edges = graph.prerequisiteEdges();
+    expect(edges, isNotEmpty);
+    expect(graph.prerequisitesFor('python'), isEmpty);
+    expect(graph.prerequisiteCycleCourseIds(), isEmpty);
+    expect(graph.danglingPrerequisiteEdges(), isEmpty);
+  });
+
+  test('prerequisite closure and reverse traversal are consistent', () {
+    const graph = AbqariKnowledgeGraph();
+    final edges = graph.prerequisiteEdges();
+    final edge = edges.first;
+    expect(graph.prerequisiteChain(edge.courseId), contains(edge.prerequisiteCourseId));
+    expect(graph.dependentsFor(edge.prerequisiteCourseId), contains(edge.courseId));
+  });
 }
