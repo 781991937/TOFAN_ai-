@@ -58,6 +58,47 @@ class AcademicProjectCapability {
 /// this build?" It does not claim that one course is sufficient for a complete
 /// production system. Cross-disciplinary projects are expected to combine
 /// multiple capabilities.
+class AcademicProjectCapabilityPlan {
+  const AcademicProjectCapabilityPlan({
+    required this.request,
+    required this.capabilities,
+    required this.courseIds,
+    required this.specializationIds,
+    required this.knowledgeAreaIds,
+    required this.knowledgeUnitIds,
+    required this.skillIds,
+    required this.conceptIds,
+    required this.lessonIds,
+    required this.projectIds,
+    required this.projectRequirements,
+    required this.implementationTasks,
+    required this.testCases,
+    required this.evidenceRequirements,
+  });
+
+  final String request;
+  final List<AcademicProjectCapability> capabilities;
+  final List<String> courseIds;
+  final List<String> specializationIds;
+  final List<String> knowledgeAreaIds;
+  final List<String> knowledgeUnitIds;
+  final List<String> skillIds;
+  final List<String> conceptIds;
+  final List<String> lessonIds;
+  final List<String> projectIds;
+  final List<String> projectRequirements;
+  final List<String> implementationTasks;
+  final List<String> testCases;
+  final List<String> evidenceRequirements;
+
+  bool get isCrossDisciplinary => specializationIds.length > 1;
+  bool get hasBuildContract =>
+      projectRequirements.isNotEmpty &&
+      implementationTasks.isNotEmpty &&
+      testCases.isNotEmpty &&
+      evidenceRequirements.isNotEmpty;
+}
+
 class AcademicProjectCapabilityEngine {
   const AcademicProjectCapabilityEngine();
 
@@ -158,11 +199,53 @@ class AcademicProjectCapabilityEngine {
     return result.take(30).toList(growable: false);
   }
 
-  bool canStartBuild(String request) =>
-      capabilitiesFor(request).any((item) => item.hasBuildEvidence);
+  AcademicProjectCapabilityPlan planFor(String request) {
+    final matches = capabilitiesFor(request);
+    // Keep the plan derived from the canonical library. Select the strongest
+    // matching capability from each specialization first, then fill remaining
+    // slots with the highest-ranked capabilities. This makes multi-disciplinary
+    // builds explicit without creating a second knowledge base.
+    final selected = <AcademicProjectCapability>[];
+    final seenSpecializations = <String>{};
+    for (final capability in matches) {
+      if (seenSpecializations.add(capability.specializationId)) {
+        selected.add(capability);
+      }
+      if (selected.length == 12) break;
+    }
+    if (selected.length < 12) {
+      for (final capability in matches) {
+        if (selected.any((item) => item.courseId == capability.courseId)) continue;
+        selected.add(capability);
+        if (selected.length == 12) break;
+      }
+    }
+
+    List<String> unique(Iterable<String> values) => values.toSet().toList(growable: false);
+    return AcademicProjectCapabilityPlan(
+      request: request,
+      capabilities: selected,
+      courseIds: unique(selected.map((item) => item.courseId)),
+      specializationIds: unique(selected.map((item) => item.specializationId)),
+      knowledgeAreaIds: unique(selected.expand((item) => item.knowledgeAreaIds)),
+      knowledgeUnitIds: unique(selected.expand((item) => item.knowledgeUnitIds)),
+      skillIds: unique(selected.expand((item) => item.skillIds)),
+      conceptIds: unique(selected.expand((item) => item.conceptIds)),
+      lessonIds: unique(selected.expand((item) => item.lessonIds)),
+      projectIds: unique(selected.expand((item) => item.projectIds)),
+      projectRequirements: unique(selected.expand((item) => item.projectRequirements)),
+      implementationTasks: unique(selected.expand((item) => item.implementationTasks)),
+      testCases: unique(selected.expand((item) => item.testCases)),
+      evidenceRequirements: unique(selected.expand((item) => item.evidenceRequirements)),
+    );
+  }
+
+  bool canStartBuild(String request) => planFor(request).capabilities.any(
+        (item) => item.hasBuildEvidence,
+      );
 
   List<String> missingEvidence(String request) {
-    final matches = capabilitiesFor(request);
+    final matches = planFor(request).capabilities;
     if (matches.isEmpty) {
       return const [
         'لا توجد مطابقة كافية في المكتبة الحالية لهذا المتطلب.',
