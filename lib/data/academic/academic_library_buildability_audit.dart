@@ -114,7 +114,7 @@ class AcademicLibraryBuildabilityAudit {
           .length,
       findings: {
         for (final audit in audits)
-          ...audit.findings.map((finding) => '${audit.courseName}: \$finding'),
+          ...audit.findings.map((finding) => '${audit.courseName}: $finding'),
       }.toList(growable: false),
     );
   }
