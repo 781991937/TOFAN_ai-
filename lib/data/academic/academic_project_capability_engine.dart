@@ -191,6 +191,40 @@ class AcademicProjectCapabilityEngine {
       }
     }
 
+    // Shared foundations are canonical and referenced by all specializations.
+    // Include them as a single foundation capability so project planning can
+    // account for programming, computing, and technical-English prerequisites.
+    for (final course in AcademicCatalog.foundationCourses) {
+      final lessons = course.lessons;
+      result.add(
+        AcademicProjectCapability(
+          courseId: course.id,
+          courseName: course.name,
+          specializationId: 'shared-foundation',
+          specializationName: 'الأساسيات المشتركة',
+          year: 0,
+          semester: 0,
+          knowledgeAreaIds: course.knowledgeAreaIds,
+          knowledgeUnitIds: course.knowledgeUnitIds,
+          skillIds: {
+            ...lessons.expand((lesson) => lesson.skillIds),
+            ...course.projects.expand((project) => project.skillIds),
+          }.toList(growable: false),
+          conceptIds: {
+            ...lessons.expand((lesson) => lesson.conceptIds),
+            ...course.projects.expand((project) => project.conceptIds),
+          }.toList(growable: false),
+          lessonIds: lessons.map((lesson) => lesson.id).toList(growable: false),
+          projectTitles: course.projects.map((project) => project.title).toList(growable: false),
+          projectIds: course.projects.map((project) => project.id).toList(growable: false),
+          projectRequirements: course.projects.expand((project) => project.requirements).toList(growable: false),
+          implementationTasks: course.projects.expand((project) => project.implementationTasks).toList(growable: false),
+          testCases: course.projects.expand((project) => project.testCases).toList(growable: false),
+          evidenceRequirements: course.projects.expand((project) => project.evidenceRequirements).toList(growable: false),
+        ),
+      );
+    }
+
     result.sort((a, b) {
       final scoreB = _capabilityScore(b, tokens);
       final scoreA = _capabilityScore(a, tokens);
