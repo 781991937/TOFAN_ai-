@@ -1,6 +1,7 @@
 import '../../domain/academic/academic_models.dart';
 import 'academic_knowledge_unit_catalog.dart';
 import 'academic_lesson_blueprints.dart';
+import 'academic_foundation_catalog.dart';
 import 'academic_source_catalog.dart';
 
 /// Reference catalog for the global TOFAN AI STUDENT library.
@@ -41,6 +42,7 @@ class AcademicCatalog {
             AcademicSpecialization(
               id: 'ai',
               name: 'الذكاء الاصطناعي',
+              foundationCourseIds: AcademicFoundationCatalog.foundationCourseIds,
               years: [
                 AcademicYear(
                   number: 1,
@@ -724,6 +726,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
     return AcademicSpecialization(
       id: id,
       name: name,
+      foundationCourseIds: AcademicFoundationCatalog.foundationCourseIds,
       years: List.generate(4, (yearIndex) => AcademicYear(
         number: yearIndex + 1,
         semesters: [
