@@ -29,6 +29,7 @@ class AcademicLibraryAudit {
         .map((unit) => unit.id)
         .toSet();
     final knowledgeUnitIds = <String>{};
+    final curriculumMetadataGaps = <String>[];
 
     for (final field in AcademicCatalog.fields) {
       fields++;
@@ -60,6 +61,16 @@ class AcademicLibraryAudit {
                 for (final course in semester.courses) {
                   courses++;
                   allCourses.add(course);
+                  if (course.curriculumProfile == null) {
+                    curriculumMetadataGaps.add('المقرر ${course.name} بلا وزن أكاديمي (credits/contact hours).');
+                  } else if (!course.curriculumProfile!.isValid) {
+                    issues.add('بيانات الوزن الأكاديمي غير صالحة في ${course.name}.');
+                  }
+                  if (course.provenance.status != AcademicPublicationStatus.draft &&
+                      course.provenance.status != AcademicPublicationStatus.privateContent &&
+                      !course.provenance.hasSource) {
+                    issues.add('المقرر المنشور/المراجع ${course.name} بلا مصدر مرجعي.');
+                  }
                   if (course.knowledgeAreaIds.isEmpty) {
                     issues.add('المقرر ${course.name} بلا تصنيف معرفي CS2023.');
                   }
@@ -117,7 +128,7 @@ class AcademicLibraryAudit {
                     for (final skillId in lesson.skillIds) {
                       if (!skillIds.add(skillId)) issues.add('معرف المهارة مكرر: ${skillId}.');
                     }
-                    _checkLesson(issues, lesson, course);
+                    _checkLesson(issues, curriculumMetadataGaps, lesson, course);
                   }
                 }
               }
@@ -145,11 +156,25 @@ class AcademicLibraryAudit {
       courses: courses,
       lessons: lessons,
       issues: List.unmodifiable(issues),
+      curriculumMetadataGaps: List.unmodifiable(curriculumMetadataGaps),
     );
   }
 
-  static void _checkLesson(List<String> issues, AcademicLesson lesson, AcademicCourse course) {
+  static void _checkLesson(
+    List<String> issues,
+    List<String> curriculumMetadataGaps,
+    AcademicLesson lesson,
+    AcademicCourse course,
+  ) {
     final context = '${lesson.title} في ${course.name}';
+    if (lesson.provenance.status == AcademicPublicationStatus.published && !lesson.provenance.hasSource) {
+      issues.add('الدرس المنشور $context بلا مصدر مرجعي.');
+    } else if (!lesson.provenance.hasSource) {
+      curriculumMetadataGaps.add('الدرس $context يحتاج provenance ومصدرًا قبل النشر.');
+    }
+    if (lesson.provenance.isReviewable && lesson.provenance.reviewer == null) {
+      issues.add('الدرس المراجع $context بلا مراجع محدد.');
+    }
     if (lesson.content.trim().isEmpty) issues.add('الدرس $context بلا محتوى.');
     if (lesson.definition.trim().isEmpty) issues.add('الدرس $context بلا تعريف صريح.');
     if (lesson.learningOutcomes.isEmpty) issues.add('الدرس $context بلا نواتج تعلم.');
@@ -256,6 +281,7 @@ class AcademicLibraryAuditReport {
     required this.courses,
     required this.lessons,
     required this.issues,
+    required this.curriculumMetadataGaps,
   });
   final int fields;
   final int universities;
@@ -266,5 +292,8 @@ class AcademicLibraryAuditReport {
   final int courses;
   final int lessons;
   final List<String> issues;
+  /// Metadata gaps do not invalidate structural integrity, but block production readiness.
+  final List<String> curriculumMetadataGaps;
   bool get isHealthy => issues.isEmpty;
+  bool get isCurriculumReady => isHealthy && curriculumMetadataGaps.isEmpty;
 }
