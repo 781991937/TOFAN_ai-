@@ -1,3 +1,4 @@
+import '../domain/academic/academic_models.dart';
 import '../data/academic/academic_catalog.dart';
 import 'academic_knowledge_engine.dart';
 import 'abqari_models.dart';
