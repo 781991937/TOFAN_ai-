@@ -778,7 +778,17 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
 
     if (n.contains('خوارز') || n.contains('هياكل البيانات') || n.contains('data structure')) { add('al-02'); add('al-03'); }
     if (n.contains('معمار') || n.contains('منطق رقمي') || n.contains('processor')) { add('ar-01'); add('ar-02'); }
-    if (n.contains('ذكاء اصطناعي') || n.contains('تعلم الآلة') || n.contains('رؤية حاسوبية') || n.contains('معالجة اللغة') || n.contains('agents')) { add('ai-01'); add('ai-04'); }
+    if (n.contains('ذكاء اصطناعي') || n.contains('ai')) { add('ai-01'); add('ai-06'); }
+    if (n.contains('بحث') || n.contains('حل المشكلات') || n.contains('خوارزم')) { add('ai-02'); }
+    if (n.contains('تمثيل المعرفة') || n.contains('استدلال') || n.contains('منطق')) { add('ai-03'); add('ai-09'); }
+    if (n.contains('تعلم الآلة') || n.contains('machine learning')) { add('ai-04'); }
+    if (n.contains('تطبيقي') || n.contains('أخلاقيات') || n.contains('مجتمعي') || n.contains('مسؤول')) { add('ai-06'); }
+    if (n.contains('احتمال') || n.contains('احتمالي') || n.contains('bayes')) { add('ai-07'); }
+    if (n.contains('تخطيط') || n.contains('planning')) { add('ai-08'); }
+    if (n.contains('وكيل') || n.contains('agents')) { add('ai-01'); }
+    if (n.contains('معالجة اللغة') || n.contains('لغة طبيعية') || n.contains('nlp')) { add('ai-10'); }
+    if (n.contains('روبوت') || n.contains('robot')) { add('ai-11'); }
+    if (n.contains('رؤية حاسوبية') || n.contains('vision') || n.contains('إدراك')) { add('ai-12'); }
     if (n.contains('قواعد البيانات') || n.contains('هندسة البيانات') || n.contains('نمذجة البيانات')) { add('dm-01'); add('dm-02'); }
     if (n.contains('لغات البرمجة') || n.contains('مترجمات') || n.contains('compiler')) { add('fpl-01'); add('fpl-04'); }
     if (n.contains('رسوميات') || n.contains('graphics') || n.contains('واقع افتراضي') || n.contains('واقع معزز')) { add('git-01'); add('git-05'); }
