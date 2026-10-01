@@ -63,6 +63,17 @@ class AcademicCourseLessonBlueprints {
     if (n.contains('منهجية البحث') || n.contains('ندوة')) return _research(courseName);
     if (n.contains('مشروع التخرج')) return _capstone(courseName);
     if (n.contains('أخلاقيات') || n.contains('المهنة') || n.contains('المجتمع')) return _ethics(courseName);
+
+    // Existing domain families are reused for closely related courses so that
+    // generated global curricula do not silently fall back to generic lessons.
+    if (n.contains('الأنظمة الموزعة') || n.contains('الحوسبة المتوازية')) return _systemsFundamentals(courseName);
+    if (n.contains('تحليل المتطلبات') || n.contains('ضمان الجودة') || n.contains('تطوير التطبيقات')) return _software(courseName);
+    if (n.contains('أساسيات تقنية المعلومات') || n.contains('إدارة الأنظمة')) return _itOperations(courseName);
+    if (n.contains('مقدمة نظم المعلومات') || n.contains('تحليل النظم') || n.contains('نظم دعم القرار') || n.contains('إدارة الخدمات')) return _informationSystems(courseName);
+    if (n.contains('معالجة البيانات الضخمة') || n.contains('التجارب وتحليلها') || n.contains('هندسة منصات البيانات')) return _analytics(courseName);
+    if (n.contains('الذكاء الاصطناعي التطبيقي')) return _ai(courseName);
+    if (n.contains('الاستجابة للحوادث') || n.contains('تحليل البرمجيات الخبيثة') || n.contains('التحقيق الجنائي الرقمي')) return _security(courseName);
+    if (n.contains('النمذجة ثلاثية الأبعاد') || n.contains('الواقع الافتراضي') || n.contains('الرؤية الحاسوبية') || n.contains('الواقع المعزز')) return _graphics(courseName);
     return _domain(courseName, knowledgeUnitIds);
   }
 
