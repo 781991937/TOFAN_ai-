@@ -38,6 +38,7 @@ jobs:
           flutter test test/project_library_integration_test.dart
           flutter test test/academic_project_capability_engine_test.dart
           flutter test test/abqari_project_curriculum_trace_test.dart
+          flutter test test/real_multidisciplinary_system_approval_gate_test.dart
 
       - name: Run full test suite
         run: flutter test
