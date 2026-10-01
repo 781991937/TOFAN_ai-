@@ -80,8 +80,6 @@ void main() {
     }
   });
 
-}
-
 
   test('specialized routing uses deep project blueprints for previously ambiguous courses', () {
     const courses = [
@@ -106,3 +104,5 @@ void main() {
       expect(lessons.last.title, contains('بناء'));
     }
   });
+
+}
