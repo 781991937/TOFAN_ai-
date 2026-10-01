@@ -1,0 +1,43 @@
+name: Academic Library Approval Gate
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  academic-library-gate:
+    name: Academic Library Approval Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run academic library approval tests
+        run: flutter test test/academic_library_buildability_audit_test.dart
+
+      - name: Run project/library integration tests
+        run: |
+          flutter test test/project_library_integration_test.dart
+          flutter test test/academic_project_capability_engine_test.dart
+          flutter test test/abqari_project_curriculum_trace_test.dart
+
+      - name: Run full test suite
+        run: flutter test
