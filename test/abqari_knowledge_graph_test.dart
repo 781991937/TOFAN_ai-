@@ -31,6 +31,7 @@ void main() {
     expect(edges.any((e) => e.relation == AcademicGraphRelation.projectToSkill), isTrue);
     final skillEdge = edges.firstWhere((e) => e.relation == AcademicGraphRelation.lessonToSkill);
     expect(graph.lessonsForSkill(skillEdge.toId), contains(skillEdge.fromId));
+    expect(graph.coursesForSkill(skillEdge.toId), isNotEmpty);
     final projectEdge = edges.firstWhere((e) => e.relation == AcademicGraphRelation.projectToSkill);
     expect(graph.projectsForSkill(projectEdge.toId), contains(projectEdge.fromId));
   });
