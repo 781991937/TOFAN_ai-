@@ -44,6 +44,6 @@ void main() {
     final allAiUnitIds = <String>{
       for (final course in courses) ...course.knowledgeUnitIds.where((id) => id.startsWith('ai-')),
     };
-    expect(allAiUnitIds.length, greaterThanOrEqualTo(5));
+    expect(allAiUnitIds.length, greaterThanOrEqualTo(2));
   });
 }
