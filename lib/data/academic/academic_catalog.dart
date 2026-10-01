@@ -780,7 +780,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
     if (n.contains('معمار') || n.contains('منطق رقمي') || n.contains('processor')) { add('ar-01'); add('ar-02'); }
     if (n.contains('ذكاء اصطناعي') || n.contains('ai')) { add('ai-01'); add('ai-06'); }
     if (n.contains('بحث') || n.contains('حل المشكلات') || n.contains('خوارزم')) { add('ai-02'); }
-    if (n.contains('تمثيل المعرفة') || n.contains('استدلال') || n.contains('منطق')) { add('ai-03'); add('ai-09'); }
+    if (n.contains('تمثيل المعرفة') || n.contains('استدلال')) { add('ai-03'); add('ai-09'); }
     if (n.contains('تعلم الآلة') || n.contains('machine learning')) { add('ai-04'); }
     if (n.contains('تطبيقي') || n.contains('أخلاقيات') || n.contains('مجتمعي') || n.contains('مسؤول')) { add('ai-06'); }
     if (n.contains('احتمال') || n.contains('احتمالي') || n.contains('bayes')) { add('ai-07'); }
