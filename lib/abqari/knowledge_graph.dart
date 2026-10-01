@@ -8,7 +8,7 @@ enum AcademicGraphNodeType { course, knowledgeArea, knowledgeUnit, lesson, conce
 enum AcademicGraphRelation {
   courseToKnowledgeArea, courseToKnowledgeUnit, courseToPrerequisite,
   lessonToConcept, lessonToSkill, assessmentToOutcome, assessmentToConcept,
-  assessmentToSkill, projectToSkill, projectToConcept,
+  assessmentToSkill, projectToSkill, projectToConcept, skillToCourse,
 }
 
 class AcademicKnowledgeGraphEdge {
