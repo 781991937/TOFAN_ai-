@@ -1,3 +1,4 @@
+import '../data/academic/academic_catalog.dart';
 import 'academic_knowledge_engine.dart';
 import 'abqari_models.dart';
 import 'knowledge_graph.dart';
@@ -18,6 +19,7 @@ class AbqariProjectEngine {
     final sourceProjectTitles = <String>{for (final item in knowledge) ...item.projectTitles}.toList(growable: false);
     final sourceLessonIds = knowledge.map((item) => item.lessonId).where((id) => id.isNotEmpty).toSet().toList(growable: false);
     final sourceKnowledgeUnitIds = <String>{for (final item in knowledge) ...item.knowledgeUnitIds}.toList(growable: false);
+    final matchedProjects = _matchedProjects(sourceCourseIds, sourceProjectTitles);
     return AbqariProjectPlan(
       idea: request.idea,
       requirements: ['تحديد الهدف ومعيار النجاح: ' + request.idea, 'تحديد المدخلات والمخرجات والقيود.', 'تحديد المخاطر وحالات الفشل قبل التنفيذ.'],
@@ -32,8 +34,53 @@ class AbqariProjectEngine {
       sourceProjectTitles: sourceProjectTitles,
       sourceLessonIds: sourceLessonIds,
       sourceKnowledgeUnitIds: sourceKnowledgeUnitIds,
+      sourceProjectRequirements: _flattenProjects(matchedProjects, (project) => project.requirements),
+      sourceImplementationTasks: _flattenProjects(matchedProjects, (project) => project.implementationTasks),
+      sourceTestCases: _flattenProjects(matchedProjects, (project) => project.testCases),
+      sourceEvidenceRequirements: _flattenProjects(matchedProjects, (project) => project.evidenceRequirements),
     );
   }
+
+
+  List<AcademicProject> _matchedProjects(
+    List<String> courseIds,
+    List<String> projectTitles,
+  ) {
+    final projects = <AcademicProject>[];
+    final wantedCourses = courseIds.toSet();
+    final wantedTitles = projectTitles.toSet();
+    for (final university in AcademicCatalog.universities) {
+      for (final college in university.colleges) {
+        for (final specialization in college.specializations) {
+          for (final year in specialization.years) {
+            for (final semester in year.semesters) {
+              for (final course in semester.courses) {
+                if (!wantedCourses.contains(course.id)) continue;
+                for (final project in [
+                  ...course.projects,
+                  ...course.lessons.expand((lesson) => lesson.projects),
+                ]) {
+                  if (wantedTitles.contains(project.title) || wantedTitles.isEmpty) {
+                    projects.add(project);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    final seen = <String>{};
+    return projects.where((project) => seen.add(project.id)).toList(growable: false);
+  }
+
+  List<String> _flattenProjects(
+    List<AcademicProject> projects,
+    List<String> Function(AcademicProject project) select,
+  ) =>
+      {
+        for (final project in projects) ...select(project),
+      }.toList(growable: false);
 
   List<String> _disciplines(String idea, List<AbqariKnowledgeItem> knowledge) {
     final text = idea + ' ' + knowledge.map((e) => e.title).join(' ');
