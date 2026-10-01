@@ -538,6 +538,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
           : _knowledgeUnitsFor(course.name),
       curriculumProfile: course.curriculumProfile,
       provenance: course.provenance.hasSource ? course.provenance : _libraryProvenance,
+      projects: course.projects.isNotEmpty ? course.projects : [_courseProject(courseId: course.id, courseName: course.name, lessons: lessons)],
     );
   }
 
@@ -717,6 +718,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
       prerequisiteCourseIds: const [],
       knowledgeAreaIds: _knowledgeAreasFor(name),
       knowledgeUnitIds: _knowledgeUnitsFor(name),
+      projects: [_courseProject(courseId: courseId, courseName: name, lessons: lessons)],
       units: [
         AcademicUnit(id: '$courseId-unit-1', title: 'الوحدة الأولى: المدخل والمفاهيم الأساسية', lessons: [lessons[0]]),
         AcademicUnit(id: '$courseId-unit-2', title: 'الوحدة الثانية: المفاهيم والمكونات', lessons: [lessons[1]]),
@@ -726,6 +728,46 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
         AcademicUnit(id: '$courseId-unit-6', title: 'الوحدة السادسة: التكامل والمشروع المصغر', lessons: [lessons[5]]),
       ],
       provenance: _libraryProvenance,
+    );
+  }
+
+  static AcademicProject _courseProject({
+    required String courseId,
+    required String courseName,
+    required List<AcademicLesson> lessons,
+  }) {
+    final skills = <String>{for (final lesson in lessons) ...lesson.skillIds}.toList(growable: false);
+    final concepts = <String>{for (final lesson in lessons) ...lesson.conceptIds}.toList(growable: false);
+    return AcademicProject(
+      id: '$courseId-capstone',
+      title: 'مشروع المقرر: $courseName',
+      description: 'مشروع تكاملي يطلب من الطالب تحويل المعرفة والمهارات المتراكمة في مقرر «$courseName» إلى حل قابل للاختبار والتوثيق.',
+      conceptIds: concepts,
+      skillIds: skills,
+      requirements: [
+        'صياغة المشكلة والهدف ونطاق المشروع.',
+        'استخدام المفاهيم والمهارات المكتسبة من دروس المقرر.',
+        'تحديد المدخلات والمخرجات والقيود وحالات الفشل.',
+      ],
+      deliverables: [
+        'تصميم أو مخطط للحل.',
+        'تنفيذ أو نموذج أولي قابل للاختبار بحسب طبيعة المقرر.',
+        'اختبارات ونتائج موثقة.',
+        'تقرير يربط التنفيذ بالدروس والمهارات.',
+      ],
+      milestones: [
+        'تحليل المتطلبات.',
+        'التصميم.',
+        'التنفيذ.',
+        'الاختبار والتصحيح.',
+        'التوثيق وعرض الدليل.',
+      ],
+      acceptanceCriteria: [
+        'كل متطلب رئيسي له دليل تنفيذ أو تحليل.',
+        'الاختبارات تغطي الحالات الطبيعية والحالات الحدية المناسبة.',
+        'النتائج قابلة للتفسير والمراجعة.',
+      ],
+      recommendedToolCategories: ['أدوات التطوير', 'أدوات الاختبار', 'أدوات التوثيق'],
     );
   }
 
