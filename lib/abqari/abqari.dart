@@ -14,6 +14,7 @@ export 'security_lab.dart';
 export 'experience_memory.dart';
 export 'assessment_experience_bridge.dart';
 export 'planning_engine.dart';
+export '../application/tools/tool_registry.dart';
 
 class TofanAbqari {
   const TofanAbqari({
