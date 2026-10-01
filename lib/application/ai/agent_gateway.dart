@@ -2,6 +2,7 @@ import '../../domain/execution/execution_models.dart';
 import '../../domain/security/agent_authorization_models.dart';
 import '../../domain/security/audit_models.dart';
 import '../../domain/security/oc_auth_models.dart';
+import '../../domain/security/owner_authority.dart';
 import '../execution/abqari_execution_coordinator.dart';
 import 'agent_state.dart';
 
@@ -21,6 +22,7 @@ class AgentGateway {
   AgentGateway({
     this.policy = const AgentPolicy(),
     this.ocAuth = const OcAuthService(),
+    this.ownerAuthority = const OwnerAuthority(),
     AbqariExecutionCoordinator? executionCoordinator,
     AuditRecorder? auditRecorder,
   })  : executionCoordinator =
@@ -29,10 +31,9 @@ class AgentGateway {
 
   final AgentPolicy policy;
   final OcAuthService ocAuth;
+  final OwnerAuthority ownerAuthority;
   final AbqariExecutionCoordinator executionCoordinator;
   final AuditRecorder auditRecorder;
-
-  static const String ownerActorId = 'raedtofan86@gmail.com';
 
   Future<AiAgentResponse> dispatch({
     required AgentContext context,
@@ -70,7 +71,7 @@ class AgentGateway {
 
     // The configured owner identity has all system permissions and does not
     // require a self-issued scoped grant.
-    if (context.actorId != ownerActorId) {
+    if (!ownerAuthority.isOwner(context.actorId)) {
       if (grant == null) {
         _audit(context.actorId, action, resource, AuditOutcome.denied,
             'Owner-scoped grant is required.');
