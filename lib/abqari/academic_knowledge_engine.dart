@@ -53,7 +53,7 @@ class AcademicKnowledgeEngine {
     return results.take(20).toList(growable: false);
   }
 
-  List<String> _tokens(String text) => text.toLowerCase().split(RegExp(r'[^\\p{L}\\p{N}_]+', unicode: true)).where((token) => token.length > 1).toList(growable: false);
+  List<String> _tokens(String text) => text.toLowerCase().split(RegExp(r'[^\p{L}\p{N}_]+', unicode: true)).where((token) => token.length > 1).toList(growable: false);
 
   int _score(AbqariKnowledgeItem item, List<String> tokens) {
     final haystack = [
