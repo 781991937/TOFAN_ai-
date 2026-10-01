@@ -37,7 +37,10 @@ class AcademicKnowledgeEngine {
                           courseId: course.id,
                           unitId: unit.id,
                           lessonId: lesson.id,
-                          projectTitles: lesson.projects.map((p) => p.title).toList(growable: false),
+                          projectTitles: <String>{
+                            ...lesson.projects.map((p) => p.title),
+                            ...course.projects.map((p) => p.title),
+                          }.toList(growable: false),
                         ));
                       }
                     }
