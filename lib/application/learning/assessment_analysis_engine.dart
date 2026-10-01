@@ -114,20 +114,12 @@ class AssessmentAnalysisEngine {
 
   Map<String, AssessmentQuestion> _questionContext(String assessmentId) {
     final result = <String, AssessmentQuestion>{};
-    for (final college in AcademicCatalog.referenceUniversity.colleges) {
-      for (final specialization in college.specializations) {
-        for (final year in specialization.years) {
-          for (final semester in year.semesters) {
-            for (final course in semester.courses) {
-              for (final lesson in course.lessons) {
-                for (final assessment in lesson.assessments) {
-                  if (assessment.id != assessmentId) continue;
-                  for (final question in assessment.questions) {
-                    result[question.id] = question;
-                  }
-                }
-              }
-            }
+    for (final course in _allCourses()) {
+      for (final lesson in course.lessons) {
+        for (final assessment in lesson.assessments) {
+          if (assessment.id != assessmentId) continue;
+          for (final question in assessment.questions) {
+            result[question.id] = question;
           }
         }
       }
