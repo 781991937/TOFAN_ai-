@@ -21,7 +21,8 @@ class AbqariProjectEngine {
   AbqariProjectPlan plan(AbqariProjectRequest request) {
     final knowledge = knowledgeEngine.search(request.idea);
     final gap = learningGapEngine.analyze(request.idea);
-    final capabilities = capabilityEngine.capabilitiesFor(request.idea);
+    final capabilityPlan = capabilityEngine.planFor(request.idea);
+    final capabilities = capabilityPlan.capabilities;
     final disciplines = _disciplines(request.idea, knowledge);
     final skills = {
       ...knowledge.expand((item) => item.skillIds),
@@ -54,14 +55,25 @@ class AbqariProjectEngine {
         if (gap.missing)
           'لا توجد معرفة مطابقة في المكتبة بعد؛ يجب التعلم أو إضافة محتوى أكاديمي قبل التنفيذ.',
         ...capabilityEngine.missingEvidence(request.idea),
+        if (!capabilityPlan.hasBuildContract)
+          'أدلة البناء الكاملة غير متوفرة بعد في المصادر المطابقة؛ يجب تعميق المقررات قبل التنفيذ.',
       }.toList(growable: false),
       phases: const ['تحليل المتطلبات', 'تصميم المعمارية', 'تحديد المكونات والواجهات', 'التنفيذ البرمجي', 'المحاكاة داخل الحاسوب', 'الاختبار وتحليل الأخطاء', 'التصحيح وإعادة الاختبار', 'توثيق المشروع وتحديث الخبرة'],
       softwareOutputs: const ['مخطط معماري', 'هيكل مشروع برمجي', 'كود قابل للاختبار', 'اختبارات آلية ومحاكاة عند توفر نموذج برمجي', 'تقرير نتائج وأخطاء'],
       physicalComponents: _physicalComponents(request.idea),
-      sourceCourseIds: sourceCourseIds,
+      sourceCourseIds: {
+        ...sourceCourseIds,
+        ...capabilityPlan.courseIds,
+      }.toList(growable: false),
       sourceProjectTitles: sourceProjectTitles,
-      sourceLessonIds: sourceLessonIds,
-      sourceKnowledgeUnitIds: sourceKnowledgeUnitIds,
+      sourceLessonIds: {
+        ...sourceLessonIds,
+        ...capabilityPlan.lessonIds,
+      }.toList(growable: false),
+      sourceKnowledgeUnitIds: {
+        ...sourceKnowledgeUnitIds,
+        ...capabilityPlan.knowledgeUnitIds,
+      }.toList(growable: false),
       sourceProjectRequirements: _flattenProjects(matchedProjects, (project) => project.requirements),
       sourceImplementationTasks: _flattenProjects(matchedProjects, (project) => project.implementationTasks),
       sourceTestCases: _flattenProjects(matchedProjects, (project) => project.testCases),
