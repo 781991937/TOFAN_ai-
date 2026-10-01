@@ -52,6 +52,55 @@ class AcademicKnowledgeEngine {
         }
       }
     }
+    // Shared foundations are canonical library content referenced by every
+    // specialization; they are indexed once rather than copied into curricula.
+    for (final course in AcademicCatalog.foundationCourses) {
+      for (final unit in course.normalizedUnits) {
+        for (final lesson in unit.lessons) {
+          final canonicalUnits = AcademicKnowledgeUnitCatalog.forCourse(course);
+          final canonicalUnitText = canonicalUnits
+              .map((item) => '${item.name} ${item.arabicName} ${item.description}')
+              .join(' ');
+          final haystack = <String>[
+            'الأساسيات المشتركة',
+            course.name,
+            unit.title,
+            canonicalUnitText,
+            lesson.title,
+            lesson.definition,
+            lesson.content,
+            ...lesson.applications,
+            ...lesson.keyTerms,
+            ...lesson.learningOutcomes,
+          ].join(' ').toLowerCase();
+          if (!tokens.any(haystack.contains)) continue;
+          results.add(
+            AbqariKnowledgeItem(
+              id: lesson.id,
+              title: lesson.title,
+              sourcePath: 'foundation/course/${course.id}/unit/${unit.id}',
+              content: lesson.content,
+              definition: lesson.definition,
+              applications: lesson.applications,
+              learningOutcomes: lesson.learningOutcomes,
+              terms: lesson.keyTerms,
+              conceptIds: lesson.conceptIds,
+              skillIds: lesson.skillIds,
+              knowledgeAreaIds: course.knowledgeAreaIds,
+              knowledgeUnitIds: course.knowledgeUnitIds,
+              courseId: course.id,
+              unitId: unit.id,
+              lessonId: lesson.id,
+              projectTitles: <String>{
+                ...lesson.projects.map((p) => p.title),
+                ...course.projects.map((p) => p.title),
+              }.toList(growable: false),
+            ),
+          );
+        }
+      }
+    }
+
     results.sort((a, b) => _score(b, tokens).compareTo(_score(a, tokens)));
     return results.take(20).toList(growable: false);
   }
