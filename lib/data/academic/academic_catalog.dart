@@ -1966,6 +1966,8 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
     );
   }
 
+}
+
 class _LessonBlueprint {
   const _LessonBlueprint({
     required this.titles,
