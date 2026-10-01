@@ -49,7 +49,7 @@ class ToolAuthorization {
   const ToolAuthorization({
     required this.actorId,
     required this.permissions,
-    this.resourceScope = const [],
+    required this.resourceScope,
   });
   final String actorId;
   final List<ToolPermission> permissions;
@@ -57,7 +57,7 @@ class ToolAuthorization {
 
   bool permits(ToolPermission permission) => permissions.contains(permission);
   bool permitsResource(String resource) =>
-      resourceScope.isEmpty || resourceScope.contains(resource);
+      actorId.trim().isNotEmpty && resourceScope.contains(resource);
 }
 
 class WorkspaceRequest {
@@ -86,10 +86,12 @@ class TestEvidence {
     required this.testId,
     required this.passed,
     required this.observation,
+    this.skillId = '',
   });
   final String testId;
   final bool passed;
   final String observation;
+  final String skillId;
 }
 
 class CapabilityVerification {
