@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import '../models/chat_message.dart';
 import '../models/conversation.dart';
 import '../domain/security/audit_models.dart';
+import '../abqari/experience_memory.dart';
 import '../utils/constants.dart';
 
 /// Local persistence adapter for client-owned data.
@@ -54,6 +55,7 @@ class AppDatabase {
 
     await _createAuditTable(db);
     await _createStudentLearningTable(db);
+    await _createExperienceMemoryTable(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -62,6 +64,9 @@ class AppDatabase {
     }
     if (oldVersion < 3) {
       await _createStudentLearningTable(db);
+    }
+    if (oldVersion < 4) {
+      await _createExperienceMemoryTable(db);
     }
   }
 
@@ -72,6 +77,28 @@ class AppDatabase {
         payload TEXT NOT NULL,
         updated_at INTEGER NOT NULL
       )
+    ''');
+  }
+
+  Future<void> _createExperienceMemoryTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS ${AppConstants.experienceMemoryTable} (
+        id TEXT PRIMARY KEY,
+        actor_id TEXT NOT NULL,
+        task TEXT NOT NULL,
+        outcome TEXT NOT NULL,
+        observation TEXT NOT NULL,
+        learned_skill_ids TEXT NOT NULL,
+        created_at INTEGER NOT NULL
+      )
+    ''');
+    await db.execute('''
+      CREATE INDEX IF NOT EXISTS ${AppConstants.experienceActorIndex}
+      ON ${AppConstants.experienceMemoryTable} (actor_id)
+    ''');
+    await db.execute('''
+      CREATE INDEX IF NOT EXISTS ${AppConstants.experienceCreatedIndex}
+      ON ${AppConstants.experienceMemoryTable} (created_at)
     ''');
   }
 
@@ -186,6 +213,73 @@ class AppDatabase {
       AppConstants.studentLearningTable,
       where: 'student_id = ?',
       whereArgs: [studentId],
+    );
+  }
+
+  Future<void> saveExperience(AbqariExperience experience) async {
+    final db = await database;
+    await db.insert(
+      AppConstants.experienceMemoryTable,
+      {
+        'id': experience.id,
+        'actor_id': experience.actorId,
+        'task': experience.task,
+        'outcome': experience.outcome.name,
+        'observation': experience.observation,
+        'learned_skill_ids': experience.learnedSkillIds.join('|'),
+        'created_at': experience.createdAt.millisecondsSinceEpoch,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List<AbqariExperience>> getExperiences({
+    String? actorId,
+    String? skillId,
+  }) async {
+    final db = await database;
+    final clauses = <String>[];
+    final args = <Object?>[];
+    if (actorId != null) {
+      clauses.add('actor_id = ?');
+      args.add(actorId);
+    }
+    final rows = await db.query(
+      AppConstants.experienceMemoryTable,
+      where: clauses.isEmpty ? null : clauses.join(' AND '),
+      whereArgs: args.isEmpty ? null : args,
+      orderBy: 'created_at DESC',
+    );
+    final experiences = rows.map((row) {
+      final outcomeName = row['outcome'] as String;
+      final outcome = ExperienceOutcome.values.firstWhere(
+        (value) => value.name == outcomeName,
+        orElse: () => ExperienceOutcome.failure,
+      );
+      return AbqariExperience(
+        id: row['id'] as String,
+        actorId: row['actor_id'] as String,
+        task: row['task'] as String,
+        outcome: outcome,
+        observation: row['observation'] as String,
+        learnedSkillIds: (row['learned_skill_ids'] as String)
+            .split('|')
+            .where((id) => id.isNotEmpty)
+            .toList(growable: false),
+        createdAt: DateTime.fromMillisecondsSinceEpoch(row['created_at'] as int),
+      );
+    }).where((experience) {
+      return skillId == null || experience.learnedSkillIds.contains(skillId);
+    }).toList(growable: false);
+    return experiences;
+  }
+
+  Future<void> clearExperiences({String? actorId}) async {
+    final db = await database;
+    await db.delete(
+      AppConstants.experienceMemoryTable,
+      where: actorId == null ? null : 'actor_id = ?',
+      whereArgs: actorId == null ? null : [actorId],
     );
   }
 
