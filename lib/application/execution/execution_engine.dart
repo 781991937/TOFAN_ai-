@@ -25,10 +25,12 @@ class ExecutionEngine {
     required List<TestEvidence> evidence,
   }) {
     final passed = evidence.where((item) => item.passed).toList(growable: false);
-    final hasRequiredTests = requiredSkillIds.isEmpty
-        ? passed.isNotEmpty
-        : passed.length >= requiredSkillIds.length;
-    final verified = requiredSkillIds.isNotEmpty && hasRequiredTests;
+    final coveredSkills = passed
+        .map((item) => item.skillId)
+        .where((id) => id.isNotEmpty)
+        .toSet();
+    final verified = requiredSkillIds.isNotEmpty &&
+        requiredSkillIds.every(coveredSkills.contains);
     return CapabilityVerification(
       capabilityId: capabilityId,
       verified: verified,
