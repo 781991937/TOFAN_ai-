@@ -43,4 +43,20 @@ void main() {
       isTrue,
     );
   });
+  test('multidisciplinary build plan aggregates canonical courses and evidence', () {
+    const engine = AcademicProjectCapabilityEngine();
+    final plan = engine.planFor('نظام ذكي ويب مع قاعدة بيانات وشبكة وأمن');
+
+    expect(plan.capabilities, isNotEmpty);
+    expect(plan.courseIds, isNotEmpty);
+    expect(plan.knowledgeUnitIds, isNotEmpty);
+    expect(plan.skillIds, isNotEmpty);
+    expect(plan.lessonIds, isNotEmpty);
+    expect(plan.projectIds, isNotEmpty);
+    expect(plan.projectRequirements, isNotEmpty);
+    expect(plan.implementationTasks, isNotEmpty);
+    expect(plan.testCases, isNotEmpty);
+    expect(plan.evidenceRequirements, isNotEmpty);
+  });
+
 }
