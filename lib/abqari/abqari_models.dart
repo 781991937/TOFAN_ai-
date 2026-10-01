@@ -27,10 +27,16 @@ class AbqariProjectPlan {
     this.sourceCourseIds = const [],
     this.sourceProjectTitles = const [],
     this.sourceLessonIds = const [],
-    this.sourceKnowledgeUnitIds = const []});
+    this.sourceKnowledgeUnitIds = const [],
+    this.sourceProjectRequirements = const [],
+    this.sourceImplementationTasks = const [],
+    this.sourceTestCases = const [],
+    this.sourceEvidenceRequirements = const []});
   final String idea;
   final List<String> requirements, disciplines, skills, knowledgeGaps, phases, softwareOutputs, physicalComponents;
   /// Exact academic sources the plan was derived from; no parallel curriculum is created.
   final List<String> sourceCourseIds, sourceProjectTitles, sourceLessonIds, sourceKnowledgeUnitIds;
+  /// Build contract extracted from canonical academic projects.
+  final List<String> sourceProjectRequirements, sourceImplementationTasks, sourceTestCases, sourceEvidenceRequirements;
   final List<AbqariKnowledgeItem> knowledge;
 }
