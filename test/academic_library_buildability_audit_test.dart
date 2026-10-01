@@ -36,4 +36,19 @@ void main() {
       isTrue,
     );
   });
+
+  test('buildability matrix validates course delivery metadata and dependencies', () {
+    final courses = AcademicLibraryBuildabilityAudit.courses();
+
+    expect(
+      courses.every(
+        (course) => !course.findings.any(
+          (finding) =>
+              finding.contains('بيانات وزن/تقديم') ||
+              finding.contains('متطلب سابق غير صالح أو ذاتي'),
+        ),
+      ),
+      isTrue,
+    );
+  });
 }
