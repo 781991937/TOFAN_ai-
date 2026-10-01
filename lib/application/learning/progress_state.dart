@@ -1,3 +1,4 @@
+import '../../domain/academic/academic_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/academic/academic_catalog.dart';
