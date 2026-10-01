@@ -16,6 +16,7 @@ class SmartStudentScreen extends ConsumerWidget {
     final smart = ref.watch(smartStudentProvider);
     final plan = ref.watch(learningPlanProvider);
     final progress = ref.watch(learningProgressProvider);
+    final overallProgress = ref.watch(learningProgressProvider.notifier).overallProgress();
     final diagnostic = ref.watch(diagnosticProvider);
     final theme = Theme.of(context);
     final primary = theme.colorScheme.primary;
@@ -122,10 +123,10 @@ class SmartStudentScreen extends ConsumerWidget {
                                   fontWeight: FontWeight.w900)),
                           const SizedBox(height: 6),
                           LinearProgressIndicator(
-                              value: progress.overallProgress()),
+                              value: overallProgress),
                           const SizedBox(height: 6),
                           Text(
-                            (progress.overallProgress() * 100).toStringAsFixed(0) +
+                            (overallProgress * 100).toStringAsFixed(0) +
                                 '% من دروس المكتبة المرجعية',
                             style: theme.textTheme.bodySmall,
                           ),
