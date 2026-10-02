@@ -1,5 +1,5 @@
-import 'experience_memory.dart';
-import 'experience_memory_repository.dart';
+import '../../abqari/experience_memory.dart';
+import '../../abqari/experience_memory_repository.dart';
 
 class PersistentExperienceMemory {
   PersistentExperienceMemory({required this.repository});
