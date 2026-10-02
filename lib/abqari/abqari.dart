@@ -31,8 +31,8 @@ export '../domain/learning/student_learning_repository.dart';
 export '../data/persistence/sqlite_student_learning_repository.dart';
 export '../data/persistence/sqlite_experience_memory_repository.dart';
 
-export '../application/abqari/persistent_experience_memory.dart';
 
+export '../application/abqari/persistent_experience_memory.dart';
 class TofanAbqari {
   const TofanAbqari({
     this.projectEngine = const AbqariProjectEngine(),
