@@ -341,9 +341,30 @@ class AcademicProjectCapabilityEngine {
     return tokens.where(haystack.contains).length;
   }
 
+  static const _queryStopWords = <String>{
+    'في',
+    'من',
+    'مع',
+    'على',
+    'إلى',
+    'عن',
+    'هذا',
+    'هذه',
+    'ذلك',
+    'تلك',
+    'غير',
+    'موجود',
+    'موجودة',
+    'الموجود',
+    'الموجودة',
+    'المكتبة',
+  };
+
   List<String> _tokens(String text) => text
       .toLowerCase()
       .split(RegExp(r'[^\p{L}\p{N}_]+', unicode: true))
-      .where((token) => token.length > 1)
+      .where(
+        (token) => token.length > 1 && !_queryStopWords.contains(token),
+      )
       .toList(growable: false);
 }
