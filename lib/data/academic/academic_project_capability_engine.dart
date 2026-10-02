@@ -114,7 +114,7 @@ class AcademicProjectCapabilityEngine {
               for (final semester in year.semesters) {
                 for (final course in semester.courses) {
                   final score = _score(course, tokens);
-                  if (score == 0) continue;
+                  if (score < 2) continue;
 
                   final lessons = course.lessons.where((lesson) {
                     final haystack = [
@@ -195,7 +195,7 @@ class AcademicProjectCapabilityEngine {
     // Include them as a single foundation capability so project planning can
     // account for programming, computing, and technical-English prerequisites.
     for (final course in AcademicCatalog.foundationCourses) {
-      if (_score(course, tokens) == 0) continue;
+      if (_score(course, tokens) < 2) continue;
       final lessons = course.lessons;
       result.add(
         AcademicProjectCapability(
