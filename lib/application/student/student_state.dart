@@ -1,9 +1,12 @@
 import 'package:flutter_riverpod/legacy.dart';
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/student/student_models.dart';
 import '../../domain/learning/student_learning_models.dart';
 import '../../domain/learning/analysis_models.dart';
+import '../../providers/security_provider.dart';
 
 final studentProfileProvider = StateProvider<StudentProfile?>((ref) => null);
 
@@ -79,6 +82,22 @@ class StudentLearningStateController extends Notifier<StudentLearningState> {
         ),
       ]),
     );
+
+    // Persist the new state without changing the synchronous domain API.
+    unawaited(_persistState(state));
+  }
+
+  Future<void> _persistState(StudentLearningState value) async {
+    try {
+      final userId = ref.read(authenticationGatewayProvider);
+      final session = await userId.currentSession();
+      final actorId = session?.identity.actorId;
+      if (actorId == null || actorId.isEmpty) return;
+      await ref.read(studentLearningRepositoryProvider).save(actorId, value);
+    } catch (_) {
+      // Persistence failures must not corrupt the in-memory learning state.
+      // The persistence layer remains observable through its own diagnostics.
+    }
   }
 
   double _bounded(double current, double delta) =>
