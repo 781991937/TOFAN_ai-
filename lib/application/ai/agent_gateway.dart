@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import '../../domain/execution/execution_models.dart';
 import '../../domain/security/agent_authorization_models.dart';
 import '../../domain/security/authentication_models.dart';
 import '../../domain/security/audit_models.dart';
+import '../../domain/security/audit_repository.dart';
 import '../../domain/security/oc_auth_models.dart';
 import '../../domain/security/owner_authority.dart';
 import '../execution/abqari_execution_coordinator.dart';
@@ -26,6 +29,7 @@ class AgentGateway {
     this.ownerAuthority = const OwnerAuthority(),
     AbqariExecutionCoordinator? executionCoordinator,
     AuditRecorder? auditRecorder,
+    this.auditRepository,
   })  : executionCoordinator =
             executionCoordinator ?? const AbqariExecutionCoordinator(),
         auditRecorder = auditRecorder ?? AuditRecorder();
@@ -35,6 +39,7 @@ class AgentGateway {
   final OwnerAuthority ownerAuthority;
   final AbqariExecutionCoordinator executionCoordinator;
   final AuditRecorder auditRecorder;
+  final AuditRepository? auditRepository;
 
   /// Dispatches only from a currently authenticated Supabase session.
   /// The caller cannot supply or override actorId/role.
@@ -163,16 +168,26 @@ class AgentGateway {
     AuditOutcome outcome,
     String reason,
   ) {
-    auditRecorder.record(
-      AuditEvent(
-        id: 'agent-' + DateTime.now().microsecondsSinceEpoch.toString(),
-        actorId: actorId,
-        action: action,
-        resourceId: resourceId,
-        outcome: outcome,
-        timestamp: DateTime.now(),
-        reason: reason,
-      ),
+    final event = AuditEvent(
+      id: 'agent-' + DateTime.now().microsecondsSinceEpoch.toString(),
+      actorId: actorId,
+      action: action,
+      resourceId: resourceId,
+      outcome: outcome,
+      timestamp: DateTime.now(),
+      reason: reason,
     );
+    auditRecorder.record(event);
+    if (auditRepository != null) {
+      unawaited(_persistAudit(event));
+    }
+  }
+
+  Future<void> _persistAudit(AuditEvent event) async {
+    try {
+      await auditRepository!.save(event);
+    } catch (_) {
+      // Audit persistence failure must not alter the authorization decision.
+    }
   }
 }
