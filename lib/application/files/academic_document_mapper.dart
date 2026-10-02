@@ -95,7 +95,7 @@ class AcademicDocumentMapper {
 
   List<String> _tokens(String text) => text
       .toLowerCase()
-      .split(RegExp(r'[^\\p{L}\\p{N}_]+', unicode: true))
+      .split(RegExp(r'[^\p{L}\p{N}_]+', unicode: true))
       .where((token) => token.length > 1)
       .toList(growable: false);
 
