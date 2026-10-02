@@ -27,6 +27,7 @@ final agentGatewayProvider = Provider<AgentGateway>((ref) {
     ownerAuthority: SupabaseConfig.ownerActorId.isEmpty
         ? const OwnerAuthority()
         : OwnerAuthority(ownerActorId: SupabaseConfig.ownerActorId),
+    auditRepository: ref.read(auditRepositoryProvider),
   );
 });
 
