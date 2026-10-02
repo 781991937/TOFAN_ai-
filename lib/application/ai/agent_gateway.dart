@@ -1,5 +1,6 @@
 import '../../domain/execution/execution_models.dart';
 import '../../domain/security/agent_authorization_models.dart';
+import '../../domain/security/authentication_models.dart';
 import '../../domain/security/audit_models.dart';
 import '../../domain/security/oc_auth_models.dart';
 import '../../domain/security/owner_authority.dart';
@@ -34,6 +35,42 @@ class AgentGateway {
   final OwnerAuthority ownerAuthority;
   final AbqariExecutionCoordinator executionCoordinator;
   final AuditRecorder auditRecorder;
+
+  /// Dispatches only from a currently authenticated Supabase session.
+  /// The caller cannot supply or override actorId/role.
+  Future<AiAgentResponse> dispatchAuthenticated({
+    required AuthenticationGateway authentication,
+    required AgentTask task,
+    required AiAgentRequest request,
+    required AiAgent agent,
+    AgentExecutionRequest? execution,
+    ScopedGrant? grant,
+    bool ownerApproved = false,
+  }) async {
+    final session = await authentication.currentSession();
+    if (session == null || !session.isActive) {
+      throw StateError('An active authenticated session is required.');
+    }
+
+    final identity = session.identity;
+    final role = TofanPrincipalRole.values.where(
+      (value) => value.name == identity.role,
+    ).firstOrNull ?? TofanPrincipalRole.student;
+
+    return dispatch(
+      context: AgentContext(
+        actorId: identity.actorId,
+        role: role,
+        studentId: role == TofanPrincipalRole.student ? identity.actorId : null,
+      ),
+      task: task,
+      request: request,
+      agent: agent,
+      execution: execution,
+      grant: grant,
+      ownerApproved: ownerApproved,
+    );
+  }
 
   Future<AiAgentResponse> dispatch({
     required AgentContext context,
