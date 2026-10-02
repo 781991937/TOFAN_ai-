@@ -15,7 +15,6 @@ class AuthenticatedIdentity {
   final DateTime authenticatedAt;
   final String sessionId;
 
-  bool get isOwner => email.toLowerCase() == 'raedtofan86@gmail.com';
 }
 
 class AuthenticationSession {
