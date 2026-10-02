@@ -14,8 +14,8 @@ class _FakeAgent implements AiAgent {
 }
 
 void main() {
-  const gateway = AgentGateway();
-  const agent = _FakeAgent();
+  final gateway = AgentGateway();
+  final agent = _FakeAgent();
 
   test('student may read academic content', () async {
     final response = await gateway.dispatch(
