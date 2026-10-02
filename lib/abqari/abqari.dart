@@ -1,3 +1,4 @@
+export '../application/abqari/persistent_experience_memory.dart';
 import 'planning_engine.dart';
 import 'project_engine.dart';
 import 'abqari_agent.dart';
@@ -47,4 +48,3 @@ class TofanAbqari {
   AbqariActionPlan plan(String request) => agent.plan(request);
 }
 
-export '../application/abqari/persistent_experience_memory.dart';
