@@ -57,6 +57,28 @@ class SupabaseAuthenticationGateway implements AuthenticationGateway {
   }
 
   @override
+  Future<AuthenticationSession?> currentSession() async {
+    final session = _client.auth.currentSession;
+    final user = _client.auth.currentUser;
+    if (session == null || user == null) {
+      return null;
+    }
+
+    return AuthenticationSession(
+      identity: AuthenticatedIdentity(
+        actorId: user.id,
+        email: user.email ?? '',
+        role: 'student',
+        authenticatedAt: DateTime.now(),
+      ),
+      status: AuthenticationStatus.authenticated,
+      expiresAt: session.expiresAt == null
+          ? DateTime.now().add(const Duration(hours: 1))
+          : DateTime.fromMillisecondsSinceEpoch(session.expiresAt! * 1000),
+    );
+  }
+
+  @override
   Future<void> signOut(String sessionId) async {
     await _client.auth.signOut();
   }
