@@ -6,6 +6,8 @@ import '../database/app_database.dart';
 import '../models/chat_message.dart';
 import '../models/conversation.dart';
 import '../application/ai/agent_state.dart';
+import '../domain/security/agent_authorization_models.dart';
+import 'security_provider.dart';
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) => AppDatabase.instance);
 
@@ -66,11 +68,20 @@ class ChatMessagesNotifier extends StateNotifier<AsyncValue<List<ChatMessage>>> 
 
     try {
       final manager = _ref.read(mainManagerAgentProvider);
-      final reply = await manager.handle(
-        AiAgentRequest(
+      final gateway = _ref.read(agentGatewayProvider);
+      final reply = await gateway.dispatchAuthenticated(
+        authentication: _ref.read(authenticationGatewayProvider),
+        task: AgentTask(
+          id: 'chat-${DateTime.now().microsecondsSinceEpoch}',
+          agentRole: AiAgentRole.mainManager.name,
+          operation: 'read',
+          resource: 'chat',
+        ),
+        request: AiAgentRequest(
           role: AiAgentRole.mainManager,
           request: content,
         ),
+        agent: manager,
       );
       final assistantText = reply.text;
 
