@@ -42,7 +42,7 @@ class AcademicCourseLessonBlueprints {
     if (n.contains('خوارز') || n.contains('هياكل البيانات')) return _algorithms(courseName);
     if (n.contains('قواعد البيانات') || n.contains('نمذجة البيانات') || n.contains('هندسة البيانات')) return _data(courseName);
     if (n.contains('تعلم الآلة')) return _ml(courseName);
-    if (n.contains('ذكاء اصطناعي') || n.contains('ai')) return _ai(courseName);
+    if (n.contains('ذكاء اصطناعي') || n.contains('الذكاء الاصطناعي') || n.contains('ai')) return _ai(courseName);
     if (n.contains('شبك')) return _network(courseName);
     if (n.contains('نظم التشغيل') || n.contains('أنظمة التشغيل')) return _os(courseName);
     if (n.contains('أمن') || n.contains('تشفير') || n.contains('cyber') ||
