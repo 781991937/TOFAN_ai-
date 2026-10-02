@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../domain/security/authentication_models.dart';
+import '../../domain/security/agent_authorization_models.dart';
 
 /// Supabase Auth adapter. Identity is taken from the verified Supabase session
 /// and its immutable user id; email is profile data only.
@@ -40,7 +41,7 @@ class SupabaseAuthenticationGateway implements AuthenticationGateway {
     final identity = AuthenticatedIdentity(
       actorId: user.id,
       email: user.email ?? '',
-      role: 'student',
+      role: _roleFor(user),
       authenticatedAt: DateTime.now(),
       sessionId: session.accessToken,
     );
@@ -54,6 +55,15 @@ class SupabaseAuthenticationGateway implements AuthenticationGateway {
               session.expiresAt! * 1000,
             ),
     );
+  }
+
+  String _roleFor(User user) {
+    final role = user.appMetadata['role'];
+    if (role is String &&
+        TofanPrincipalRole.values.any((value) => value.name == role)) {
+      return role;
+    }
+    return TofanPrincipalRole.student.name;
   }
 
   @override
