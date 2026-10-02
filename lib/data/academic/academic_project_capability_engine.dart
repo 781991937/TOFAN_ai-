@@ -195,6 +195,7 @@ class AcademicProjectCapabilityEngine {
     // Include them as a single foundation capability so project planning can
     // account for programming, computing, and technical-English prerequisites.
     for (final course in AcademicCatalog.foundationCourses) {
+      if (_score(course, tokens) == 0) continue;
       final lessons = course.lessons;
       result.add(
         AcademicProjectCapability(
