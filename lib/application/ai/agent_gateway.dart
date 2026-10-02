@@ -106,14 +106,11 @@ class AgentGateway {
       throw StateError(agentAuthorization.reason);
     }
 
-    // The configured owner identity has all system permissions and does not
-    // require a self-issued scoped grant.
-    if (!ownerAuthority.isOwner(context.actorId)) {
-      if (grant == null) {
-        _audit(context.actorId, action, resource, AuditOutcome.denied,
-            'Owner-scoped grant is required.');
-        throw StateError('Owner-scoped grant is required.');
-      }
+    // Normal role permissions are sufficient for ordinary operations.
+    // A scoped grant is an additional constraint when explicitly supplied; it
+    // is never self-issued and is never required merely because the actor is
+    // not the owner.
+    if (grant != null) {
       final ownerDecision = ocAuth.authorize(
         actorId: context.actorId,
         operation: action,
