@@ -41,5 +41,7 @@ abstract interface class AuthenticationGateway {
     required String credential,
   });
 
+  Future<AuthenticationSession?> currentSession();
+
   Future<void> signOut(String sessionId);
 }
