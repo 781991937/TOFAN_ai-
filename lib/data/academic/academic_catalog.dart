@@ -128,6 +128,7 @@ skillEvidence: ['يكتب ويشغل برنامجًا قصيرًا.', 'يشرح 
                               projects: [
                                 AcademicProject(
                                   id: 'python-1-project',
+                                  recommendedToolCategories: ['بيئة Python', 'أدوات الاختبار', 'أدوات التوثيق'],
                                   conceptIds: ['concept-python-1'],
                                   skillIds: ['skill-python-1'],
                                   title: 'مشروع: برنامج ترحيب بسيط',
@@ -173,6 +174,7 @@ skillEvidence: ['ينشئ متغيرات مناسبة للبيانات.', 'يت�
                               projects: [
                                 AcademicProject(
                                   id: 'python-2-project',
+                                  recommendedToolCategories: ['بيئة Python', 'أدوات الاختبار', 'أدوات التوثيق'],
                                   conceptIds: ['concept-python-2'],
                                   skillIds: ['skill-python-2'],
                                   title: 'مشروع: بطاقة بيانات طالب',
@@ -218,6 +220,7 @@ skillEvidence: ['يبني برنامجًا تفاعليًا بسيطًا.', 'ي�
                               projects: [
                                 AcademicProject(
                                   id: 'python-3-project',
+                                  recommendedToolCategories: ['بيئة Python', 'أدوات الاختبار', 'أدوات التوثيق'],
                                   conceptIds: ['concept-python-3'],
                                   skillIds: ['skill-python-3'],
                                   title: 'مشروع: حاسبة طالب',
@@ -278,6 +281,7 @@ skillEvidence: ['ينفذ عمليات المجموعات بدقة.', 'يبرر 
                               projects: [
                                 AcademicProject(
                                   id: 'sets-project',
+                                  recommendedToolCategories: ['أدوات الرياضيات', 'أدوات التوثيق'],
                                   conceptIds: ['concept-sets'],
                                   skillIds: ['skill-sets'],
                                   title: 'مشروع: نموذج مجموعات بيانات',
@@ -323,6 +327,7 @@ skillEvidence: ['يمثل علاقة صحيحة.', 'يفسر كل زوج مرت�
                               projects: [
                                 AcademicProject(
                                   id: 'relations-project',
+                                  recommendedToolCategories: ['أدوات الرياضيات', 'أدوات التوثيق'],
                                   conceptIds: ['concept-relations'],
                                   skillIds: ['skill-relations'],
                                   title: 'مشروع: علاقة المقررات والمتطلبات',
@@ -382,6 +387,7 @@ skillEvidence: ['يحلل نظامًا ذكيًا بمصطلحات دقيقة.',
                               projects: [
                                 AcademicProject(
                                   id: 'ai-foundations-project',
+                                  recommendedToolCategories: ['أدوات Python/البيانات', 'أدوات التحليل', 'أدوات التوثيق'],
                                   conceptIds: ['concept-ai-foundations'],
                                   skillIds: ['skill-ai-foundations'],
                                   title: 'مشروع: دراسة حالة لنظام ذكي',
@@ -427,6 +433,7 @@ skillEvidence: ['يحدد مكونات نموذج وكيل.', 'يربط المل
                               projects: [
                                 AcademicProject(
                                   id: 'ai-agents-project',
+                                  recommendedToolCategories: ['بيئة تطوير', 'أدوات الاختبار', 'أدوات التوثيق'],
                                   conceptIds: ['concept-ai-agents'],
                                   skillIds: ['skill-ai-agents'],
                                   title: 'مشروع: تصميم وكيل تعليمي',
@@ -492,6 +499,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
                               projects: [
                                 AcademicProject(
                                   id: 'arrays-project',
+                                  recommendedToolCategories: ['بيئة Python', 'أدوات الاختبار', 'أدوات التوثيق'],
                                   conceptIds: ['concept-arrays'],
                                   skillIds: ['skill-arrays'],
                                   title: 'مشروع: قائمة مهام برمجية',
@@ -1069,6 +1077,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
     final lessonId = '$courseId-$lessonNumber';
     final conceptId = 'concept-$courseId-$lessonNumber';
     final skillId = 'skill-$courseId-$lessonNumber';
+    final projectProfile = _projectProfile(courseName);
 
     return AcademicLesson(
       id: lessonId,
@@ -1164,6 +1173,14 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
               'أنجز تطبيقًا صغيرًا في «$courseName» يثبت فهم «${spec.topic}». وثّق المتطلبات والخطوات والاختبارات والنتيجة والقيود.',
           conceptIds: [conceptId],
           skillIds: [skillId],
+          requirements: projectProfile['requirements']!,
+          deliverables: projectProfile['deliverables']!,
+          milestones: projectProfile['milestones']!,
+          acceptanceCriteria: projectProfile['acceptanceCriteria']!,
+          implementationTasks: projectProfile['implementationTasks']!,
+          testCases: projectProfile['testCases']!,
+          evidenceRequirements: projectProfile['evidenceRequirements']!,
+          recommendedToolCategories: projectProfile['recommendedToolCategories']!,
         ),
       ],
       conceptIds: [conceptId],
