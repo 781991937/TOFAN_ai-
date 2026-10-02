@@ -93,10 +93,19 @@ class AcademicDocumentMapper {
     return tokens.where((token) => haystack.contains(token)).length;
   }
 
+  static const _mappingStopWords = <String>{
+    'a', 'an', 'and', 'at', 'by', 'content', 'document', 'for', 'from',
+    'in', 'no', 'of', 'on', 'or', 'terms', 'the', 'to', 'with',
+    'academic', 'catalog', 'unknown',
+    'في', 'من', 'مع', 'على', 'إلى', 'عن', 'هذا', 'هذه', 'ذلك',
+    'تلك', 'غير', 'موجود', 'موجودة', 'الموجود', 'الموجودة', 'المكتبة',
+    'المحتوى', 'وثيقة', 'مستند', 'أكاديمي', 'الأكاديمية', 'المصطلحات',
+  };
+
   List<String> _tokens(String text) => text
       .toLowerCase()
       .split(RegExp(r'[^\p{L}\p{N}_]+', unicode: true))
-      .where((token) => token.length > 1)
+      .where((token) => token.length > 1 && !_mappingStopWords.contains(token))
       .toList(growable: false);
 
   List<AcademicCourse> _allCourses() {

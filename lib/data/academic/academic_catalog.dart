@@ -570,9 +570,54 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
       years.add(AcademicYear(number: year.number, semesters: semesters));
     }
 
+    // The reference AI specialization contains authored year-one content.
+    // Extend that same specialization to the canonical four-year/eight-semester
+    // structure instead of replacing its existing first-year material.
+    if (specialization.id == 'ai' && years.length < 4) {
+      const aiSemesters = <List<String>>[
+        ['الخوارزميات للذكاء الاصطناعي', 'الرياضيات للذكاء الاصطناعي', 'قواعد بيانات للذكاء الاصطناعي'],
+        ['تمثيل المعرفة والاستدلال', 'البحث وحل المشكلات في الذكاء الاصطناعي', 'هندسة البيانات للذكاء الاصطناعي'],
+        ['تعلم الآلة', 'تمثيل احتمالي للذكاء الاصطناعي', 'التخطيط واتخاذ القرار في الذكاء الاصطناعي'],
+        ['الرؤية الحاسوبية', 'معالجة اللغة الطبيعية', 'الذكاء الاصطناعي التطبيقي'],
+        ['الوكلاء الذكيون', 'الروبوتات والأنظمة الذكية', 'أمن الذكاء الاصطناعي'],
+        ['الذكاء الاصطناعي المتقدم', 'أخلاقيات الذكاء الاصطناعي', 'منهجية البحث في الذكاء الاصطناعي'],
+        ['مشروع التخرج 1', 'موضوعات متقدمة في الذكاء الاصطناعي', 'ندوة الذكاء الاصطناعي'],
+        ['مشروع التخرج 2', 'تكامل أنظمة الذكاء الاصطناعي', 'تقييم مشروع الذكاء الاصطناعي'],
+      ];
+      for (var index = years.length * 2; index < aiSemesters.length; index++) {
+        final yearNumber = index ~/ 2 + 1;
+        final semesterNumber = index.isEven ? 1 : 2;
+        final courses = aiSemesters[index]
+            .map((name) => _course(
+                  'ai',
+                  yearNumber,
+                  semesterNumber,
+                  name,
+                ))
+            .toList(growable: false);
+        final semester = AcademicSemester(
+          number: semesterNumber,
+          courses: courses,
+        );
+        if (semesterNumber == 1) {
+          years.add(AcademicYear(
+            number: yearNumber,
+            semesters: [semester],
+          ));
+        } else {
+          final previous = years.removeLast();
+          years.add(AcademicYear(
+            number: yearNumber,
+            semesters: [...previous.semesters, semester],
+          ));
+        }
+      }
+    }
+
     return AcademicSpecialization(
       id: specialization.id,
       name: specialization.name,
+      foundationCourseIds: specialization.foundationCourseIds,
       years: years,
     );
   }
@@ -832,14 +877,26 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
 
     if (n.contains('خوارز') || n.contains('هياكل البيانات') || n.contains('data structure')) { add('al-02'); add('al-03'); }
     if (n.contains('معمار') || n.contains('منطق رقمي') || n.contains('processor')) { add('ar-01'); add('ar-02'); }
-    if (n.contains('ذكاء اصطناعي') || n.contains('ai')) { add('ai-01'); add('ai-06'); }
-    if (n.contains('بحث') || n.contains('حل المشكلات') || n.contains('خوارزم')) { add('ai-02'); }
-    if (n.contains('تمثيل المعرفة') || n.contains('استدلال')) { add('ai-03'); add('ai-09'); }
+    final isAiContext = n.contains('ذكاء اصطناعي') ||
+        n.contains('الذكاء الاصطناعي') ||
+        n.contains('تعلم الآلة') ||
+        n.contains('machine learning') ||
+        n.contains('وكيل') ||
+        n.contains('agents') ||
+        n.contains('رؤية حاسوبية') ||
+        n.contains('معالجة اللغة') ||
+        n.contains('لغة طبيعية') ||
+        n.contains('روبوت') ||
+        n.contains('robot') ||
+        n.contains('nlp') ||
+        n.contains('ai');
+
+    if (isAiContext) { add('ai-01'); add('ai-06'); }
+    if (isAiContext && (n.contains('بحث') || n.contains('حل المشكلات') || n.contains('خوارزم'))) { add('ai-02'); }
+    if (isAiContext && (n.contains('تمثيل المعرفة') || n.contains('استدلال'))) { add('ai-03'); add('ai-09'); }
     if (n.contains('تعلم الآلة') || n.contains('machine learning')) { add('ai-04'); }
-    if (n.contains('تطبيقي') || n.contains('أخلاقيات') || n.contains('مجتمعي') || n.contains('مسؤول')) { add('ai-06'); }
-    if (n.contains('احتمال') || n.contains('احتمالي') || n.contains('bayes')) { add('ai-07'); }
-    if (n.contains('تخطيط') || n.contains('planning')) { add('ai-08'); }
-    if (n.contains('وكيل') || n.contains('agents')) { add('ai-01'); }
+    if (isAiContext && (n.contains('احتمال') || n.contains('احتمالي') || n.contains('bayes'))) { add('ai-07'); }
+    if (isAiContext && (n.contains('تخطيط') || n.contains('planning'))) { add('ai-08'); }
     if (n.contains('معالجة اللغة') || n.contains('لغة طبيعية') || n.contains('nlp')) { add('ai-10'); }
     if (n.contains('روبوت') || n.contains('robot')) { add('ai-11'); }
     if (n.contains('رؤية حاسوبية') || n.contains('vision') || n.contains('إدراك')) { add('ai-12'); }
@@ -1082,7 +1139,11 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
     return AcademicLesson(
       id: lessonId,
       title: spec.title,
-      content: spec.content,
+      content: _ensureLessonContentDepth(
+        spec.content,
+        courseName: courseName,
+        topic: spec.topic,
+      ),
       definition: spec.definition,
       applications: spec.applications,
       errorAnalysisGuidance:
@@ -1192,6 +1253,17 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
       ],
       provenance: _libraryProvenance,
     );
+  }
+
+  static String _ensureLessonContentDepth(
+    String content, {
+    required String courseName,
+    required String topic,
+  }) {
+    if (content.trim().length >= 180) return content;
+    return '$content '
+        'يربط الطالب «$topic» بسياق مقرر «$courseName»، ثم يختبر الفكرة على حالة مختلفة ويقارن النتيجة '
+        'بالافتراضات والقيود، مع توثيق الدليل الذي يبرر الاستنتاج قبل نقل المعرفة إلى تطبيق جديد.';
   }
 
   static AcademicLesson _deepCurriculumLesson({

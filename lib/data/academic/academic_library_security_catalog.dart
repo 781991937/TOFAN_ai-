@@ -25,7 +25,7 @@ class AcademicLibrarySecurityCatalog {
       ..._rulesFor('software-engineering', [LibrarySecurityRole.student, LibrarySecurityRole.tutor, LibrarySecurityRole.knowledgeAgent, LibrarySecurityRole.projectAgent], [LibraryAccessOperation.read, LibraryAccessOperation.search]),
       ..._rulesFor('interactive-computing', [LibrarySecurityRole.student, LibrarySecurityRole.tutor, LibrarySecurityRole.knowledgeAgent, LibrarySecurityRole.projectAgent], [LibraryAccessOperation.read, LibraryAccessOperation.search]),
       ..._rulesFor('society-profession', [LibrarySecurityRole.student, LibrarySecurityRole.tutor, LibrarySecurityRole.knowledgeAgent, LibrarySecurityRole.projectAgent], [LibraryAccessOperation.read, LibraryAccessOperation.search]),
-      ..._rulesFor('security', [LibrarySecurityRole.tutor, LibrarySecurityRole.knowledgeAgent, LibrarySecurityRole.securityAdmin], [LibraryAccessOperation.read, LibraryAccessOperation.search]),
+      ..._rulesFor('security', [LibrarySecurityRole.tutor, LibrarySecurityRole.knowledgeAgent], [LibraryAccessOperation.read, LibraryAccessOperation.search]),
       ..._rulesFor('core-computing', [LibrarySecurityRole.libraryAdmin], LibraryAccessOperation.values),
       ..._rulesFor('ai-data', [LibrarySecurityRole.libraryAdmin], LibraryAccessOperation.values),
       ..._rulesFor('systems-networking', [LibrarySecurityRole.libraryAdmin], LibraryAccessOperation.values),

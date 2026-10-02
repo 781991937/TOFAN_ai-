@@ -203,7 +203,14 @@ class AbqariKnowledgeGraph {
   List<String> lessonsForSkill(String id) => _relatedIds(AcademicGraphNodeType.lesson, AcademicGraphNodeType.skill, AcademicGraphRelation.lessonToSkill, id);
   List<String> coursesForKnowledgeUnit(String id) => _relatedIds(AcademicGraphNodeType.course, AcademicGraphNodeType.knowledgeUnit, AcademicGraphRelation.courseToKnowledgeUnit, id);
   List<String> coursesForKnowledgeArea(String id) => _relatedIds(AcademicGraphNodeType.course, AcademicGraphNodeType.knowledgeArea, AcademicGraphRelation.courseToKnowledgeArea, id);
-  List<String> coursesForSkill(String id) => _relatedIds(AcademicGraphNodeType.skill, AcademicGraphNodeType.course, AcademicGraphRelation.skillToCourse, id);
+  List<String> coursesForSkill(String id) => academicEdges()
+      .where((e) => e.fromType == AcademicGraphNodeType.skill &&
+          e.toType == AcademicGraphNodeType.course &&
+          e.relation == AcademicGraphRelation.skillToCourse &&
+          e.fromId == id)
+      .map((e) => e.toId)
+      .toSet()
+      .toList(growable: false);
   List<String> projectsForSkill(String id) => _relatedIds(AcademicGraphNodeType.project, AcademicGraphNodeType.skill, AcademicGraphRelation.projectToSkill, id);
   List<String> projectsForConcept(String id) => _relatedIds(AcademicGraphNodeType.project, AcademicGraphNodeType.concept, AcademicGraphRelation.projectToConcept, id);
   List<String> assessmentQuestionsForSkill(String id) => _relatedIds(AcademicGraphNodeType.assessmentQuestion, AcademicGraphNodeType.skill, AcademicGraphRelation.assessmentToSkill, id);

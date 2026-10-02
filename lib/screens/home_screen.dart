@@ -24,7 +24,7 @@ class HomeScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('TOFAN SMART ACADEMY',
+                        Text(AppConstants.productName,
                             style: theme.textTheme.labelLarge?.copyWith(
                               color: primary, fontWeight: FontWeight.w800, letterSpacing: .5)),
                         const SizedBox(height: 4),

@@ -67,6 +67,10 @@ class AcademicLibraryAudit {
                   } else if (!course.curriculumProfile!.isValid) {
                     issues.add('بيانات الوزن الأكاديمي غير صالحة في ${course.name}.');
                   }
+                  if (course.curriculumProfile != null &&
+                      course.provenance.status == AcademicPublicationStatus.draft) {
+                    curriculumMetadataGaps.add('الوزن الأكاديمي للمقرر ${course.name} يحتاج مراجعة مؤسسية قبل النشر.');
+                  }
                   if (course.provenance.status != AcademicPublicationStatus.draft &&
                       course.provenance.status != AcademicPublicationStatus.privateContent &&
                       !course.provenance.hasSource) {
