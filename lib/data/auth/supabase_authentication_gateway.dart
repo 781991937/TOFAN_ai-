@@ -78,7 +78,7 @@ class SupabaseAuthenticationGateway implements AuthenticationGateway {
       identity: AuthenticatedIdentity(
         actorId: user.id,
         email: user.email ?? '',
-        role: 'student',
+        role: _roleFor(user),
         authenticatedAt: DateTime.now(),
       ),
       status: AuthenticationStatus.authenticated,
