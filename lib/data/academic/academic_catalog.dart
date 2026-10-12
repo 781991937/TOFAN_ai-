@@ -850,7 +850,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
 
     if (n.contains('خوارزم') || n.contains('هياكل البيانات') || n.contains('algorithms') || n.contains('data structure')) add('AL');
     if (n.contains('معمار') || n.contains('منطق رقمي') || n.contains('architecture') || n.contains('processor')) add('AR');
-    if (n.contains('ذكاء اصطناعي') || n.contains('تعلم الآلة') || n.contains('رؤية حاسوبية') || n.contains('معالجة اللغة') || n.contains('وكيل') || n.contains('agents') || n.contains('روبوت') || n.contains('robot') || n.contains('ai')) add('AI');
+    if (n.contains('ذكاء اصطناعي') || n.contains('الذكاء الاصطناعي') || n.contains('تعلم الآلة') || n.contains('رؤية حاسوبية') || n.contains('معالجة اللغة') || n.contains('وكيل') || n.contains('agents') || n.contains('روبوت') || n.contains('robot') || n.contains('ai')) add('AI');
     if (n.contains('قواعد البيانات') || n.contains('هندسة البيانات') || n.contains('data management') || n.contains('نمذجة البيانات')) add('DM');
     if (n.contains('لغات البرمجة') || n.contains('مترجمات') || n.contains('programming language') || n.contains('compiler')) add('FPL');
     if (n.contains('رسوميات') || n.contains('graphics') || n.contains('واقع افتراضي') || n.contains('واقع معزز')) add('GIT');

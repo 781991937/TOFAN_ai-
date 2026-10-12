@@ -57,7 +57,7 @@ class TofanAbqariAgent {
   AbqariTask classify(String request) {
     final text = request.trim().toLowerCase();
     final lab = _containsAny(text, ['مختبر أمني', 'اختبار اختراق أخلاقي', 'ethical hacking', 'security lab', 'wstg']);
-    final cyber = _containsAny(text, ['هجوم', 'هاجم', 'اختراق', 'أمن سيبراني', 'attack', 'hack']);
+    final cyber = _containsAny(text, ['هجوم', 'هاجم', 'اختراق', 'أمن سيبراني', 'الأمن السيبراني', 'attack', 'hack']);
     final safety = _containsAny(text, ['خطر', 'تهديد', 'يهدد', 'يهاجم', 'اعتداء', 'يحاول إيذاء', 'threat', 'danger']);
     final project = _containsAny(text, ['مشروع', 'ابن', 'بناء نظام', 'project', 'build']);
     final programming = _containsAny(text, ['كود', 'برمج', 'python', 'dart', 'flutter', 'code']);

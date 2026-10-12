@@ -36,6 +36,7 @@ void main() {
 
   test('student cannot search the protected cybersecurity compartment', () {
     final result = agent.handle('اشرح الأمن السيبراني', role: LibrarySecurityRole.student);
+    expect(result.task.kind, AbqariTaskKind.cybersecurity);
     expect(result.knowledge, isEmpty);
   });
 
