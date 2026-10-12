@@ -5,6 +5,82 @@ import 'academic_lesson_blueprints.dart';
 import 'academic_foundation_catalog.dart';
 import 'academic_source_catalog.dart';
 
+class _AcademicConceptBuilder {
+  _AcademicConceptBuilder({required this.id, required AcademicLesson source})
+      : title = source.title.trim().isEmpty ? id : source.title,
+        definition = source.definition;
+
+  final String id;
+  String title;
+  String definition;
+  final sourceCourseIds = <String>{};
+  final sourceLessonIds = <String>{};
+  final courseKnowledgeAreaIds = <String>{};
+  final courseKnowledgeUnitIds = <String>{};
+  final learningOutcomeIds = <String>{};
+  final relatedSkillIds = <String>{};
+  final assessmentQuestionIds = <String>{};
+  final projectIds = <String>{};
+  final sourceReferenceIds = <String>{};
+
+  void addSource(AcademicCourse course, AcademicLesson lesson) {
+    if (title == id && lesson.title.trim().isNotEmpty) title = lesson.title;
+    if (definition.trim().isEmpty && lesson.definition.trim().isNotEmpty) {
+      definition = lesson.definition;
+    }
+    sourceCourseIds.add(course.id);
+    sourceLessonIds.add(lesson.id);
+    courseKnowledgeAreaIds.addAll(course.knowledgeAreaIds);
+    courseKnowledgeUnitIds.addAll(course.knowledgeUnitIds);
+    sourceReferenceIds.addAll(
+      course.provenance.sourceReferences.map((reference) => reference.id),
+    );
+    sourceReferenceIds.addAll(
+      lesson.provenance.sourceReferences.map((reference) => reference.id),
+    );
+
+    for (final outcome in lesson.learningOutcomeDefinitions) {
+      if (outcome.conceptIds.contains(id)) {
+        learningOutcomeIds.add('${lesson.id}/${outcome.id}');
+      }
+    }
+    for (final assessment in lesson.assessments) {
+      for (final question in assessment.questions) {
+        if (!question.conceptIds.contains(id)) continue;
+        assessmentQuestionIds.add(
+          '${lesson.id}/${assessment.id}/${question.id}',
+        );
+        relatedSkillIds.addAll(question.skillIds);
+      }
+    }
+    for (final project in lesson.projects) {
+      if (project.conceptIds.contains(id)) {
+        projectIds.add('${lesson.id}/${project.id}');
+      }
+    }
+    for (final project in course.projects) {
+      if (project.conceptIds.contains(id)) {
+        projectIds.add('${course.id}/${project.id}');
+      }
+    }
+  }
+
+  AcademicConcept build() => AcademicConcept(
+        id: id,
+        title: title,
+        definition: definition,
+        sourceCourseIds: List.unmodifiable(sourceCourseIds),
+        sourceLessonIds: List.unmodifiable(sourceLessonIds),
+        courseKnowledgeAreaIds: List.unmodifiable(courseKnowledgeAreaIds),
+        courseKnowledgeUnitIds: List.unmodifiable(courseKnowledgeUnitIds),
+        learningOutcomeIds: List.unmodifiable(learningOutcomeIds),
+        relatedSkillIds: List.unmodifiable(relatedSkillIds),
+        assessmentQuestionIds: List.unmodifiable(assessmentQuestionIds),
+        projectIds: List.unmodifiable(projectIds),
+        sourceReferenceIds: List.unmodifiable(sourceReferenceIds),
+      );
+}
+
 /// Reference catalog for the global TOFAN AI STUDENT library.
 /// The structure is independent from any single university.
 /// Learning content is aligned with internationally published computing
@@ -16,6 +92,17 @@ class AcademicCatalog {
 
   static int get lessonCount =>
       _allCourses().fold<int>(0, (sum, course) => sum + course.lessons.length);
+
+  static final Map<String, AcademicConcept> _conceptIndex =
+      _buildConceptIndex();
+
+  /// Canonical concept entities projected from existing lesson references.
+  static List<AcademicConcept> get concepts =>
+      List.unmodifiable(_conceptIndex.values);
+
+  static int get conceptCount => _conceptIndex.length;
+
+  static AcademicConcept? conceptById(String id) => _conceptIndex[id];
 
   static List<AcademicCourse> _allCourses() {
     final courses = <AcademicCourse>[
@@ -31,6 +118,24 @@ class AcademicCatalog {
       unique[course.id] = course;
     }
     return unique.values.toList(growable: false);
+  }
+
+  static Map<String, AcademicConcept> _buildConceptIndex() {
+    final builders = <String, _AcademicConceptBuilder>{};
+    for (final course in _allCourses()) {
+      for (final lesson in course.lessons) {
+        for (final conceptId in lesson.conceptIds) {
+          final builder = builders.putIfAbsent(
+            conceptId,
+            () => _AcademicConceptBuilder(id: conceptId, source: lesson),
+          );
+          builder.addSource(course, lesson);
+        }
+      }
+    }
+    return Map.unmodifiable({
+      for (final entry in builders.entries) entry.key: entry.value.build(),
+    });
   }
 
   static const _libraryProvenance = AcademicContentProvenance(

@@ -19,7 +19,6 @@ class AcademicLibraryAudit {
     final specializationIds = <String>{};
     final courseIds = <String>{};
     final lessonIds = <String>{};
-    final conceptIds = <String>{};
     final skillIds = <String>{};
     final allCourses = <AcademicCourse>[];
     final knowledgeAreas = <String>{};
@@ -127,9 +126,6 @@ class AcademicLibraryAudit {
                   for (final lesson in course.lessons) {
                     lessons++;
                     if (!lessonIds.add(lesson.id)) issues.add('معرف الدرس مكرر: ${lesson.id}.');
-                    for (final conceptId in lesson.conceptIds) {
-                      if (!conceptIds.add(conceptId)) issues.add('معرف المفهوم مكرر: ${conceptId}.');
-                    }
                     for (final skillId in lesson.skillIds) {
                       if (!skillIds.add(skillId)) issues.add('معرف المهارة مكرر: ${skillId}.');
                     }
@@ -143,7 +139,55 @@ class AcademicLibraryAudit {
       }
     }
 
-    _checkPrerequisites(issues, allCourses);
+    final canonicalCourses = <AcademicCourse>[
+      ...AcademicCatalog.foundationCourses,
+      ...allCourses,
+    ];
+    final canonicalCourseIds = canonicalCourses.map((course) => course.id).toSet();
+    final canonicalLessonIds = {
+      for (final course in canonicalCourses)
+        for (final lesson in course.lessons) lesson.id,
+    };
+    final canonicalConceptReferences = {
+      for (final course in canonicalCourses)
+        for (final lesson in course.lessons) ...lesson.conceptIds,
+    };
+
+    _checkPrerequisites(issues, canonicalCourses);
+    final conceptModel = AcademicCatalog.concepts;
+    final conceptModelIds = conceptModel.map((concept) => concept.id).toSet();
+    for (final conceptId in canonicalConceptReferences.difference(conceptModelIds)) {
+      issues.add('معرف المفهوم $conceptId بلا كيان AcademicConcept محلول.');
+    }
+    for (final conceptId in conceptModelIds.difference(canonicalConceptReferences)) {
+      issues.add('كيان AcademicConcept $conceptId غير مشار إليه من درس.');
+    }
+    for (final concept in conceptModel) {
+      if (!concept.isWellFormed) {
+        issues.add('كيان المفهوم ${concept.id} ناقص التعريف أو المصدر.');
+      }
+      if (concept.sourceCourseIds.any((id) => !canonicalCourseIds.contains(id))) {
+        issues.add('كيان المفهوم ${concept.id} يشير إلى مقرر مصدر غير موجود.');
+      }
+      if (concept.sourceLessonIds.any((id) => !canonicalLessonIds.contains(id))) {
+        issues.add('كيان المفهوم ${concept.id} يشير إلى درس مصدر غير موجود.');
+      }
+    }
+    for (final course in canonicalCourses) {
+      final courseConceptIds = {
+        for (final lesson in course.lessons) ...lesson.conceptIds,
+      };
+      for (final project in course.projects) {
+        for (final conceptId in project.conceptIds) {
+          if (!courseConceptIds.contains(conceptId)) {
+            issues.add(
+              'المشروع ${project.id} في ${course.name} يشير إلى مفهوم خارج دروس المقرر: $conceptId.',
+            );
+          }
+        }
+      }
+    }
+
     final securityReport = AcademicLibrarySecurityAudit.run();
     issues.addAll(securityReport.issues.map((issue) => 'أمن المكتبة: $issue'));
 

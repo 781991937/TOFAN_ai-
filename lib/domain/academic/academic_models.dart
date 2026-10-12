@@ -147,6 +147,49 @@ class AcademicLearningOutcome {
   final List<String> conceptIds;
 }
 
+/// Typed, read-only projection of a concept already referenced by canonical
+/// lessons. The catalog derives this record from its source lessons; it is not
+/// a second store of academic content.
+class AcademicConcept {
+  const AcademicConcept({
+    required this.id,
+    required this.title,
+    required this.definition,
+    required this.sourceCourseIds,
+    required this.sourceLessonIds,
+    this.courseKnowledgeAreaIds = const [],
+    this.courseKnowledgeUnitIds = const [],
+    this.learningOutcomeIds = const [],
+    this.relatedSkillIds = const [],
+    this.assessmentQuestionIds = const [],
+    this.projectIds = const [],
+    this.sourceReferenceIds = const [],
+  });
+
+  final String id;
+  final String title;
+  final String definition;
+  final List<String> sourceCourseIds;
+  final List<String> sourceLessonIds;
+  /// Course-level context, not a claim of lesson-level unit alignment.
+  final List<String> courseKnowledgeAreaIds;
+  final List<String> courseKnowledgeUnitIds;
+  final List<String> learningOutcomeIds;
+  /// Skills are included only when an assessment question explicitly links
+  /// both this concept and that skill.
+  final List<String> relatedSkillIds;
+  final List<String> assessmentQuestionIds;
+  final List<String> projectIds;
+  final List<String> sourceReferenceIds;
+
+  bool get isWellFormed =>
+      id.trim().isNotEmpty &&
+      title.trim().isNotEmpty &&
+      definition.trim().isNotEmpty &&
+      sourceCourseIds.isNotEmpty &&
+      sourceLessonIds.isNotEmpty;
+}
+
 /// Canonical skill definition attached to its owning course.
 class AcademicSkill {
   const AcademicSkill({
