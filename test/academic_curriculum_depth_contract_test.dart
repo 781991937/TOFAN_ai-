@@ -58,6 +58,47 @@ void main() {
     }
   });
 
+  test('derived prerequisites come only from earlier semesters', () {
+    for (final university in AcademicCatalog.universities) {
+      for (final college in university.colleges) {
+        for (final specialization in college.specializations) {
+          final completedCourseIds = <String>{};
+          for (final year in specialization.years) {
+            for (final semester in year.semesters) {
+              for (final course in semester.courses) {
+                expect(
+                  course.prerequisiteCourseIds.every(completedCourseIds.contains),
+                  isTrue,
+                  reason: 'Prerequisites must be earlier than ${specialization.id}/${course.id}.',
+                );
+              }
+              completedCourseIds.addAll(
+                semester.courses.map((course) => course.id),
+              );
+            }
+          }
+        }
+      }
+    }
+  });
+
+  test('AI machine learning course links to an earlier AI foundation', () {
+    final aiSpecialization = AcademicCatalog.universities
+        .expand((university) => university.colleges)
+        .expand((college) => college.specializations)
+        .firstWhere((specialization) => specialization.id == 'ai');
+    final machineLearning = aiSpecialization.years
+        .expand((year) => year.semesters)
+        .expand((semester) => semester.courses)
+        .firstWhere((course) => course.name == 'تعلم الآلة');
+
+    expect(
+      machineLearning.prerequisiteCourseIds,
+      contains('ai-intro'),
+      reason: 'Machine learning should reuse the existing AI foundation course.',
+    );
+  });
+
   test('generated profiles distinguish foundation, core, advanced and capstone work', () {
     final courses = AcademicCatalog.universities
         .expand((u) => u.colleges)

@@ -544,7 +544,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
 
   static AcademicSpecialization _deepenSpecialization(
       AcademicSpecialization specialization) {
-    final previousSemesterCourses = <AcademicCourse>[];
+    final completedCourses = <AcademicCourse>[];
     final years = <AcademicYear>[];
 
     for (final year in specialization.years) {
@@ -556,16 +556,16 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
         final linked = normalized
             .map((course) => _withDerivedPrerequisites(
                   course,
-                  previousSemesterCourses,
+                  completedCourses,
                 ))
             .toList(growable: false);
         semesters.add(AcademicSemester(
           number: semester.number,
           courses: linked,
         ));
-        previousSemesterCourses
-          ..clear()
-          ..addAll(linked);
+        // Candidates are strictly from completed semesters; courses in the
+        // current semester cannot become prerequisites of one another.
+        completedCourses.addAll(linked);
       }
       years.add(AcademicYear(number: year.number, semesters: semesters));
     }
@@ -594,6 +594,10 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
                   semesterNumber,
                   name,
                 ))
+            .map((course) => _withDerivedPrerequisites(
+                  course,
+                  completedCourses,
+                ))
             .toList(growable: false);
         final semester = AcademicSemester(
           number: semesterNumber,
@@ -611,6 +615,7 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
             semesters: [...previous.semesters, semester],
           ));
         }
+        completedCourses.addAll(courses);
       }
     }
 
@@ -624,26 +629,35 @@ skillEvidence: ['ينشئ قائمة ويقرأ ويعدل عناصرها.', 'ي
 
   static AcademicCourse _withDerivedPrerequisites(
     AcademicCourse course,
-    List<AcademicCourse> previousSemesterCourses,
+    List<AcademicCourse> priorCourses,
   ) {
     if (course.prerequisiteCourseIds.isNotEmpty ||
-        previousSemesterCourses.isEmpty) {
+        priorCourses.isEmpty) {
       return course;
     }
 
-    final ranked = previousSemesterCourses
-        .map((candidate) {
+    final ranked = priorCourses.asMap().entries
+        .map((entry) {
+          final candidate = entry.value;
           final unitOverlap = course.knowledgeUnitIds
               .where(candidate.knowledgeUnitIds.contains)
               .length;
           final areaOverlap = course.knowledgeAreaIds
               .where(candidate.knowledgeAreaIds.contains)
               .length;
-          return (candidate: candidate, score: unitOverlap * 3 + areaOverlap);
+          return (
+            candidate: candidate,
+            score: unitOverlap * 3 + areaOverlap,
+            recency: entry.key,
+          );
         })
         .where((item) => item.score > 0)
         .toList()
-      ..sort((a, b) => b.score.compareTo(a.score));
+      ..sort((a, b) {
+        final byAcademicOverlap = b.score.compareTo(a.score);
+        if (byAcademicOverlap != 0) return byAcademicOverlap;
+        return b.recency.compareTo(a.recency);
+      });
 
     final prerequisites = ranked
         .take(2)

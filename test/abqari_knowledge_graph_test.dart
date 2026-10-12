@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tofan_ai/abqari/knowledge_graph.dart';
+import 'package:tofan_ai/data/academic/academic_catalog.dart';
 
 void main() {
   test('knowledge graph returns canonical unit and skill evidence', () {
@@ -42,5 +43,21 @@ void main() {
     final edge = edges.first;
     expect(graph.prerequisiteChain(edge.courseId), contains(edge.prerequisiteCourseId));
     expect(graph.dependentsFor(edge.prerequisiteCourseId), contains(edge.courseId));
+  });
+
+  test('curriculum prerequisite inference is exposed through the canonical graph', () {
+    const graph = AbqariKnowledgeGraph();
+    final machineLearning = AcademicCatalog.universities
+        .expand((university) => university.colleges)
+        .expand((college) => college.specializations)
+        .firstWhere((specialization) => specialization.id == 'ai')
+        .years
+        .expand((year) => year.semesters)
+        .expand((semester) => semester.courses)
+        .firstWhere((course) => course.name == 'تعلم الآلة');
+
+    expect(machineLearning.prerequisiteCourseIds, contains('ai-intro'));
+    expect(graph.prerequisitesFor(machineLearning.id), contains('ai-intro'));
+    expect(graph.dependentsFor('ai-intro'), contains(machineLearning.id));
   });
 }
