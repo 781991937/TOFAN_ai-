@@ -409,7 +409,7 @@ Knowledge → Concepts → Skills → Prerequisites → Practice → Assessment 
 | 18. Provenance & Governance | PARTIALLY IMPLEMENTED | حالات النشر وsource/version/author وغيرها موجودة؛ دورة المراجعة والإدارة الكاملة لم تكتمل. |
 | 19. Security Architecture | PARTIALLY IMPLEMENTED | Library security وdeny-by-default والسياسات موجودة؛ الأمن الإنتاجي الشامل ما زال مطلوبًا. |
 | 20. Security Lab & Safe Cyber | COMPLETED | سيناريوهات المختبر، النطاق، التفويض، الأدلة، المعالجة وإعادة الاختبار موجودة واختباراتها موجودة. |
-| 21. Data & Persistence | MISSING | لا تزال طبقة التخزين الإنتاجية الدائمة والمهاجرات والنسخ الاحتياطي المطلوبة غير مكتملة. |
+| 21. Data & Persistence | PARTIALLY IMPLEMENTED | مستودعات Supabase/SQLite وترحيل أساس البيانات موجودة؛ أضيفت سياسات RLS ذاتية النطاق في `supabase/migrations/0002_authenticated_owner_rls.sql`، لكن التحقق على مشروع Supabase والنسخ الاحتياطي والاستعادة والإدارة الإنتاجية لم تكتمل. |
 | 22. API & Integration | PARTIALLY IMPLEMENTED | طبقات التطبيق والواجهات موجودة، لكن العقد المتكامل والإصدار والاختبارات التكاملية والإدارة الخلفية لم تكتمل. |
 | 23. User Experience | PARTIALLY IMPLEMENTED | واجهات الطالب وRTL/الهيكل الأساسي موجودة؛ التجربة الإنتاجية الشاملة للمنصة لم تكتمل. |
 | 24. Quality Gate | PARTIALLY IMPLEMENTED | اختبارات وحدات وتدفق متعددة موجودة؛ بوابة جودة شاملة لكل المسارات والأداء والأمن لم تعتمد نهائيًا. |
@@ -638,3 +638,20 @@ KNOWLEDGE + SKILLS + REASONING + PRACTICE + ASSESSMENT + PROJECTS + EVIDENCE + E
 7. اختبار متطلبات نظام متعدد التخصصات من خلال TOFAN ABQARI وإثبات أن الخطة ترجع إلى مقررات ودروس ومشاريع المكتبة الكانونية.
 
 **الحالة: PARTIALLY IMPLEMENTED — لم يتم إعلان المكتبة أو جميع التخصصات مكتملة قبل اجتياز هذه البوابة.**
+
+
+## 16-O. تنفيذ RLS لبيانات المستخدم الموثق — 2026-10-12
+
+**النطاق:** استكمال حدّ أمني ضيق في التخزين القائم، دون تغيير نموذج الهوية أو تطبيق ترحيل على خدمة خارجية.
+
+- أضيف `supabase/migrations/0002_authenticated_owner_rls.sql` بعد ترحيل الأساس الموجود؛ لم يُعدّل ترحيل منشور سابقًا ولم تُحذف بيانات أو جداول.
+- ربطت سياسات `student_learning_state` بـ`student_id = auth.uid()::text` للقراءة/الإضافة/التحديث/الحذف الذاتي فقط.
+- قُيّدت `experience_memory` و`audit_events` بهوية `actor_id = auth.uid()::text`. الذاكرة تدعم القراءة والإضافة والحذف الذاتي وفق واجهة المستودع؛ سجل التدقيق يدعم القراءة والإضافة فقط ولا يتيح للعميل التعديل أو الحذف.
+- تتطابق قيمة SQL النصية مع `SupabaseClient.auth.currentUser.id` المستخدمة في المستودعات؛ لم يُضف تجاوز صلاحيات أو صلاحية خدمة أو وصول بين المستخدمين.
+- أُبقيت سياسة المنع الافتراضي للمستخدم غير الموثق ولأي صف لا يطابق هوية الجلسة.
+
+**التحقق المنفذ:** فحص يدوي للعقود في `supabase_student_learning_repository.dart` و`supabase_experience_memory_repository.dart` و`supabase_audit_repository.dart`، وفحص ترحيل الأساس وسياسات RLS الجديدة. مستودع العمل كان نظيفًا قبل التعديل، ولا توجد تغييرات للمستخدم أزيلت.
+
+**التحقق غير المنفذ/القيود:** Flutter/Dart غير متاحين في بيئة التنفيذ الحالية، لذلك لم تُشغّل اختبارات Flutter. لا تتوفر بيانات اتصال بقاعدة Supabase للاختبار الحي، ولم يُطبّق الترحيل خارجيًا. يجب تطبيق الترحيل في بيئة تطوير/اختبار مصرح بها ثم التحقق من عزل مستخدمين فعليين قبل اعتباره متحققًا تشغيليًا أو نشره.
+
+**وثائق طلبها المستخدم ولم توجد في المستودع أو تاريخ Git المتاح:** `Master Execution Matrix` كملف منفصل (المصفوفة مضمنة في هذه الوثيقة، لكن بعض صفوفها غير سليمة التنسيق وتجمع عدة بنود)، و`Technical Implementation Model`، و`PHASE 3 IMPLEMENTATION INSTRUCTIONS`. لم تُختلق وثائق بديلة ولم تُنسب إليها متطلبات غير متاحة.
