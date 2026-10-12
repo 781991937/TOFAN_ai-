@@ -76,7 +76,7 @@ class TofanAbqariAgent {
 
   AbqariAgentResult handle(String request, {LibrarySecurityRole role = LibrarySecurityRole.knowledgeAgent}) {
     final task = classify(request);
-    final knowledge = _guardedKnowledge(task.request, role);
+    final knowledge = _guardedKnowledge(task, role);
 
     switch (task.kind) {
       case AbqariTaskKind.project:
@@ -124,12 +124,21 @@ class TofanAbqariAgent {
     }
   }
 
-  List<AbqariKnowledgeItem> _guardedKnowledge(String request, LibrarySecurityRole role) {
+  List<AbqariKnowledgeItem> _guardedKnowledge(AbqariTask task, LibrarySecurityRole role) {
+    const operation = LibraryAccessOperation.search;
+    if (task.kind == AbqariTaskKind.cybersecurity &&
+        !AcademicLibrarySecurityCatalog.policy.canAccess(
+          role,
+          'security',
+          operation,
+        )) {
+      return const <AbqariKnowledgeItem>[];
+    }
     final domains = AcademicLibrarySecurityCatalog.domains.where(
-      (domain) => AcademicLibrarySecurityCatalog.policy.canAccess(role, domain.id, LibraryAccessOperation.search),
+      (domain) => AcademicLibrarySecurityCatalog.policy.canAccess(role, domain.id, operation),
     );
     if (domains.isEmpty) return const <AbqariKnowledgeItem>[];
-    return knowledgeEngine.search(request).where((item) {
+    return knowledgeEngine.search(task.request).where((item) {
       if (item.knowledgeAreaIds.isEmpty) return false;
       return item.knowledgeAreaIds.every((areaId) {
         final domain = AcademicLibrarySecurityCatalog.domainForArea(areaId);
@@ -137,7 +146,7 @@ class TofanAbqariAgent {
             AcademicLibrarySecurityCatalog.policy.canAccess(
               role,
               domain.id,
-              LibraryAccessOperation.search,
+              operation,
             );
       });
     }).toList(growable: false);

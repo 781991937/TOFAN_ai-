@@ -38,4 +38,12 @@ void main() {
     final result = agent.handle('اشرح الأمن السيبراني', role: LibrarySecurityRole.student);
     expect(result.knowledge, isEmpty);
   });
+
+  test('authorized knowledge role can search the cybersecurity compartment', () {
+    final result = agent.handle(
+      'اشرح الأمن السيبراني',
+      role: LibrarySecurityRole.knowledgeAgent,
+    );
+    expect(result.knowledge, isNotEmpty);
+  });
 }
