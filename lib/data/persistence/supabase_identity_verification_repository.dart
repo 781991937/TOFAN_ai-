@@ -24,6 +24,11 @@ class SupabaseIdentityVerificationRepository
   Future<IdentityVerificationRecord> createRequest({
     required IdentityVerificationMethod method,
   }) async {
+    if (method != IdentityVerificationMethod.manualDocumentReview) {
+      throw UnsupportedError(
+        'Trusted-provider verification is unavailable until a provider is configured.',
+      );
+    }
     final userId = _requireCurrentUserId();
     final row = await _client
         .from('identity_verification_requests')
