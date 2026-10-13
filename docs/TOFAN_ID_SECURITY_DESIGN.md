@@ -1,6 +1,6 @@
 # TOFAN ID — Identity Verification and Owner Authorization Design
 
-**Status:** Design contract for implementation; not evidence that identity verification is already implemented.
+**Status:** Initial implementation slice in a draft PR. The domain metadata model, current-user request repository, provider registration, and proposed RLS migration exist on the feature branch. This is not a complete or production-ready identity-verification system.
 
 ## Goals
 Integrate an identity-verification workflow into the existing TOFAN AI architecture without creating a parallel app or weakening current authorization. Identity verification and project-owner authorization are separate decisions.
@@ -13,6 +13,12 @@ Integrate an identity-verification workflow into the existing TOFAN AI architect
 5. Do not store identity-card images by default. If retention is later justified, require explicit consent, strict access control, encryption, a retention deadline, and deletion workflow. Never log card numbers, extracted identity data, or image contents.
 6. OCR and face matching are signals only; neither proves document authenticity. A human review must be described as document review, not official government verification. Only claim authoritative verification if a trusted provider can be integrated and its evidence validated server-side.
 7. Keep audit records append-only where supported, recording decision metadata without raw personal data.
+
+## Implemented in the current draft
+- Privacy-minimized domain metadata model and unit tests.
+- Client repository that creates a pending request using the active Supabase Auth user ID and lists only that user's requests.
+- A new migration proposal that grants authenticated users read-own/create-pending access only; approval fields are not client-writable.
+- No card image upload, OCR, face matching, reviewer endpoint, trusted provider, owner-role integration, or live migration has been implemented.
 
 ## Workflow and states
 - UNVERIFIED: no verification request.
