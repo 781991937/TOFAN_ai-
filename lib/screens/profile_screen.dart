@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../application/student/student_state.dart';
 import '../utils/constants.dart';
 import 'onboarding_screen.dart';
+import 'passkey_security_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -108,6 +109,19 @@ class ProfileScreen extends ConsumerWidget {
                     Text(smart.learningStreak.toString(),
                         style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900)),
                   ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Card(
+              child: ListTile(
+                leading: Icon(Icons.fingerprint, color: primary),
+                title: const Text('مفتاح المرور والبصمة', style: TextStyle(fontWeight: FontWeight.w800)),
+                subtitle: const Text('إعداد التحقق الإضافي للحساب'),
+                trailing: const Icon(Icons.chevron_left),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PasskeySecurityScreen()),
                 ),
               ),
             ),

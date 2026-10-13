@@ -1,0 +1,36 @@
+name: Supabase Edge Function checks
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "supabase/functions/**"
+      - ".github/workflows/supabase-edge-check.yml"
+  push:
+    branches: [main]
+    paths:
+      - "supabase/functions/**"
+      - ".github/workflows/supabase-edge-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  edge-function:
+    name: Type-check Supabase Edge Functions
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Type-check Edge Function
+        run: |
+          deno check supabase/functions/tofan-owner-bootstrap/index.ts
+          deno check supabase/functions/tofan-passkey-step-up/index.ts
+          deno check supabase/functions/tofan-identity-review/index.ts
