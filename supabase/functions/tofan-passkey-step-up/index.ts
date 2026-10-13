@@ -51,7 +51,7 @@ function isObject(value: unknown): value is Record<string, unknown> {
 }
 
 async function isRateLimited(
-  admin: ReturnType<typeof createClient>,
+  admin: ReturnType<typeof createClient<any>>,
   userId: string,
   ceremony: "registration" | "authentication",
 ): Promise<boolean> {
