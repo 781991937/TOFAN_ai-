@@ -72,10 +72,10 @@ begin
       using errcode = '23505';
   end if;
 
-  insert into public.tofan_owner_assignment
+  insert into public.tofan_owner_assignment as assigned_owner
     (singleton, owner_user_id, assignment_method)
   values (true, p_actor_id, 'verified_bootstrap')
-  returning public.tofan_owner_assignment.assigned_at into v_assigned_at;
+  returning assigned_owner.assigned_at into v_assigned_at;
 
   return query select p_actor_id, v_assigned_at;
 end;
