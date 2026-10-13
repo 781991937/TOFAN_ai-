@@ -41,12 +41,12 @@ create index if not exists idx_identity_verification_user_created
 create or replace function public.set_identity_verification_updated_at()
 returns trigger
 language plpgsql
-as $
+as $function$
 begin
   new.updated_at = now();
   return new;
 end;
-$;
+$function$;
 
 drop trigger if exists identity_verification_requests_updated_at
   on public.identity_verification_requests;
