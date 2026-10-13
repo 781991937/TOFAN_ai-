@@ -25,6 +25,12 @@ dependencies:
   shared_preferences: ^2.5.3
   uuid: ^4.5.3
 
+# The 2.21.1 passkeys implementation predates the WebAuthn Signal API.
+# Pin its interface to the Dart 3.8-compatible 2.8.0 contract instead of
+# resolving the newer 2.9+ interface, which adds methods the implementation lacks.
+dependency_overrides:
+  passkeys_platform_interface: 2.8.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
