@@ -58,8 +58,11 @@ Deno.serve(async (request: Request) => {
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const rpID = Deno.env.get("TOFAN_WEBAUTHN_RP_ID");
-  const expectedOrigin = Deno.env.get("TOFAN_WEBAUTHN_ORIGIN");
-  if (!supabaseUrl || !anonKey || !serviceRoleKey || !rpID || !expectedOrigin) {
+  const configuredOrigins = Deno.env.get("TOFAN_WEBAUTHN_ORIGIN") ?? "";
+  // Exact allowlist: web origins use https://..., Android native credentials
+  // use android:apk-key-hash:<base64url SHA-256 signing-certificate hash>.
+  const expectedOrigins = configuredOrigins.split(",").map((origin) => origin.trim()).filter(Boolean);
+  if (!supabaseUrl || !anonKey || !serviceRoleKey || !rpID || expectedOrigins.length === 0) {
     return json(503, { error: "passkey_service_not_configured" });
   }
 
@@ -165,7 +168,7 @@ Deno.serve(async (request: Request) => {
         verification = await verifyRegistrationResponse({
           response: credentialResponse as unknown as RegistrationResponseJSON,
           expectedChallenge: challenge.challenge,
-          expectedOrigin,
+          expectedOrigin: expectedOrigins,
           expectedRPID: rpID,
           requireUserVerification: true,
         });
@@ -212,7 +215,7 @@ Deno.serve(async (request: Request) => {
       verification = await verifyAuthenticationResponse({
         response: credentialResponse as unknown as AuthenticationResponseJSON,
         expectedChallenge: challenge.challenge,
-        expectedOrigin,
+        expectedOrigin: expectedOrigins,
         expectedRPID: rpID,
         credential: {
           id: stored.credential_id,
