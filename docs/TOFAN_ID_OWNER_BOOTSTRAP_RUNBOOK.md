@@ -43,3 +43,10 @@ A server-side WebAuthn step-up ceremony and a Flutter client screen have been ad
 - Recovery must require trusted operator intervention; never add a public “make me owner” fallback.
 - Do not enable public launch until owner authorization is enforced server-side at each privileged operation boundary and passkey step-up/recovery flows have been implemented and tested.
 - No live migration, secret installation, function deployment, or ownership claim was performed while preparing this document.
+
+
+## Trusted manual review
+
+- Set `app_metadata.identity_reviewer = true` only through trusted Supabase admin tooling for a specifically authorized reviewer account. Never authorize from user-editable `user_metadata`.
+- The `tofan-identity-review` Edge Function allows only pending manual-review requests, blocks self-review, uses a compare-and-set update, and accepts only fixed reason codes.
+- The reviewer must inspect documents using an approved secure process outside the app. The app currently does not upload documents or query a government identity authority; the record is a manual-review decision, not a cryptographic government-document authenticity proof.
