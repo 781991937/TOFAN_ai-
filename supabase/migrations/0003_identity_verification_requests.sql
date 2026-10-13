@@ -38,6 +38,11 @@ create table if not exists public.identity_verification_requests (
 create index if not exists idx_identity_verification_user_created
   on public.identity_verification_requests (user_id, created_at desc);
 
+-- Prevent duplicate concurrent pending requests for the same account.
+create unique index if not exists idx_identity_verification_one_pending_per_user
+  on public.identity_verification_requests (user_id)
+  where status = 'pending_review';
+
 create or replace function public.set_identity_verification_updated_at()
 returns trigger
 language plpgsql
