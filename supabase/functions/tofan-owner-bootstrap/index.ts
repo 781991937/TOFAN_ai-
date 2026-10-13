@@ -2,7 +2,7 @@
 // Configure TOFAN_OWNER_BOOTSTRAP_SECRET as a high-entropy Supabase Edge Function secret.
 // This endpoint never logs or persists the supplied secret and never accepts an actor ID
 // from the request body; the actor comes from a validated Supabase access token.
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
