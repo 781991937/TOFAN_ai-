@@ -19,7 +19,18 @@ create table if not exists public.identity_verification_requests (
   reviewed_at timestamptz,
   constraint identity_verification_status_assurance_check check (
     (status = 'pending_review' and assurance_level = 'none' and reviewed_at is null)
-    or (status = 'verified' and assurance_level in ('document_reviewed', 'provider_verified') and reviewed_at is not null)
+    or (
+      status = 'verified'
+      and assurance_level = 'document_reviewed'
+      and reviewed_at is not null
+      and reviewer_actor_id is not null
+    )
+    or (
+      status = 'verified'
+      and assurance_level = 'provider_verified'
+      and reviewed_at is not null
+      and provider_reference is not null
+    )
     or (status in ('rejected', 'suspended') and reviewed_at is not null)
   )
 );
