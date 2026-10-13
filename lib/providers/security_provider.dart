@@ -5,9 +5,11 @@ import '../data/auth/supabase_authentication_gateway.dart';
 import '../data/persistence/supabase_student_learning_repository.dart';
 import '../data/persistence/supabase_experience_memory_repository.dart';
 import '../data/persistence/supabase_audit_repository.dart';
+import '../data/persistence/supabase_identity_verification_repository.dart';
 import '../domain/learning/student_learning_repository.dart';
 import '../abqari/experience_memory_repository.dart';
 import '../domain/security/audit_repository.dart';
+import '../domain/security/identity_verification_repository.dart';
 import '../domain/security/authentication_models.dart';
 import '../domain/security/owner_authority.dart';
 import '../config/supabase_config.dart';
@@ -43,4 +45,9 @@ final experienceMemoryRepositoryProvider =
 
 final auditRepositoryProvider = Provider<AuditRepository>((ref) {
   return SupabaseAuditRepository();
+});
+
+final identityVerificationRepositoryProvider =
+    Provider<IdentityVerificationRepository>((ref) {
+  return SupabaseIdentityVerificationRepository();
 });
