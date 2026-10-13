@@ -8,7 +8,7 @@ Integrate an identity-verification workflow into the existing TOFAN AI architect
 ## Security invariants
 1. Supabase Auth user ID (auth.uid() / currentUser.id) is the canonical account identity. Email, display name, OCR output, client-provided flags, and a submitted document are not authentication proofs.
 2. A verified identity does not automatically become the project owner. Owner status must be bound to an explicitly configured, trusted account identity and enforced server-side / by database policy.
-3. The client must never be trusted to set ownerAuthenticated, a verification status, reviewer identity, or an administrative role.
+3. The client must never be trusted to set ownerAuthenticated, a verification status, reviewer identity, or an administrative role. Owner-command grants must not be minted by Flutter code from caller-supplied booleans.
 4. Deny by default. A missing verifier, missing configuration, failed review, expired evidence, or provider error must not grant owner privileges.
 5. Do not store identity-card images by default. If retention is later justified, require explicit consent, strict access control, encryption, a retention deadline, and deletion workflow. Never log card numbers, extracted identity data, or image contents.
 6. OCR and face matching are signals only; neither proves document authenticity. A human review must be described as document review, not official government verification. Only claim authoritative verification if a trusted provider can be integrated and its evidence validated server-side.
@@ -18,6 +18,7 @@ Integrate an identity-verification workflow into the existing TOFAN AI architect
 - Privacy-minimized domain metadata model and unit tests.
 - Client repository that creates a pending request using the active Supabase Auth user ID and lists only that user's requests; requests for a trusted provider are rejected until a provider is actually configured.
 - A new migration proposal that grants authenticated users read-own/create-pending access only; approval fields are not client-writable, and a partial unique index prevents multiple simultaneous pending requests per account.
+- Client-side owner-grant minting using a caller-supplied `ownerAuthenticated` boolean has been disabled; grant issuance remains unavailable until a trusted server-side path exists.
 - No card image upload, OCR, face matching, reviewer endpoint, trusted provider, owner-role integration, or live migration has been implemented.
 
 ## Workflow and states
