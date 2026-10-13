@@ -80,3 +80,18 @@ No lower assurance level may be promoted to a higher one by a client-side flag o
 ## Current known limitation
 
 The current draft has metadata models, a client request repository, a proposed RLS migration, and owner-grant hardening. It does **not** yet contain the OCR worker, secure document upload/review endpoint, passkey server, bootstrap service, or ownership-transfer service. This document specifies the next implementation path; it does not mark those components as complete.
+
+
+## Explicit owner decision from product owner (2026-10-13)
+
+The national ID card is **only an information-entry/document-data source** for the user's profile. It must not be treated as a shared owner credential, a transferable owner token, or the mechanism that grants project ownership. Extract only the fields the user explicitly needs, show them for confirmation, and minimize retention; the card itself does not establish TOFAN project ownership.
+
+Project ownership is a separate security role. The owner's biometric step is **the fingerprint/biometric check performed locally by the device's operating system through a passkey/platform authenticator**. TOFAN must verify the server-side cryptographic assertion; it must not receive or store the owner's fingerprint image/template. Where fingerprint-capable hardware is unavailable, the platform may offer another supported authenticator/recovery path, but it must not silently claim a fingerprint check occurred.
+
+Therefore:
+- ID-card information collection and owner authentication are separate workflows and separate data models.
+- A card upload, OCR result, or extracted identity field never grants or transfers owner privileges.
+- Registering an account or being the first registrant never grants owner privileges by itself.
+- Owner enrollment/assignment must be established by a secure, one-time server-side bootstrap and then bound to a passkey credential after successful local user verification.
+- Any future owner transfer must require the current owner's fresh passkey assertion plus explicit, independently authenticated acceptance by the new owner, with audit and recovery controls.
+- UI wording must accurately say “device biometric/passkey authentication”; do not imply TOFAN directly scans or stores a fingerprint.
