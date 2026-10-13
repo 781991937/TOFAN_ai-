@@ -18,6 +18,8 @@ class _PasskeySecurityScreenState extends State<PasskeySecurityScreen> {
   // or logged. No privileged app operation consumes this receipt yet.
   String? _ephemeralOwnerReceipt;
 
+  bool get _hasEphemeralReceipt => _ephemeralOwnerReceipt != null;
+
   @override
   void dispose() {
     _ephemeralOwnerReceipt = null;
@@ -108,6 +110,14 @@ class _PasskeySecurityScreenState extends State<PasskeySecurityScreen> {
             if (_busy) ...[
               const SizedBox(height: 16),
               const Center(child: CircularProgressIndicator()),
+            ],
+            if (_hasEphemeralReceipt) ...[
+              const SizedBox(height: 12),
+              const ListTile(
+                leading: Icon(Icons.verified_outlined),
+                title: Text('اكتمل التحقق الإضافي مؤقتًا'),
+                subtitle: Text('التصريح محفوظ في الذاكرة فقط، ولا تستخدمه أي عملية إدارية في التطبيق حتى الآن.'),
+              ),
             ],
             if (_registeredThisSession) ...[
               const SizedBox(height: 12),
