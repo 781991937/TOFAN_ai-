@@ -33,3 +33,4 @@ jobs:
         run: |
           deno check supabase/functions/tofan-owner-bootstrap/index.ts
           deno check supabase/functions/tofan-passkey-step-up/index.ts
+          deno check supabase/functions/tofan-identity-review/index.ts
