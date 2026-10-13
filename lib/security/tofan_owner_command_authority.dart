@@ -1,7 +1,7 @@
 enum OwnerPermission { read, search, write, export, administer, execute }
 
 class OwnerCommandGrant {
-  const OwnerCommandGrant({
+  const OwnerCommandGrant._({
     required this.ownerIdentity,
     required this.commandId,
     required this.agentId,
@@ -43,38 +43,9 @@ class OwnerCommandGrant {
 class TofanOwnerCommandAuthority {
   const TofanOwnerCommandAuthority._();
 
-  static OwnerCommandGrant? issueGrant({
-    required bool ownerAuthenticated,
-    required String ownerIdentity,
-    required String commandId,
-    required String resourceScope,
-    required OwnerPermission permission,
-    required String action,
-    required DateTime now,
-    required Duration ttl,
-    required String reason,
-  }) {
-    if (!ownerAuthenticated ||
-        ownerIdentity.trim().isEmpty ||
-        commandId.trim().isEmpty ||
-        resourceScope.trim().isEmpty ||
-        action.trim().isEmpty ||
-        reason.trim().isEmpty ||
-        ttl <= Duration.zero) {
-      return null;
-    }
-    return OwnerCommandGrant(
-      ownerIdentity: ownerIdentity,
-      commandId: commandId,
-      agentId: 'TOFAN_ABQARI',
-      resourceScope: resourceScope,
-      permission: permission,
-      action: action,
-      issuedAt: now,
-      expiresAt: now.add(ttl),
-      reason: reason,
-    );
-  }
+  /// Grant issuance is intentionally unavailable in the Flutter client.
+  /// A caller-controlled boolean is not proof of owner authentication. Add a
+  /// server-side, authenticated issuance path before enabling owner grants.
 
   static bool authorize({
     required OwnerCommandGrant? grant,
