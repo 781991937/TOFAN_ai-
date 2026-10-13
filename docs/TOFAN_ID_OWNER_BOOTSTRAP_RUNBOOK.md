@@ -10,7 +10,7 @@
 - Uses migration `0004_tofan_owner_bootstrap.sql` to atomically consume the one-time bootstrap and create exactly one owner assignment.
 - Denies client direct access to owner-assignment and bootstrap-state tables and denies client execution of the bootstrap RPC.
 
-This does **not** implement passkey/WebAuthn registration or assertion verification, document upload/OCR, a reviewer UI/API, owner transfer, or enforcement for every privileged application operation. Do not describe the whole identity system as production-ready.
+A server-side WebAuthn step-up ceremony has also been added using the pinned `@simplewebauthn/server` library: short-lived challenges, verified registration, signature verification, credential counters, and one-time owner step-up receipts. It is **not yet wired to a Flutter/native passkey ceremony**, has not been tested against real devices, and does not create Supabase Auth sessions from passkeys. Document upload/OCR, a reviewer UI/API, owner transfer, rate limiting, and enforcement at every privileged operation boundary remain unfinished. Do not describe the whole identity system as production-ready.
 
 ## Required setup
 
@@ -31,9 +31,10 @@ This does **not** implement passkey/WebAuthn registration or assertion verificat
    ```
 
    Use the actual verified project ref; do not copy a ref from an old/inactive environment. Supabase provides the function's server-side `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` environment values. The service-role key must never be sent to the client.
-5. Before invoking bootstrap, establish and audit a trusted identity-review path. The owner claim intentionally fails until the account has a valid `verified` row with the required assurance fields set by a trusted server/reviewer. Do not manually mark a record verified merely to bypass this guard.
-6. Invoke the function only from a freshly authenticated account and transmit the bootstrap secret over HTTPS. Treat the secret as consumed once an owner is assigned; rotate/remove the function secret immediately afterward. The database also enforces one-time use, so retries after success must fail.
-7. Verify that one owner row exists, client roles cannot read or alter it, a second claim fails, and the audit trail contains no secret or identity-document contents.
+5. Configure the WebAuthn Edge Function with `TOFAN_WEBAUTHN_RP_ID` and `TOFAN_WEBAUTHN_ORIGIN` matching the actual relying-party domain/origin. These values are security-critical; do not use a guessed domain or wildcard origin. Deploy `tofan-passkey-step-up` only after the app has a compatible client ceremony and the origin association has been verified.
+6. Before invoking bootstrap, establish and audit a trusted identity-review path. The owner claim intentionally fails until the account has a valid `verified` row with the required assurance fields set by a trusted server/reviewer. Do not manually mark a record verified merely to bypass this guard.
+7. Invoke the bootstrap function only from a freshly authenticated account and transmit the bootstrap secret over HTTPS. Treat the secret as consumed once an owner is assigned; rotate/remove the function secret immediately afterward. The database also enforces one-time use, so retries after success must fail.
+8. Verify that one owner row exists, client roles cannot read or alter it, a second claim fails, and the audit trail contains no secret or identity-document contents.
 
 ## Operational safety
 
