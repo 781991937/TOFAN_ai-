@@ -21,6 +21,7 @@ dependencies:
   google_fonts: ^6.3.2
   flutter_dotenv: ^6.0.1
   supabase_flutter: ^2.10.3
+  passkeys: 2.21.1
   shared_preferences: ^2.5.3
   uuid: ^4.5.3
 
