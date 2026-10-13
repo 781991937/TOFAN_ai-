@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   edge-function:
-    name: Type-check owner bootstrap Edge Function
+    name: Type-check Supabase Edge Functions
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -30,4 +30,6 @@ jobs:
           deno-version: v2.x
 
       - name: Type-check Edge Function
-        run: deno check supabase/functions/tofan-owner-bootstrap/index.ts
+        run: |
+          deno check supabase/functions/tofan-owner-bootstrap/index.ts
+          deno check supabase/functions/tofan-passkey-step-up/index.ts
