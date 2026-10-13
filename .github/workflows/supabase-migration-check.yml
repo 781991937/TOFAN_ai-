@@ -1,0 +1,53 @@
+name: Supabase migration and RLS checks
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "supabase/tests/**"
+      - "scripts/test_supabase_migrations.sh"
+      - ".github/workflows/supabase-migration-check.yml"
+  push:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "supabase/tests/**"
+      - "scripts/test_supabase_migrations.sh"
+      - ".github/workflows/supabase-migration-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  migration-rls:
+    name: Apply migrations and verify identity RLS
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: tofan_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d tofan_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/tofan_test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes postgresql-client
+
+      - name: Apply all migrations to an isolated PostgreSQL database and test RLS
+        run: bash scripts/test_supabase_migrations.sh
