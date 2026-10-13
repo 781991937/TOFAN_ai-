@@ -50,6 +50,24 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+async function isRateLimited(
+  admin: ReturnType<typeof createClient>,
+  userId: string,
+  ceremony: "registration" | "authentication",
+): Promise<boolean> {
+  // Count challenge issuance attempts (including challenges that were consumed
+  // or failed verification) to limit repeated ceremony requests per account.
+  const since = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+  const { count, error } = await admin
+    .from("tofan_passkey_challenges")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .eq("ceremony", ceremony)
+    .gte("created_at", since);
+  if (error) throw new Error("passkey_rate_limit_check_failed");
+  return (count ?? 0) >= 8;
+}
+
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (request.method !== "POST") return json(405, { error: "method_not_allowed" });
@@ -93,6 +111,13 @@ Deno.serve(async (request: Request) => {
   });
 
   if (action === "registration-options") {
+    try {
+      if (await isRateLimited(admin, user.id, "registration")) {
+        return json(429, { error: "passkey_rate_limit_exceeded" });
+      }
+    } catch {
+      return json(503, { error: "passkey_rate_limit_unavailable" });
+    }
     const { data: existing, error } = await admin
       .from("tofan_passkey_credentials")
       .select("credential_id,transports")
@@ -269,6 +294,13 @@ Deno.serve(async (request: Request) => {
   }
 
   if (action === "authentication-options") {
+    try {
+      if (await isRateLimited(admin, user.id, "authentication")) {
+        return json(429, { error: "passkey_rate_limit_exceeded" });
+      }
+    } catch {
+      return json(503, { error: "passkey_rate_limit_unavailable" });
+    }
     const { data: credentials, error } = await admin
       .from("tofan_passkey_credentials")
       .select("credential_id,transports")
