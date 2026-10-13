@@ -16,8 +16,8 @@ Integrate an identity-verification workflow into the existing TOFAN AI architect
 
 ## Implemented in the current draft
 - Privacy-minimized domain metadata model and unit tests.
-- Client repository that creates a pending request using the active Supabase Auth user ID and lists only that user's requests.
-- A new migration proposal that grants authenticated users read-own/create-pending access only; approval fields are not client-writable.
+- Client repository that creates a pending request using the active Supabase Auth user ID and lists only that user's requests; requests for a trusted provider are rejected until a provider is actually configured.
+- A new migration proposal that grants authenticated users read-own/create-pending access only; approval fields are not client-writable, and a partial unique index prevents multiple simultaneous pending requests per account.
 - No card image upload, OCR, face matching, reviewer endpoint, trusted provider, owner-role integration, or live migration has been implemented.
 
 ## Workflow and states
