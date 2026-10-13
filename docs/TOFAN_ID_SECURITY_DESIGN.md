@@ -22,6 +22,9 @@ Integrate an identity-verification workflow into the existing TOFAN AI architect
 - A new migration proposal that grants authenticated users read-own/create-pending access only; approval fields are not client-writable, and a partial unique index prevents multiple simultaneous pending requests per account.
 - Client-side owner-grant minting using a caller-supplied `ownerAuthenticated` boolean has been disabled; grant issuance remains unavailable until a trusted server-side path exists.
 - Removed the `TOFAN_OWNER_ACTOR_ID` compile-time client setting. The Flutter client now fails closed for local owner authority instead of treating a bundled actor ID as proof of ownership. This is a defense-in-depth hardening step, not a replacement for server-side authorization.
+- Added a proposed server-only owner-assignment table and single-use atomic bootstrap RPC. The RPC requires a previously reviewed identity-verification record, rejects client execution, and permits only one owner assignment.
+- Added a Supabase Edge Function that validates the caller through Supabase Auth, checks a high-entropy `TOFAN_OWNER_BOOTSTRAP_SECRET` configured only as a server-side function secret, and calls the atomic RPC with the validated account ID. It never accepts an actor ID from the request body.
+- Added isolated PostgreSQL tests for client denial, unverified identity denial, successful reviewed-identity bootstrap, and rejection of a second claim. This function is not deployed and the proposed migration is not applied to a live database.
 - No card image upload, OCR, face matching, reviewer endpoint, trusted provider, owner-role integration, or live migration has been implemented.
 
 ## Proposed end-to-end identity and owner lifecycle
