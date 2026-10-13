@@ -62,7 +62,7 @@ create trigger identity_verification_requests_updated_at
 alter table public.identity_verification_requests enable row level security;
 
 -- The client can read only its own request metadata.
--- The client may create a pending request only; it cannot update/delete or approve it.
+-- The client may create a pending manual-review request only; it cannot update/delete or approve it.
 revoke all on table public.identity_verification_requests from anon, authenticated;
 grant select on table public.identity_verification_requests to authenticated;
 grant insert (user_id, method)
@@ -83,6 +83,7 @@ create policy identity_verification_insert_pending_own
   with check (
     user_id = (select auth.uid())
     and status = 'pending_review'
+    and method = 'manual_document_review'
     and assurance_level = 'none'
     and reviewer_actor_id is null
     and provider_reference is null
