@@ -88,19 +88,9 @@ class TofanPasskeyService {
         throw const TofanPasskeyException('تعذّر إكمال التحقق من مفتاح المرور.');
       }
       return data;
-    } on FunctionException catch (error) {
-      if (error.status == 403) {
-        throw const TofanPasskeyException(
-          'هذا الحساب ليس المالك المعتمد؛ تسجيل مفتاح المرور لا يمنح صلاحية المالك.',
-        );
-      }
-      if (error.status == 401) {
-        throw const TofanPasskeyException(
-          'انتهت جلسة الدخول أو لم تعد صالحة. سجّل الدخول مجددًا.',
-        );
-      }
+    } on FunctionException {
       throw const TofanPasskeyException(
-        'خدمة مفتاح المرور غير متاحة أو لم تُنشر بعد. لم يتم تغيير صلاحيات الحساب.',
+        'رفض الخادم الطلب أو تعذّر الاتصال بالخدمة. تأكد من تسجيل الدخول وإعداد الخدمة، ثم أعد المحاولة.',
       );
     }
   }
