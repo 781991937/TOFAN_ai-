@@ -48,7 +48,9 @@ insert into public.identity_verification_requests
   (user_id, status, method, assurance_level, reviewer_actor_id, reviewed_at)
 values
   ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'verified', 'manual_document_review',
-   'document_reviewed', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', now());
+   'document_reviewed', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', now()),
+  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', 'verified', 'manual_document_review',
+   'document_reviewed', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', now());
 
 select * from public.claim_initial_tofan_owner('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa');
 
