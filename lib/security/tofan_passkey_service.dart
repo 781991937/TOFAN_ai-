@@ -1,4 +1,5 @@
-import 'package:passkeys/passkeys.dart';
+import 'package:passkeys/authenticator.dart';
+import 'package:passkeys/types.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Flutter client for the server-verified TOFAN passkey ceremony.
