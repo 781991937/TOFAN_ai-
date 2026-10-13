@@ -25,10 +25,11 @@ final authenticationGatewayProvider = Provider<AuthenticationGateway>((ref) {
 });
 
 final agentGatewayProvider = Provider<AgentGateway>((ref) {
+  // Owner status must come from a trusted server-side authorization decision.
+  // A compile-time value bundled into a client is extractable and cannot prove
+  // ownership, so the client deliberately grants no owner authority.
   return AgentGateway(
-    ownerAuthority: SupabaseConfig.ownerActorId.isEmpty
-        ? const OwnerAuthority()
-        : OwnerAuthority(ownerActorId: SupabaseConfig.ownerActorId),
+    ownerAuthority: const OwnerAuthority(),
     auditRepository: ref.read(auditRepositoryProvider),
   );
 });
