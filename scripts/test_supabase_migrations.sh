@@ -35,6 +35,9 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/identity_verification_
 echo "Running owner-bootstrap authorization and single-use assertions"
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/tofan_owner_bootstrap.sql
 
+echo "Running passkey storage and step-up receipt assertions"
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/tofan_passkey_step_up.sql
+
 expect_failure() {
   local description="$1"
   local expected_text="$2"
