@@ -21,12 +21,12 @@ dependencies:
   google_fonts: ^6.3.2
   flutter_dotenv: ^6.0.1
   supabase_flutter: ^2.10.3
-  passkeys: 2.21.1 # pinned: supports the project's Dart 3.8 SDK floor
+  passkeys: 2.21.1 # pinned to avoid newer Dart 3.9+ package APIs
   shared_preferences: ^2.5.3
   uuid: ^4.5.3
 
 # The 2.21.1 passkeys implementation predates the WebAuthn Signal API.
-# Pin its interface to the Dart 3.8-compatible 2.8.0 contract instead of
+# Pin its interface to the older 2.8.0 contract instead of
 # resolving the newer 2.9+ interface, which adds methods the implementation lacks.
 dependency_overrides:
   passkeys_platform_interface: 2.8.0
