@@ -95,3 +95,24 @@ Therefore:
 - Owner enrollment/assignment must be established by a secure, one-time server-side bootstrap and then bound to a passkey credential after successful local user verification.
 - Any future owner transfer must require the current owner's fresh passkey assertion plus explicit, independently authenticated acceptance by the new owner, with audit and recovery controls.
 - UI wording must accurately say “device biometric/passkey authentication”; do not imply TOFAN directly scans or stores a fingerprint.
+
+
+## Implementation status and tracked blockers (2026-10-13)
+
+Tracking issue: [#3 — Implement passkey-backed owner authentication and one-time owner bootstrap](https://github.com/781991937/TOFAN_ai-/issues/3).
+
+### Implemented in this branch
+- Identity-verification request metadata model and current-user-scoped Supabase repository.
+- Proposed RLS migration that allows a signed-in user to create a pending request and read their own request metadata; it does not let the client approve a request.
+- Client-side owner-grant minting from a caller-provided `ownerAuthenticated` boolean is disabled.
+- Security design separates card-data entry, account authentication, platform biometric unlock, passkey authentication, and owner authorization.
+
+### Not implemented; must not be represented as working
+- Passkey registration/login UX and a server-verified WebAuthn challenge/credential lifecycle.
+- An atomic, operator-armed one-time owner bootstrap and database-enforced owner assignment.
+- Server-side enforcement connecting the owner assignment to every privileged operation.
+- ID-card image upload, OCR extraction, profile-field confirmation UI, manual-review endpoint, or trusted issuing-authority/provider verification.
+- Secure ownership transfer, lost-device recovery, or production RLS/Edge Function integration tests.
+
+### Current delivery boundary
+This branch is still a draft. The migration remains a proposal and has not been applied. No production secrets were configured, no live database was changed, and no merge or deployment was performed. Implementation must proceed against the existing architecture and be tested in an isolated environment before any production enablement.
