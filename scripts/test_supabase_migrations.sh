@@ -32,6 +32,9 @@ done
 echo "Running identity-verification RLS assertions"
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/identity_verification_rls.sql
 
+echo "Running owner-bootstrap authorization and single-use assertions"
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/tofan_owner_bootstrap.sql
+
 expect_failure() {
   local description="$1"
   local expected_text="$2"
