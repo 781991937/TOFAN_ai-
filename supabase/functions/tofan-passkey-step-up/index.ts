@@ -4,7 +4,7 @@ import {
   verifyAuthenticationResponse,
   verifyRegistrationResponse,
   type AuthenticationResponseJSON,
-  type AuthenticatorTransportFuture,
+  type AuthenticatorTransport,
   type RegistrationResponseJSON,
 } from "npm:@simplewebauthn/server@14.0.3";
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -108,7 +108,7 @@ Deno.serve(async (request: Request) => {
       },
       excludeCredentials: (existing ?? []).map((row) => ({
         id: row.credential_id,
-        transports: (row.transports ?? []) as AuthenticatorTransportFuture[],
+        transports: (row.transports ?? []) as AuthenticatorTransport[],
       })),
     });
 
@@ -216,9 +216,9 @@ Deno.serve(async (request: Request) => {
         expectedRPID: rpID,
         credential: {
           id: stored.credential_id,
-          publicKey: base64ToBytes(stored.public_key_base64),
+          publicKey: Uint8Array.from(base64ToBytes(stored.public_key_base64)),
           counter: previousCounter,
-          transports: (stored.transports ?? []) as AuthenticatorTransportFuture[],
+          transports: (stored.transports ?? []) as AuthenticatorTransport[],
         },
         requireUserVerification: true,
       });
@@ -277,7 +277,7 @@ Deno.serve(async (request: Request) => {
       rpID,
       allowCredentials: credentials.map((row) => ({
         id: row.credential_id,
-        transports: (row.transports ?? []) as AuthenticatorTransportFuture[],
+        transports: (row.transports ?? []) as AuthenticatorTransport[],
       })),
       userVerification: "required",
     });
