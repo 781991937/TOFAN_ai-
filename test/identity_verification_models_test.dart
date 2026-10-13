@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tofan_ai/domain/execution/execution_models.dart';
 import 'package:tofan_ai/domain/security/identity_verification_models.dart';
+import 'package:tofan_ai/domain/security/owner_authority.dart';
 
 void main() {
   final createdAt = DateTime.utc(2026, 10, 13);
@@ -52,6 +54,23 @@ void main() {
     expect(providerVerified.hasRecordedVerification, isTrue);
     expect(reviewed.method, IdentityVerificationMethod.manualDocumentReview);
     expect(providerVerified.assuranceLevel, IdentityAssuranceLevel.providerVerified);
+  });
+
+
+  test('verified identity does not grant project-owner authority', () {
+    final request = record(
+      status: IdentityVerificationStatus.verified,
+      assurance: IdentityAssuranceLevel.documentReviewed,
+    );
+    const unconfiguredOwnerAuthority = OwnerAuthority();
+    expect(request.hasRecordedVerification, isTrue);
+    expect(
+      unconfiguredOwnerAuthority.hasPermission(
+        request.userId,
+        ToolPermission.administer,
+      ),
+      isFalse,
+    );
   });
 
   test('rejected and suspended records are not verified', () {
