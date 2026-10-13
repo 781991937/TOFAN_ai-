@@ -22,6 +22,15 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Verify dependency lockfile
+        run: |
+          if ! git diff --quiet -- pubspec.lock; then
+            echo "::warning::pubspec.lock is out of date with pubspec.yaml"
+            git diff -- pubspec.lock
+          else
+            echo "pubspec.lock is in sync with pubspec.yaml"
+          fi
+
       - name: Analyze
         run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
