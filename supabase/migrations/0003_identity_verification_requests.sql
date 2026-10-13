@@ -27,6 +27,22 @@ create table if not exists public.identity_verification_requests (
 create index if not exists idx_identity_verification_user_created
   on public.identity_verification_requests (user_id, created_at desc);
 
+create or replace function public.set_identity_verification_updated_at()
+returns trigger
+language plpgsql
+as $
+begin
+  new.updated_at = now();
+  return new;
+end;
+$;
+
+drop trigger if exists identity_verification_requests_updated_at
+  on public.identity_verification_requests;
+create trigger identity_verification_requests_updated_at
+  before update on public.identity_verification_requests
+  for each row execute function public.set_identity_verification_updated_at();
+
 alter table public.identity_verification_requests enable row level security;
 
 -- The client can read only its own request metadata.
