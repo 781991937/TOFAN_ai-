@@ -59,5 +59,9 @@ create policy identity_verification_insert_pending_own
   );
 
 -- No UPDATE/DELETE grant or policy for authenticated users.
+-- Trusted server-side review code may manage records using the server-only service role.
+-- Never expose the service-role key to Flutter or a browser client.
+grant all on table public.identity_verification_requests to service_role;
+
 -- Trusted review/provider integration must be implemented server-side before
 -- status transitions can be used as authorization evidence. Never trust client state.
