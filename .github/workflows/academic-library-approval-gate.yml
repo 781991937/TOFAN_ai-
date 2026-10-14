@@ -30,6 +30,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Verify executable roadmap baseline
+        run: python3 tool/verify_roadmap_baseline.py
+
       - name: Run academic library approval tests
         run: flutter test test/academic_library_buildability_audit_test.dart
 

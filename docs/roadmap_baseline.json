@@ -1,0 +1,2169 @@
+{
+  "schema_version": 1,
+  "repository": "781991937/TOFAN_ai-",
+  "roadmap": "docs/ROADMAP.md",
+  "baseline_commit": "bbff3679bacb9326f74b0846cee0bb1394b0346e",
+  "verification_policy": "الحالة NEEDS_VERIFICATION هي الحالة الافتراضية حتى تُسجل أدلة كود واختبار وتشغيل. لا تُرقّى الحالات تلقائيًا من ROADMAP.",
+  "items": [
+    {
+      "id": "01",
+      "name": "النواة الأكاديمية العالمية",
+      "phase": "2",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "—",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #01"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "02",
+      "name": "مجالات علوم الحاسوب Knowledge Areas",
+      "phase": "2",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "01",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #02"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "03",
+      "name": "التخصصات الحاسوبية العالمية",
+      "phase": "4",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "02",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #03"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "04",
+      "name": "4 سنوات × 8 فصول كهيكل مرحلي",
+      "phase": "4",
+      "reference_status": "COMPLETED/STRUCTURE",
+      "dependencies": "03",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #04"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "05",
+      "name": "المقررات وربطها بالتخصصات",
+      "phase": "3–4",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "04",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #05"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "06",
+      "name": "Knowledge Units",
+      "phase": "2",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "05",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #06"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "07",
+      "name": "الدروس الأكاديمية",
+      "phase": "5",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "06",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #07"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "08",
+      "name": "عقد الدرس: تعريف/شرح/أمثلة/تطبيق/تدريب/تقييم",
+      "phase": "5",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "07",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #08"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "09",
+      "name": "Prerequisite Graph",
+      "phase": "3/6",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "06–08",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #09"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "10",
+      "name": "Concept Model",
+      "phase": "6",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "06–09",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #10"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "11",
+      "name": "Knowledge Graph غني بالعلاقات",
+      "phase": "6",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "10",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #11"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "12",
+      "name": "Skill Model",
+      "phase": "7",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "10",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #12"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "13",
+      "name": "Capability Model",
+      "phase": "7",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "12",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #13"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "14",
+      "name": "Knowledge → Skill → Capability",
+      "phase": "7",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "10–13",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #14"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "15",
+      "name": "Academic Quality Gate",
+      "phase": "24",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "07–14",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #15"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "16",
+      "name": "تعميق المحتوى التخصصي واعتماده",
+      "phase": "4/17/18/24",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "15",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #16"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "17",
+      "name": "Student Model الدائم",
+      "phase": "10/21",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "16",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #17"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "18",
+      "name": "Knowledge State لكل مفهوم",
+      "phase": "10/11",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "17",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #18"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "19",
+      "name": "Skill State لكل مهارة",
+      "phase": "7/10",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "17",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #19"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "20",
+      "name": "Capability State",
+      "phase": "7/10",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "18–19",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #20"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "21",
+      "name": "Learning History دائم",
+      "phase": "10/21",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "17",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #21"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "22",
+      "name": "Diagnostic Engine",
+      "phase": "10–11",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "18–21",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #22"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "23",
+      "name": "Personalized Learning Plan",
+      "phase": "11",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "22",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #23"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "24",
+      "name": "Knowledge/Skill/Prerequisite Gap Detection",
+      "phase": "11",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "09,18,19",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #24"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "25",
+      "name": "Learning Intelligence والتحديث الديناميكي",
+      "phase": "11",
+      "reference_status": "MISSING/PARTIAL",
+      "dependencies": "23–24",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #25"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "26",
+      "name": "Assessment Engine",
+      "phase": "8",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "15",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #26"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "27",
+      "name": "Assessment Analysis وربط الخطأ بالمفهوم",
+      "phase": "8",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "26",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #27"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "28",
+      "name": "Remediation Engine",
+      "phase": "8/11",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "24,27",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #28"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "29",
+      "name": "Retry/Reassessment",
+      "phase": "8",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "28",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #29"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "30",
+      "name": "Skill Update من نتائج التقييم",
+      "phase": "7/8",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "29",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #30"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "31",
+      "name": "Project Engine",
+      "phase": "9",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "13–16",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #31"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "32",
+      "name": "Project Requirements",
+      "phase": "9",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "31",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #32"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "33",
+      "name": "Implementation Tasks",
+      "phase": "9",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "32",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #33"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "34",
+      "name": "Project Test Cases",
+      "phase": "9",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "33",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #34"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "35",
+      "name": "Evidence Requirements",
+      "phase": "9",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "34",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #35"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "36",
+      "name": "Capability Verification بالمشروع",
+      "phase": "9",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "35",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #36"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "37",
+      "name": "TOFAN AI Core abstraction",
+      "phase": "16",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "10–16",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #37"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "38",
+      "name": "Local-first AI architecture",
+      "phase": "16",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "37",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #38"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "39",
+      "name": "تشغيل النظام دون مفاتيح خارجية",
+      "phase": "16",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "38",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #39"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "40",
+      "name": "Provider Independence كخيار اختياري",
+      "phase": "16",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "38–39",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #40"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "41",
+      "name": "Agent Architecture الموحد",
+      "phase": "12",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "37",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #41"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "42",
+      "name": "Academic Tutor Agent",
+      "phase": "12",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "41",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #42"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "43",
+      "name": "Knowledge Agent",
+      "phase": "12",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "11,41",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #43"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "44",
+      "name": "Assessment Agent",
+      "phase": "12",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "26–30,41",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #44"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "45",
+      "name": "Skills Agent",
+      "phase": "12",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "12–14,41",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #45"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "46",
+      "name": "Project Agent",
+      "phase": "12",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "31–36,41",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #46"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "47",
+      "name": "File/Document Agent",
+      "phase": "12/17",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "16,41",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #47"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "48",
+      "name": "Progress Analyst Agent",
+      "phase": "12",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "17–25,41",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #48"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "49",
+      "name": "Translation/Terminology Agent",
+      "phase": "12",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "10,41",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #49"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "50",
+      "name": "Main Manager Agent",
+      "phase": "12",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "41–49",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #50"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "51",
+      "name": "ABQARI Core",
+      "phase": "12",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "11–16,37",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #51"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "52",
+      "name": "Intent Analysis",
+      "phase": "12",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "51",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #52"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "53",
+      "name": "Task/Discipline Classification",
+      "phase": "12",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "52",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #53"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "54",
+      "name": "Academic Retrieval",
+      "phase": "12",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "11",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #54"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "55",
+      "name": "Knowledge Gap داخل ABQARI",
+      "phase": "12",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "24,54",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #55"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "56",
+      "name": "Engineering Planning",
+      "phase": "12",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "55",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #56"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "57",
+      "name": "Tool Layer وعقود الأدوات",
+      "phase": "13",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "56",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #57"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "58",
+      "name": "Safe Code Workspace",
+      "phase": "13",
+      "reference_status": "MISSING",
+      "dependencies": "57",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #58"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "59",
+      "name": "General Testing Execution",
+      "phase": "13",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "58",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #59"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "60",
+      "name": "Correction Loop",
+      "phase": "13",
+      "reference_status": "MISSING",
+      "dependencies": "59",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #60"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "61",
+      "name": "Re-test Loop",
+      "phase": "13",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "60",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #61"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "62",
+      "name": "Engineering Evaluation",
+      "phase": "12/13",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "61",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #62"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "63",
+      "name": "Persistent Experience Memory",
+      "phase": "15/21",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "62",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #63"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "64",
+      "name": "Experience Retrieval",
+      "phase": "15",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "63",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #64"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "65",
+      "name": "Student File Storage",
+      "phase": "17/21",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "47",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #65"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "66",
+      "name": "File Extraction Pipeline",
+      "phase": "17",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "65",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #66"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "67",
+      "name": "File → Concept/Skill/Course Mapping",
+      "phase": "17",
+      "reference_status": "MISSING",
+      "dependencies": "66",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #67"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "68",
+      "name": "Provenance الكامل للمحتوى",
+      "phase": "18",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "16,67",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #68"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "69",
+      "name": "Authentication إنتاجي",
+      "phase": "19/21",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "01",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #69"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "70",
+      "name": "Authorization",
+      "phase": "19",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "69",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #70"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "71",
+      "name": "RBAC",
+      "phase": "19",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "70",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #71"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "72",
+      "name": "Audit System",
+      "phase": "19",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "70–71",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #72"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "73",
+      "name": "Persistence Architecture",
+      "phase": "21",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "17,63",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #73"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "74",
+      "name": "Production Database",
+      "phase": "21",
+      "reference_status": "MISSING",
+      "dependencies": "73",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #74"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "75",
+      "name": "Migrations",
+      "phase": "21",
+      "reference_status": "MISSING",
+      "dependencies": "74",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #75"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "76",
+      "name": "Backup/Recovery",
+      "phase": "21/26",
+      "reference_status": "MISSING",
+      "dependencies": "74",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #76"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "77",
+      "name": "Backend API",
+      "phase": "22",
+      "reference_status": "MISSING/PARTIAL",
+      "dependencies": "69–76",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #77"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "78",
+      "name": "Internal AI Gateway",
+      "phase": "16/22",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "37–40",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #78"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "79",
+      "name": "Agent Gateway",
+      "phase": "22",
+      "reference_status": "MISSING",
+      "dependencies": "41",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #79"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "80",
+      "name": "Academic API",
+      "phase": "22",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "16, 16-C",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #80"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "81",
+      "name": "Student API",
+      "phase": "22",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "17, 16-C",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #81"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "82",
+      "name": "Learning/Assessment API",
+      "phase": "22",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "22–30, 16-C",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #82"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "83",
+      "name": "Project API",
+      "phase": "22",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "31–36, 16-C",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #83"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "84",
+      "name": "Android/Mobile UI",
+      "phase": "23",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "77",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #84"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "85",
+      "name": "Web/Desktop UI",
+      "phase": "23",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "77",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #85"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "86",
+      "name": "Academic Library UI",
+      "phase": "23",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "80",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #86"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "87",
+      "name": "Learning UI",
+      "phase": "23",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "82",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #87"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "88",
+      "name": "Assessment UI",
+      "phase": "23",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "82",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #88"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "89",
+      "name": "Project UI",
+      "phase": "23",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "83",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #89"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "90",
+      "name": "ABQARI UI",
+      "phase": "23",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "79",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #90"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "91",
+      "name": "Student Dashboard",
+      "phase": "23",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "81–90",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #91"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "92",
+      "name": "Administration",
+      "phase": "23",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "77",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #92"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "93",
+      "name": "Academic Administration",
+      "phase": "23",
+      "reference_status": "MISSING",
+      "dependencies": "92",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #93"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "94",
+      "name": "Agent Administration",
+      "phase": "23",
+      "reference_status": "MISSING",
+      "dependencies": "92",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #94"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "95",
+      "name": "Security Administration",
+      "phase": "23",
+      "reference_status": "MISSING",
+      "dependencies": "92",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #95"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "96",
+      "name": "Analytics",
+      "phase": "23",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "91–95",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #96"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "97",
+      "name": "Notifications",
+      "phase": "23",
+      "reference_status": "MISSING",
+      "dependencies": "91",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #97"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "98",
+      "name": "Subscription",
+      "phase": "23",
+      "reference_status": "MISSING",
+      "dependencies": "91",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #98"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "99",
+      "name": "Certificates",
+      "phase": "23",
+      "reference_status": "MISSING",
+      "dependencies": "91",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #99"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "100",
+      "name": "Integration Testing",
+      "phase": "24",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "77–91",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #100"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "101",
+      "name": "E2E Testing",
+      "phase": "24",
+      "reference_status": "MISSING",
+      "dependencies": "100",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #101"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "102",
+      "name": "Security Testing",
+      "phase": "19/20/24",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "69–79",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #102"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "103",
+      "name": "Performance Testing",
+      "phase": "24",
+      "reference_status": "MISSING",
+      "dependencies": "77–91",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #103"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "104",
+      "name": "Content/Data Validation",
+      "phase": "17/18/24",
+      "reference_status": "COMPLETED/BASE",
+      "dependencies": "16–68",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #104"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "105",
+      "name": "Observability/Metrics",
+      "phase": "26",
+      "reference_status": "MISSING",
+      "dependencies": "77",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #105"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "106",
+      "name": "Production Logging",
+      "phase": "25/26",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "77",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #106"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "107",
+      "name": "Unified Error Handling",
+      "phase": "22/24",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "77–91",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #107"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "108",
+      "name": "CI/CD",
+      "phase": "25",
+      "reference_status": "PARTIALLY IMPLEMENTED",
+      "dependencies": "100–107",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #108"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "109",
+      "name": "Release System",
+      "phase": "25",
+      "reference_status": "MISSING",
+      "dependencies": "108",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #109"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "110",
+      "name": "Production Deployment",
+      "phase": "26",
+      "reference_status": "MISSING",
+      "dependencies": "109",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #110"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "111",
+      "name": "Production Hardening",
+      "phase": "26",
+      "reference_status": "MISSING",
+      "dependencies": "110",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #111"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "112",
+      "name": "Production Backup",
+      "phase": "26",
+      "reference_status": "MISSING",
+      "dependencies": "110",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #112"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "113",
+      "name": "Production Monitoring",
+      "phase": "26",
+      "reference_status": "MISSING",
+      "dependencies": "110",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #113"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "114",
+      "name": "Disaster/Recovery Procedure",
+      "phase": "26",
+      "reference_status": "MISSING",
+      "dependencies": "112–113",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #114"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "115",
+      "name": "Final Integration",
+      "phase": "26",
+      "reference_status": "MISSING",
+      "dependencies": "01–114",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #115"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "116",
+      "name": "Full System Verification",
+      "phase": "24–26",
+      "reference_status": "MISSING",
+      "dependencies": "115",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #116"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "117",
+      "name": "Academic Acceptance",
+      "phase": "18/24",
+      "reference_status": "MISSING",
+      "dependencies": "116",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #117"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "118",
+      "name": "ABQARI Acceptance",
+      "phase": "12/13/24",
+      "reference_status": "MISSING",
+      "dependencies": "116",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #118"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "119",
+      "name": "Production Release",
+      "phase": "25/26",
+      "reference_status": "MISSING",
+      "dependencies": "117–118",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #119"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    },
+    {
+      "id": "120",
+      "name": "TOFAN AL-ABQARI مستقلًا",
+      "phase": "26",
+      "reference_status": "FINAL",
+      "dependencies": "119",
+      "verification": "NEEDS_VERIFICATION",
+      "code_paths": [],
+      "test_paths": [],
+      "evidence": [
+        {
+          "kind": "roadmap_reference",
+          "path": "docs/ROADMAP.md",
+          "locator": "master execution matrix item #120"
+        }
+      ],
+      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+    }
+  ]
+}
