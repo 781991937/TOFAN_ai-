@@ -326,6 +326,38 @@ class TofanApiServer {
         },
       );
     }
+    if (_isPath(segments, ['v1', 'students', 'me', 'project-plan'])) {
+      if (method == 'GET') {
+        final rows = await _gateway.selectRows(
+          table: 'student_project_assignments',
+          accessToken: accessToken,
+          query: {
+            'select': 'assignment,source_plan_assessment_id,updated_at',
+            'student_id': 'eq.${principal.userId}',
+            'limit': '1',
+          },
+        );
+        final row = rows.isEmpty ? null : rows.first;
+        return (
+          200,
+          {
+            'data': {
+              'studentId': principal.userId,
+              'assignment': row?['assignment'],
+              'sourcePlanAssessmentId': row?['source_plan_assessment_id'],
+              'updatedAt': row?['updated_at'],
+            },
+          },
+        );
+      }
+      if (method == 'POST') {
+        final assignment = await _createProjectAssignment(
+          principal: principal,
+          accessToken: accessToken,
+        );
+        return (201, {'data': assignment});
+      }
+    }
     if (_isPath(segments, ['v1', 'students', 'me', 'learning-state'])) {
       if (method == 'GET') {
         final rows = await _gateway.selectRows(
@@ -546,6 +578,90 @@ class TofanApiServer {
       'route_not_found',
       'The API route was not found.',
     );
+  }
+
+  Future<Map<String, dynamic>> _createProjectAssignment({
+    required ApiPrincipal principal,
+    required String accessToken,
+  }) async {
+    final planRows = await _gateway.selectRows(
+      table: 'student_learning_plans',
+      accessToken: accessToken,
+      query: {
+        'select': 'plan,source_assessment_id',
+        'student_id': 'eq.${principal.userId}',
+        'limit': '1',
+      },
+    );
+    if (planRows.isEmpty || planRows.first['plan'] is! Map) {
+      throw const ApiException(
+        409,
+        'learning_plan_required',
+        'A saved learning plan is required before assigning a project.',
+      );
+    }
+    final plan = Map<String, dynamic>.from(planRows.first['plan'] as Map);
+    final gaps = plan['gaps'] is Map
+        ? Map<String, dynamic>.from(plan['gaps'] as Map)
+        : const <String, dynamic>{};
+    final skillIds = (gaps['skillIds'] as List<dynamic>? ?? const [])
+        .whereType<String>()
+        .toSet();
+    final conceptIds = (gaps['conceptIds'] as List<dynamic>? ?? const [])
+        .whereType<String>()
+        .toSet();
+
+    final projects = _catalog.projects;
+    if (projects.isEmpty) {
+      throw const ApiException(
+        409,
+        'project_unavailable',
+        'No canonical project is available for assignment.',
+      );
+    }
+    final ranked = projects.map((record) {
+      final project = record.project;
+      final overlap =
+          project.skillIds.where(skillIds.contains).length * 2 +
+          project.conceptIds.where(conceptIds.contains).length;
+      return (record: record, overlap: overlap);
+    }).toList()..sort((a, b) => b.overlap.compareTo(a.overlap));
+    final selected = ranked.first.record;
+    final project = selected.project;
+    final tasks = project.implementationTasks
+        .asMap()
+        .entries
+        .map(
+          (entry) => {
+            'id': '${project.id}-task-${entry.key + 1}',
+            'title': entry.value,
+            'status': 'pending',
+            'source': 'canonical_project',
+          },
+        )
+        .toList(growable: false);
+    final assignment = {
+      'projectId': project.id,
+      'courseId': selected.course.course.id,
+      'title': project.title,
+      'description': project.description,
+      'requirements': project.requirements,
+      'deliverables': project.deliverables,
+      'acceptanceCriteria': project.acceptanceCriteria,
+      'tasks': tasks,
+      'testCases': project.testCases,
+      'evidenceRequirements': project.evidenceRequirements,
+      'sourcePlanAssessmentId': plan['assessmentId'],
+      'generatedAt': DateTime.now().toUtc().toIso8601String(),
+    };
+    await _gateway.upsertDerivedProjectAssignment({
+      'student_id': principal.userId,
+      'assignment': assignment,
+      'source_plan_assessment_id':
+          planRows.first['source_assessment_id'] ?? plan['assessmentId'],
+      'updated_at': DateTime.now().toUtc().toIso8601String(),
+    });
+    return {'studentId': principal.userId, 'assignment': assignment};
   }
 
   Future<Map<String, dynamic>> _submitAssessment({
