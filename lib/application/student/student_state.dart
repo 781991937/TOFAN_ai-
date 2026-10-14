@@ -1,28 +1,77 @@
-import 'package:flutter_riverpod/legacy.dart';
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
-import '../../domain/student/student_models.dart';
-import '../../domain/learning/student_learning_models.dart';
 import '../../domain/learning/analysis_models.dart';
+import '../../domain/learning/student_learning_models.dart';
+import '../../domain/student/student_models.dart';
 import '../../providers/security_provider.dart';
 
 final studentProfileProvider = StateProvider<StudentProfile?>((ref) => null);
 
 final smartStudentProvider =
     NotifierProvider<SmartStudentController, SmartStudentState>(
-  SmartStudentController.new,
-);
+      SmartStudentController.new,
+    );
 
 final studentLearningStateProvider =
     NotifierProvider<StudentLearningStateController, StudentLearningState>(
-  StudentLearningStateController.new,
-);
+      StudentLearningStateController.new,
+    );
 
 class StudentLearningStateController extends Notifier<StudentLearningState> {
+  Future<void>? _hydration;
+
   @override
-  StudentLearningState build() => const StudentLearningState();
+  StudentLearningState build() {
+    // Hydration starts as soon as the authenticated learning state is first
+    // observed. Callers can await reload() when they need a synchronization
+    // barrier before rendering or evaluating the student.
+    unawaited(_safeReload());
+    return const StudentLearningState();
+  }
+
+  Future<void> _safeReload() async {
+    try {
+      await reload();
+    } catch (_) {
+      // A non-configured or signed-out client starts with an empty state.
+      // Explicit callers can use reload() to receive the original failure.
+    }
+  }
+
+  /// Reloads the authenticated student's durable state into memory.
+  Future<void> reload() {
+    return _hydration ??= _reload().whenComplete(() => _hydration = null);
+  }
+
+  Future<void> _reload() async {
+    final studentId = await _authenticatedStudentId();
+    if (studentId == null) return;
+    final loaded = await ref
+        .read(studentLearningRepositoryProvider)
+        .load(studentId);
+    if (loaded != null) state = loaded;
+  }
+
+  /// Persists the current in-memory state for the authenticated student.
+  Future<void> save() async {
+    final studentId = await _authenticatedStudentId();
+    if (studentId == null) {
+      throw StateError('An active authenticated student is required.');
+    }
+    await ref.read(studentLearningRepositoryProvider).save(studentId, state);
+  }
+
+  Future<String?> _authenticatedStudentId() async {
+    final session = await ref
+        .read(authenticationGatewayProvider)
+        .currentSession();
+    if (session == null || !session.isActive) return null;
+    final actorId = session.identity.actorId.trim();
+    return actorId.isEmpty ? null : actorId;
+  }
 
   void recordKnowledge({
     required String sourceId,
@@ -53,8 +102,8 @@ class StudentLearningStateController extends Notifier<StudentLearningState> {
         status: level >= 80
             ? StudentSkillStatus.acquired
             : level >= 60
-                ? StudentSkillStatus.developing
-                : StudentSkillStatus.missing,
+            ? StudentSkillStatus.developing
+            : StudentSkillStatus.missing,
         lastUpdated: now,
       );
     }
@@ -83,20 +132,17 @@ class StudentLearningStateController extends Notifier<StudentLearningState> {
       ]),
     );
 
-    // Persist the new state without changing the synchronous domain API.
-    unawaited(_persistState(state));
+    // Preserve the existing synchronous domain API while ensuring the normal
+    // application path attempts durable persistence immediately.
+    unawaited(_persistAfterMutation());
   }
 
-  Future<void> _persistState(StudentLearningState value) async {
+  Future<void> _persistAfterMutation() async {
     try {
-      final userId = ref.read(authenticationGatewayProvider);
-      final session = await userId.currentSession();
-      final actorId = session?.identity.actorId;
-      if (actorId == null || actorId.isEmpty) return;
-      await ref.read(studentLearningRepositoryProvider).save(actorId, value);
+      await save();
     } catch (_) {
-      // Persistence failures must not corrupt the in-memory learning state.
-      // The persistence layer remains observable through its own diagnostics.
+      // Explicit callers can await save() and receive the failure. The UI
+      // mutation remains valid in memory when persistence is unavailable.
     }
   }
 
@@ -118,7 +164,13 @@ class StudentLearningStateController extends Notifier<StudentLearningState> {
     );
   }
 
-  void clear() => state = const StudentLearningState();
+  Future<void> clear() async {
+    final studentId = await _authenticatedStudentId();
+    if (studentId != null) {
+      await ref.read(studentLearningRepositoryProvider).clear(studentId);
+    }
+    state = const StudentLearningState();
+  }
 }
 
 class SmartStudentController extends Notifier<SmartStudentState> {

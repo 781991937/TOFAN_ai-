@@ -299,17 +299,32 @@
       "phase": "10/21",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "16",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/application/student/student_state.dart",
+        "lib/domain/learning/student_learning_models.dart"
+      ],
+      "test_paths": [
+        "test/student_learning_persistence_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #17"
+          "kind": "code",
+          "path": "lib/application/student/student_state.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/domain/learning/student_learning_models.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/student_learning_persistence_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "حالة الطالب أصبحت قابلة للحفظ وإعادة التحميل؛ الهوية الحية وSupabase staging لم تثبتا."
     },
     {
       "id": "18",
@@ -317,17 +332,38 @@
       "phase": "10/11",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "17",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/application/student/student_state.dart",
+        "lib/data/persistence/sqlite_student_learning_repository.dart",
+        "lib/data/persistence/supabase_student_learning_repository.dart"
+      ],
+      "test_paths": [
+        "test/student_learning_persistence_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #18"
+          "kind": "code",
+          "path": "lib/application/student/student_state.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/data/persistence/sqlite_student_learning_repository.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/data/persistence/supabase_student_learning_repository.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/student_learning_persistence_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "ConceptState محفوظ ويعود بعد reload؛ تكامل قاعدة الإنتاج لم يثبت."
     },
     {
       "id": "19",
@@ -335,17 +371,38 @@
       "phase": "7/10",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "17",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/application/student/student_state.dart",
+        "lib/data/persistence/sqlite_student_learning_repository.dart",
+        "lib/data/persistence/supabase_student_learning_repository.dart"
+      ],
+      "test_paths": [
+        "test/student_learning_persistence_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #19"
+          "kind": "code",
+          "path": "lib/application/student/student_state.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/data/persistence/sqlite_student_learning_repository.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/data/persistence/supabase_student_learning_repository.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/student_learning_persistence_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "SkillState وحالته محفوظة وتعود بعد reload؛ التقييم الخادمي لم يربط بعد."
     },
     {
       "id": "20",
@@ -353,17 +410,38 @@
       "phase": "7/10",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "18–19",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/application/student/student_state.dart",
+        "lib/data/persistence/sqlite_student_learning_repository.dart",
+        "lib/data/persistence/supabase_student_learning_repository.dart"
+      ],
+      "test_paths": [
+        "test/student_learning_persistence_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #20"
+          "kind": "code",
+          "path": "lib/application/student/student_state.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/data/persistence/sqlite_student_learning_repository.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/data/persistence/supabase_student_learning_repository.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/student_learning_persistence_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "CapabilityState محفوظ؛ التحقق الفعلي للقدرة يأتي في الشريحة اللاحقة."
     },
     {
       "id": "21",
@@ -371,17 +449,32 @@
       "phase": "10/21",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "17",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/application/student/student_state.dart",
+        "lib/domain/learning/student_learning_models.dart"
+      ],
+      "test_paths": [
+        "test/student_learning_persistence_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #21"
+          "kind": "code",
+          "path": "lib/application/student/student_state.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/domain/learning/student_learning_models.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/student_learning_persistence_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "LearningHistoryEntry محفوظ ويعود بعد reload."
     },
     {
       "id": "22",
@@ -1178,17 +1271,38 @@
       "phase": "17/21",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "47",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/data/persistence/sqlite_student_learning_repository.dart",
+        "lib/data/persistence/supabase_student_learning_repository.dart"
+      ],
+      "test_paths": [
+        "test/student_learning_persistence_test.dart",
+        "test/supabase_persistence_boundary_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #65"
+          "kind": "code",
+          "path": "lib/data/persistence/sqlite_student_learning_repository.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/data/persistence/supabase_student_learning_repository.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/student_learning_persistence_test.dart",
+          "locator": "flutter test passed locally"
+        },
+        {
+          "kind": "test",
+          "path": "test/supabase_persistence_boundary_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "عقود التخزين موجودة ودورة الذاكرة اختُبرت؛ التخزين الحي يحتاج staging."
     },
     {
       "id": "66",
@@ -1379,17 +1493,32 @@
       "phase": "21",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "17,63",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/domain/learning/student_learning_repository.dart",
+        "lib/application/student/student_state.dart"
+      ],
+      "test_paths": [
+        "test/student_learning_persistence_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #73"
+          "kind": "code",
+          "path": "lib/domain/learning/student_learning_repository.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/application/student/student_state.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/student_learning_persistence_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "أضيفت بوابة reload/save/clear فوق عقد التخزين؛ لا تزال طبقة الإنتاج بحاجة تحقق حي."
     },
     {
       "id": "74",
