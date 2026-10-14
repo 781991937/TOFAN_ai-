@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 
 import '../../domain/execution/execution_models.dart';
 import '../../domain/security/agent_authorization_models.dart';
@@ -30,9 +31,10 @@ class AgentGateway {
     AbqariExecutionCoordinator? executionCoordinator,
     AuditRecorder? auditRecorder,
     this.auditRepository,
-  })  : executionCoordinator =
-            executionCoordinator ?? const AbqariExecutionCoordinator(),
-        auditRecorder = auditRecorder ?? AuditRecorder();
+    this.onAuditPersistenceFailure,
+  }) : executionCoordinator =
+           executionCoordinator ?? const AbqariExecutionCoordinator(),
+       auditRecorder = auditRecorder ?? AuditRecorder();
 
   final AgentPolicy policy;
   final OcAuthService ocAuth;
@@ -40,9 +42,9 @@ class AgentGateway {
   final AbqariExecutionCoordinator executionCoordinator;
   final AuditRecorder auditRecorder;
   final AuditRepository? auditRepository;
+  final void Function(Object error, AuditEvent event)?
+  onAuditPersistenceFailure;
 
-  /// Dispatches only from a currently authenticated Supabase session.
-  /// The caller cannot supply or override actorId/role.
   Future<AiAgentResponse> dispatchAuthenticated({
     required AuthenticationGateway authentication,
     required AgentTask task,
@@ -50,7 +52,7 @@ class AgentGateway {
     required AiAgent agent,
     AgentExecutionRequest? execution,
     ScopedGrant? grant,
-    bool ownerApproved = false,
+    OwnerApproval? ownerApproval,
   }) async {
     final session = await authentication.currentSession();
     if (session == null || !session.isActive) {
@@ -58,9 +60,11 @@ class AgentGateway {
     }
 
     final identity = session.identity;
-    final role = TofanPrincipalRole.values.where(
-      (value) => value.name == identity.role,
-    ).firstOrNull ?? TofanPrincipalRole.student;
+    final role =
+        TofanPrincipalRole.values
+            .where((value) => value.name == identity.role)
+            .firstOrNull ??
+        TofanPrincipalRole.student;
 
     return dispatch(
       context: AgentContext(
@@ -73,7 +77,7 @@ class AgentGateway {
       agent: agent,
       execution: execution,
       grant: grant,
-      ownerApproved: ownerApproved,
+      ownerApproval: ownerApproval,
     );
   }
 
@@ -84,48 +88,72 @@ class AgentGateway {
     required AiAgent agent,
     AgentExecutionRequest? execution,
     ScopedGrant? grant,
-    bool ownerApproved = false,
+    OwnerApproval? ownerApproval,
   }) async {
     final action = task.operation;
     final resource = task.resource;
 
     if (context.actorId.trim().isEmpty) {
-      _audit(context.actorId, action, resource, AuditOutcome.denied,
-          'Missing actor identity.');
+      await _audit(
+        context.actorId,
+        action,
+        resource,
+        AuditOutcome.denied,
+        'Missing actor identity.',
+      );
       throw StateError('Missing actor identity.');
+    }
+    if (context.role == TofanPrincipalRole.owner &&
+        !ownerAuthority.isOwner(context.actorId)) {
+      await _audit(
+        context.actorId,
+        action,
+        resource,
+        AuditOutcome.denied,
+        'Owner identity is not trusted by this gateway.',
+      );
+      throw StateError('Owner identity is not trusted by this gateway.');
     }
 
     if (request.role != agent.role) {
-      _audit(context.actorId, action, resource, AuditOutcome.denied,
-          'Request role does not match target agent.');
+      await _audit(
+        context.actorId,
+        action,
+        resource,
+        AuditOutcome.denied,
+        'Request role does not match target agent.',
+      );
       throw ArgumentError('Request role does not match target agent.');
     }
 
-    final agentAuthorization = policy.authorize(
-      context: context,
-      task: task,
-    );
+    final agentAuthorization = policy.authorize(context: context, task: task);
     if (!agentAuthorization.allowed) {
-      _audit(context.actorId, action, resource, AuditOutcome.denied,
-          agentAuthorization.reason);
+      await _audit(
+        context.actorId,
+        action,
+        resource,
+        AuditOutcome.denied,
+        agentAuthorization.reason,
+      );
       throw StateError(agentAuthorization.reason);
     }
 
-    // Normal role permissions are sufficient for ordinary operations.
-    // A scoped grant is an additional constraint when explicitly supplied; it
-    // is never self-issued and is never required merely because the actor is
-    // not the owner.
     if (grant != null) {
       final ownerDecision = ocAuth.authorize(
         actorId: context.actorId,
         operation: action,
         resourceId: resource,
         grant: grant,
-        ownerApproved: ownerApproved,
+        ownerApproval: ownerApproval,
       );
       if (!ownerDecision.allowed) {
-        _audit(context.actorId, action, resource, AuditOutcome.denied,
-            ownerDecision.reason);
+        await _audit(
+          context.actorId,
+          action,
+          resource,
+          AuditOutcome.denied,
+          ownerDecision.reason,
+        );
         throw StateError(ownerDecision.reason);
       }
     }
@@ -134,40 +162,72 @@ class AgentGateway {
         action.toLowerCase() == 'tool.execute' || execution != null;
     if (requiresExecutionAuthorization) {
       if (execution == null) {
-        _audit(context.actorId, action, resource, AuditOutcome.denied,
-            'Tool and workspace authorization are required.');
+        await _audit(
+          context.actorId,
+          action,
+          resource,
+          AuditOutcome.denied,
+          'Tool and workspace authorization are required.',
+        );
         throw StateError('Tool and workspace authorization are required.');
       }
       if (execution.authorization.actorId != context.actorId) {
-        _audit(context.actorId, action, resource, AuditOutcome.denied,
-            'Tool authorization actor does not match agent context.');
+        await _audit(
+          context.actorId,
+          action,
+          resource,
+          AuditOutcome.denied,
+          'Tool authorization actor does not match agent context.',
+        );
         throw StateError(
-            'Tool authorization actor does not match agent context.');
+          'Tool authorization actor does not match agent context.',
+        );
       }
       if (!executionCoordinator.authorize(
         toolId: execution.toolId,
         authorization: execution.authorization,
         workspaceRequest: execution.workspaceRequest,
       )) {
-        _audit(context.actorId, action, resource, AuditOutcome.denied,
-            'Tool or workspace authorization denied.');
+        await _audit(
+          context.actorId,
+          action,
+          resource,
+          AuditOutcome.denied,
+          'Tool or workspace authorization denied.',
+        );
         throw StateError('Tool or workspace authorization denied.');
       }
     }
 
-    final response = await agent.handle(request);
-    _audit(context.actorId, action, resource, AuditOutcome.success,
-        'Agent request completed.');
-    return response;
+    try {
+      final response = await agent.handle(request);
+      await _audit(
+        context.actorId,
+        action,
+        resource,
+        AuditOutcome.success,
+        'Agent request completed.',
+      );
+      return response;
+    } catch (error) {
+      await _audit(
+        context.actorId,
+        action,
+        resource,
+        AuditOutcome.failure,
+        'Agent request failed: $error',
+      );
+      rethrow;
+    }
   }
 
-  void _audit(
+  Future<void> _audit(
     String actorId,
     String action,
     String resourceId,
     AuditOutcome outcome,
     String reason,
-  ) {
+  ) async {
     final event = AuditEvent(
       id: 'agent-' + DateTime.now().microsecondsSinceEpoch.toString(),
       actorId: actorId,
@@ -179,15 +239,17 @@ class AgentGateway {
     );
     auditRecorder.record(event);
     if (auditRepository != null) {
-      unawaited(_persistAudit(event));
-    }
-  }
-
-  Future<void> _persistAudit(AuditEvent event) async {
-    try {
-      await auditRepository!.save(event);
-    } catch (_) {
-      // Audit persistence failure must not alter the authorization decision.
+      try {
+        await auditRepository!.save(event);
+      } catch (error, stackTrace) {
+        developer.log(
+          'Durable audit persistence failed for ${event.id}.',
+          name: 'AgentGateway',
+          error: error,
+          stackTrace: stackTrace,
+        );
+        onAuditPersistenceFailure?.call(error, event);
+      }
     }
   }
 }

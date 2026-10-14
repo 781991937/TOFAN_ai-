@@ -695,17 +695,32 @@
       "phase": "16",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "38",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/ai/local_first_ai_core.dart",
+        "lib/ai/local_ai_core.dart"
+      ],
+      "test_paths": [
+        "test/ai_core_gateway_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #39"
+          "kind": "code",
+          "path": "lib/ai/local_first_ai_core.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/ai/local_ai_core.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/ai_core_gateway_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "اختبار مسار AiCore المحلي؛ لا يثبت نموذجًا لغويًا محليًا كاملًا."
     },
     {
       "id": "40",
@@ -1253,17 +1268,38 @@
       "phase": "19",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "69",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/domain/security/oc_auth_models.dart",
+        "lib/application/ai/agent_gateway.dart"
+      ],
+      "test_paths": [
+        "test/authorization_boundary_test.dart",
+        "test/authenticated_agent_gateway_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #70"
+          "kind": "code",
+          "path": "lib/domain/security/oc_auth_models.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/application/ai/agent_gateway.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/authorization_boundary_test.dart",
+          "locator": "flutter test passed locally"
+        },
+        {
+          "kind": "test",
+          "path": "test/authenticated_agent_gateway_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "تم رفض العمليات المجهولة وربط المنح بالمستخدم والمورد؛ التحقق الحي وRLS غير منفذين."
     },
     {
       "id": "71",
@@ -1271,17 +1307,38 @@
       "phase": "19",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "70",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/domain/security/agent_authorization_models.dart",
+        "lib/domain/security/owner_authority.dart"
+      ],
+      "test_paths": [
+        "test/authorization_boundary_test.dart",
+        "test/owner_authority_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #71"
+          "kind": "code",
+          "path": "lib/domain/security/agent_authorization_models.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/domain/security/owner_authority.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/authorization_boundary_test.dart",
+          "locator": "flutter test passed locally"
+        },
+        {
+          "kind": "test",
+          "path": "test/owner_authority_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "RBAC محلي مع deny-by-default؛ مصدر المالك الإنتاجي ما زال يحتاج staging."
     },
     {
       "id": "72",
@@ -1289,17 +1346,32 @@
       "phase": "19",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "70–71",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/domain/security/audit_models.dart",
+        "lib/application/ai/agent_gateway.dart"
+      ],
+      "test_paths": [
+        "test/audit_persistence_boundary_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #72"
+          "kind": "code",
+          "path": "lib/domain/security/audit_models.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/application/ai/agent_gateway.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/audit_persistence_boundary_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "فشل sink أصبح مرئيًا عبر callback وdeveloper log؛ التدقيق الدائم الحي لم يثبت."
     },
     {
       "id": "73",
@@ -1397,17 +1469,38 @@
       "phase": "16/22",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "37–40",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/ai/ai_core.dart",
+        "lib/ai/backend_ai_core.dart",
+        "lib/services/ai/ai_manager.dart"
+      ],
+      "test_paths": [
+        "test/ai_core_gateway_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #78"
+          "kind": "code",
+          "path": "lib/ai/ai_core.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/ai/backend_ai_core.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/services/ai/ai_manager.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/ai_core_gateway_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "AIManager لم يعد يقرأ مفاتيح العميل؛ gateway الحي وضوابط limits ما زالت لاحقة."
     },
     {
       "id": "79",

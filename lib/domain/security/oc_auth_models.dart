@@ -7,6 +7,30 @@ class OwnerIdentity {
   final String actorId;
 }
 
+class OwnerApproval {
+  const OwnerApproval({
+    required this.approvalId,
+    required this.ownerId,
+    required this.grantId,
+    required this.subjectId,
+    required this.expiresAt,
+  });
+
+  final String approvalId;
+  final String ownerId;
+  final String grantId;
+  final String subjectId;
+  final DateTime expiresAt;
+
+  bool get isExpired => DateTime.now().isAfter(expiresAt);
+
+  bool matches(ScopedGrant grant) =>
+      !isExpired &&
+      ownerId == grant.ownerId &&
+      grantId == grant.grantId &&
+      subjectId == grant.subjectId;
+}
+
 class ScopedGrant {
   const ScopedGrant({
     required this.grantId,
@@ -36,10 +60,7 @@ class ScopedGrant {
 }
 
 class OcAuthDecision {
-  const OcAuthDecision({
-    required this.allowed,
-    required this.reason,
-  });
+  const OcAuthDecision({required this.allowed, required this.reason});
   final bool allowed;
   final String reason;
 }
@@ -52,34 +73,70 @@ class OcAuthPolicy {
     required String operation,
     required String resourceId,
     required ScopedGrant grant,
-    bool ownerApproved = false,
+    OwnerApproval? ownerApproval,
   }) {
     if (actorId.trim().isEmpty) {
-      return const OcAuthDecision(allowed: false, reason: 'Missing actor identity.');
+      return const OcAuthDecision(
+        allowed: false,
+        reason: 'Missing actor identity.',
+      );
+    }
+    if (operation.trim().isEmpty || resourceId.trim().isEmpty) {
+      return const OcAuthDecision(
+        allowed: false,
+        reason: 'Operation and resource scope are required.',
+      );
+    }
+    if (grant.grantId.trim().isEmpty ||
+        grant.ownerId.trim().isEmpty ||
+        grant.subjectId.trim().isEmpty) {
+      return const OcAuthDecision(
+        allowed: false,
+        reason: 'Grant identity is incomplete.',
+      );
     }
     if (grant.ownerId == grant.subjectId) {
-      return const OcAuthDecision(allowed: false, reason: 'Self-grant is forbidden.');
-    }
-    if (grant.ownerId.trim().isEmpty || grant.subjectId.trim().isEmpty) {
-      return const OcAuthDecision(allowed: false, reason: 'Grant identity is incomplete.');
+      return const OcAuthDecision(
+        allowed: false,
+        reason: 'Self-grant is forbidden.',
+      );
     }
     if (grant.subjectId != actorId) {
-      return const OcAuthDecision(allowed: false, reason: 'Grant subject does not match actor.');
+      return const OcAuthDecision(
+        allowed: false,
+        reason: 'Grant subject does not match actor.',
+      );
     }
     if (grant.isExpired) {
       return const OcAuthDecision(allowed: false, reason: 'Grant has expired.');
     }
-    if (grant.requiresOwnerApproval && !ownerApproved) {
-      return const OcAuthDecision(allowed: false, reason: 'Owner approval is required.');
+    if (grant.requiresOwnerApproval &&
+        (ownerApproval == null || !ownerApproval.matches(grant))) {
+      return const OcAuthDecision(
+        allowed: false,
+        reason: 'A matching owner approval is required.',
+      );
     }
     final permission = _permissionFor(operation);
-    if (!grant.permits(permission, resourceId)) {
-      return const OcAuthDecision(allowed: false, reason: 'Scoped permission denied.');
+    if (permission == null) {
+      return OcAuthDecision(
+        allowed: false,
+        reason: 'Unknown operation denied: $operation.',
+      );
     }
-    return const OcAuthDecision(allowed: true, reason: 'Authorized by scoped owner grant.');
+    if (!grant.permits(permission, resourceId)) {
+      return const OcAuthDecision(
+        allowed: false,
+        reason: 'Scoped permission denied.',
+      );
+    }
+    return const OcAuthDecision(
+      allowed: true,
+      reason: 'Authorized by scoped owner grant.',
+    );
   }
 
-  ToolPermission _permissionFor(String operation) {
+  ToolPermission? _permissionFor(String operation) {
     switch (operation.toLowerCase()) {
       case 'read':
         return ToolPermission.read;
@@ -96,7 +153,7 @@ class OcAuthPolicy {
       case 'tool.execute':
         return ToolPermission.execute;
       default:
-        return ToolPermission.read;
+        return null;
     }
   }
 }
@@ -110,13 +167,12 @@ class OcAuthService {
     required String operation,
     required String resourceId,
     required ScopedGrant grant,
-    bool ownerApproved = false,
-  }) =>
-      policy.authorize(
-        actorId: actorId,
-        operation: operation,
-        resourceId: resourceId,
-        grant: grant,
-        ownerApproved: ownerApproved,
-      );
+    OwnerApproval? ownerApproval,
+  }) => policy.authorize(
+    actorId: actorId,
+    operation: operation,
+    resourceId: resourceId,
+    grant: grant,
+    ownerApproval: ownerApproval,
+  );
 }
