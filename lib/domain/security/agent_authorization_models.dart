@@ -1,6 +1,13 @@
 enum TofanPrincipalRole { student, tutor, manager, owner }
 
-enum AgentPermission { readAcademic, updateStudentState, assess, manageProjects, useTools, administer }
+enum AgentPermission {
+  readAcademic,
+  updateStudentState,
+  assess,
+  manageProjects,
+  useTools,
+  administer,
+}
 
 class AgentContext {
   const AgentContext({
@@ -53,30 +60,51 @@ class AgentPolicy {
         reason: 'Missing actor identity.',
       );
     }
+    if (task.resource.trim().isEmpty) {
+      return const AgentAuthorization(
+        allowed: false,
+        reason: 'Missing resource scope.',
+      );
+    }
+    if (context.role == TofanPrincipalRole.student &&
+        context.studentId != null &&
+        context.studentId != context.actorId) {
+      return const AgentAuthorization(
+        allowed: false,
+        reason: 'Student scope does not match actor identity.',
+      );
+    }
 
     final permissions = switch (context.role) {
       TofanPrincipalRole.student => const [
-          AgentPermission.readAcademic,
-          AgentPermission.updateStudentState,
-          AgentPermission.assess,
-          AgentPermission.manageProjects,
-        ],
+        AgentPermission.readAcademic,
+        AgentPermission.updateStudentState,
+        AgentPermission.assess,
+        AgentPermission.manageProjects,
+      ],
       TofanPrincipalRole.tutor => const [
-          AgentPermission.readAcademic,
-          AgentPermission.assess,
-          AgentPermission.manageProjects,
-        ],
+        AgentPermission.readAcademic,
+        AgentPermission.assess,
+        AgentPermission.manageProjects,
+      ],
       TofanPrincipalRole.manager => const [
-          AgentPermission.readAcademic,
-          AgentPermission.updateStudentState,
-          AgentPermission.assess,
-          AgentPermission.manageProjects,
-          AgentPermission.useTools,
-        ],
+        AgentPermission.readAcademic,
+        AgentPermission.updateStudentState,
+        AgentPermission.assess,
+        AgentPermission.manageProjects,
+        AgentPermission.useTools,
+      ],
       TofanPrincipalRole.owner => AgentPermission.values,
     };
 
     final required = _permissionFor(task.operation);
+    if (required == null) {
+      return AgentAuthorization(
+        allowed: false,
+        reason: 'Unknown operation denied: ${task.operation}.',
+        permissions: List.unmodifiable(permissions),
+      );
+    }
     if (!permissions.contains(required)) {
       return AgentAuthorization(
         allowed: false,
@@ -92,7 +120,7 @@ class AgentPolicy {
     );
   }
 
-  AgentPermission _permissionFor(String operation) {
+  AgentPermission? _permissionFor(String operation) {
     switch (operation.toLowerCase()) {
       case 'read':
       case 'search':
@@ -109,7 +137,7 @@ class AgentPolicy {
       case 'admin':
         return AgentPermission.administer;
       default:
-        return AgentPermission.useTools;
+        return null;
     }
   }
 }
