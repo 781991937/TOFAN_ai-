@@ -271,6 +271,10 @@ void main() {
       expect(assignment['tasks'], isNotEmpty);
       expect(assignment['testCases'], isNotEmpty);
       expect(assignment['evidenceRequirements'], isNotEmpty);
+      final firstTask =
+          (assignment['tasks'] as List<dynamic>).first as Map<String, dynamic>;
+      final projectId = assignment['projectId'] as String;
+      final taskId = firstTask['id'] as String;
       expect(
         supabase.table('student_project_assignments').single['student_id'],
         _userId,
@@ -283,6 +287,34 @@ void main() {
         isA<Map<String, dynamic>>(),
       );
 
+      final submittedEvidence =
+          await postApi('/v1/projects/$projectId/tasks/$taskId/evidence', {
+            'type': 'test_result',
+            'title': 'نتيجة اختبار المهمة',
+            'description': 'تم تشغيل الاختبار وتسجيل النتيجة بنجاح.',
+            'uri': 'https://example.test/evidence/1',
+          });
+      expect(submittedEvidence.statusCode, 201);
+      expect(_json(submittedEvidence)['data']['taskId'], taskId);
+      expect(
+        supabase.table('project_task_evidence').single['student_id'],
+        _userId,
+      );
+
+      final evidence = await getApi(
+        '/v1/projects/$projectId/tasks/$taskId/evidence',
+      );
+      expect(evidence.statusCode, 200);
+      expect((_json(evidence)['data']['items'] as List), hasLength(1));
+
+      final invalidTask =
+          await postApi('/v1/projects/$projectId/tasks/not-assigned/evidence', {
+            'type': 'text',
+            'title': 'دليل غير صالح',
+            'description': 'يجب رفضه لأنه ليس من مهام التعيين.',
+          });
+      expect(invalidTask.statusCode, 403);
+
       final otherPlan = await getApi(
         '/v1/students/me/learning-plan',
         token: 'other-token',
@@ -293,6 +325,11 @@ void main() {
         token: 'other-token',
       );
       expect(_json(otherAssignment)['data']['assignment'], isNull);
+      final otherEvidence = await getApi(
+        '/v1/projects/$projectId/tasks/$taskId/evidence',
+        token: 'other-token',
+      );
+      expect((_json(otherEvidence)['data']['items'] as List), isEmpty);
 
       final duplicatePass = await postApi(route, {'answers': answers});
       expect(duplicatePass.statusCode, 409);

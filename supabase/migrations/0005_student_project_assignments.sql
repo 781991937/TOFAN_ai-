@@ -6,8 +6,8 @@ create table if not exists public.student_project_assignments (
   student_id text primary key,
   assignment jsonb not null check (
     jsonb_typeof(assignment) = 'object'
-    and jsonb_typeof(assignment->'tasks') = 'array'
     and jsonb_typeof(assignment->'project') = 'object'
+    and jsonb_typeof(assignment->'tasks') = 'array'
   ),
   source_plan_assessment_id text not null,
   updated_at timestamptz not null default now()
