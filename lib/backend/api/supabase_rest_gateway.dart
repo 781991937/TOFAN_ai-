@@ -19,6 +19,7 @@ class SupabaseRestGateway {
     'student_profiles',
     'student_learning_state',
     'student_learning_plans',
+    'student_project_assignments',
     'assessment_attempts',
     'student_project_progress',
   };
@@ -169,6 +170,25 @@ class SupabaseRestGateway {
     final response = await _send(
       'POST',
       _tableUri('student_learning_plans', {'on_conflict': 'student_id'}),
+      headers: {
+        'apikey': _config.serviceRoleKey,
+        'Authorization': 'Bearer ${_config.serviceRoleKey}',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Prefer': 'resolution=merge-duplicates,return=representation',
+      },
+      body: row,
+    );
+    _requireSuccess(response);
+    return _firstRow(response.body);
+  }
+
+  Future<Map<String, dynamic>?> upsertDerivedProjectAssignment(
+    Map<String, dynamic> row,
+  ) async {
+    final response = await _send(
+      'POST',
+      _tableUri('student_project_assignments', {'on_conflict': 'student_id'}),
       headers: {
         'apikey': _config.serviceRoleKey,
         'Authorization': 'Bearer ${_config.serviceRoleKey}',

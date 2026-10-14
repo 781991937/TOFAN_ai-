@@ -263,11 +263,36 @@ void main() {
       expect(_json(savedPlan)['data']['studentId'], _userId);
       expect(_json(savedPlan)['data']['plan'], isA<Map<String, dynamic>>());
 
+      final assignedProject = await postApi('/v1/students/me/project-plan', {});
+      expect(assignedProject.statusCode, 201);
+      final assignment =
+          _json(assignedProject)['data']['assignment'] as Map<String, dynamic>;
+      expect(assignment['projectId'], isA<String>());
+      expect(assignment['tasks'], isNotEmpty);
+      expect(assignment['testCases'], isNotEmpty);
+      expect(assignment['evidenceRequirements'], isNotEmpty);
+      expect(
+        supabase.table('student_project_assignments').single['student_id'],
+        _userId,
+      );
+
+      final savedAssignment = await getApi('/v1/students/me/project-plan');
+      expect(savedAssignment.statusCode, 200);
+      expect(
+        _json(savedAssignment)['data']['assignment'],
+        isA<Map<String, dynamic>>(),
+      );
+
       final otherPlan = await getApi(
         '/v1/students/me/learning-plan',
         token: 'other-token',
       );
       expect(_json(otherPlan)['data']['plan'], isNull);
+      final otherAssignment = await getApi(
+        '/v1/students/me/project-plan',
+        token: 'other-token',
+      );
+      expect(_json(otherAssignment)['data']['assignment'], isNull);
 
       final duplicatePass = await postApi(route, {'answers': answers});
       expect(duplicatePass.statusCode, 409);
