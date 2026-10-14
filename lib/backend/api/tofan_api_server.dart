@@ -358,6 +358,43 @@ class TofanApiServer {
         return (201, {'data': assignment});
       }
     }
+    if (_isPath(segments, [
+      'v1',
+      'students',
+      'me',
+      'capability-verification',
+    ])) {
+      if (method == 'GET') {
+        final rows = await _gateway.selectRows(
+          table: 'student_capability_verifications',
+          accessToken: accessToken,
+          query: {
+            'select': 'project_id,verification,updated_at',
+            'student_id': 'eq.${principal.userId}',
+            'limit': '1',
+          },
+        );
+        final row = rows.isEmpty ? null : rows.first;
+        return (
+          200,
+          {
+            'data': {
+              'studentId': principal.userId,
+              'projectId': row?['project_id'],
+              'verification': row?['verification'],
+              'updatedAt': row?['updated_at'],
+            },
+          },
+        );
+      }
+      if (method == 'POST') {
+        final verification = await _verifyAcademicCapability(
+          principal: principal,
+          accessToken: accessToken,
+        );
+        return (200, {'data': verification});
+      }
+    }
     if (_isPath(segments, ['v1', 'students', 'me', 'learning-state'])) {
       if (method == 'GET') {
         final rows = await _gateway.selectRows(
@@ -623,6 +660,131 @@ class TofanApiServer {
       'route_not_found',
       'The API route was not found.',
     );
+  }
+
+  Future<Map<String, dynamic>> _verifyAcademicCapability({
+    required ApiPrincipal principal,
+    required String accessToken,
+  }) async {
+    final assignmentRows = await _gateway.selectRows(
+      table: 'student_project_assignments',
+      accessToken: accessToken,
+      query: {
+        'select': 'assignment,source_plan_assessment_id',
+        'student_id': 'eq.${principal.userId}',
+        'limit': '1',
+      },
+    );
+    if (assignmentRows.isEmpty || assignmentRows.first['assignment'] is! Map) {
+      throw const ApiException(
+        409,
+        'project_assignment_required',
+        'A project assignment is required before capability verification.',
+      );
+    }
+    final assignment = Map<String, dynamic>.from(
+      assignmentRows.first['assignment'] as Map,
+    );
+    final projectId = assignment['projectId'];
+    if (projectId is! String || projectId.isEmpty) {
+      throw const ApiException(
+        409,
+        'invalid_project_assignment',
+        'The saved project assignment is invalid.',
+      );
+    }
+    final projectRecord = _catalog.projectById(projectId);
+    if (projectRecord == null) {
+      throw const ApiException(
+        409,
+        'project_not_found',
+        'The assigned project is not in the canonical catalog.',
+      );
+    }
+    final evidenceRows = await _gateway.selectRows(
+      table: 'project_task_evidence',
+      accessToken: accessToken,
+      query: {
+        'select': 'evidence_id,task_id,evidence,submitted_at',
+        'student_id': 'eq.${principal.userId}',
+        'project_id': 'eq.$projectId',
+        'order': 'submitted_at.asc',
+      },
+    );
+    final assignedTasks = (assignment['tasks'] as List<dynamic>? ?? const [])
+        .whereType<Map>()
+        .map((task) => Map<String, dynamic>.from(task))
+        .toList(growable: false);
+    final assignedTaskIds = assignedTasks
+        .map((task) => task['id'])
+        .whereType<String>()
+        .toSet();
+    final evidenceTaskIds =
+        evidenceRows.map((row) => row['task_id']).whereType<String>().toSet()
+          ..removeWhere((taskId) => !assignedTaskIds.contains(taskId));
+    final missingTaskIds = assignedTaskIds.difference(evidenceTaskIds).toList()
+      ..sort();
+    final course = projectRecord.course.course;
+    final projectSkillIds = projectRecord.project.skillIds.toSet();
+    final capabilities = <Map<String, dynamic>>[];
+    for (final capability in course.capabilities) {
+      final missingSkills = capability.requiredSkillIds
+          .where((skillId) => !projectSkillIds.contains(skillId))
+          .toList(growable: false);
+      final requiredEvidenceCount = capability.evidenceRequirements.length;
+      final evidenceSufficient =
+          evidenceRows.length >=
+          (requiredEvidenceCount == 0 ? 1 : requiredEvidenceCount);
+      final taskCoverage = missingTaskIds.isEmpty && assignedTaskIds.isNotEmpty;
+      final verified =
+          missingSkills.isEmpty && taskCoverage && evidenceSufficient;
+      capabilities.add({
+        'capabilityId': capability.id,
+        'name': capability.name,
+        'status': verified ? 'verified' : 'insufficient_evidence',
+        'verified': verified,
+        'requiredSkillIds': capability.requiredSkillIds,
+        'missingSkillIds': missingSkills,
+        'requiredEvidenceCount': requiredEvidenceCount,
+        'submittedEvidenceCount': evidenceRows.length,
+        'missingTaskIds': missingTaskIds,
+        'reason': verified
+            ? 'All assigned tasks and evidence thresholds are covered.'
+            : 'Evidence or canonical skill coverage is incomplete.',
+      });
+    }
+    final verifiedCount = capabilities
+        .where((item) => item['verified'] == true)
+        .length;
+    final status =
+        capabilities.isNotEmpty && verifiedCount == capabilities.length
+        ? 'verified'
+        : 'insufficient_evidence';
+    final report = {
+      'status': status,
+      'projectId': projectId,
+      'sourcePlanAssessmentId': assignment['sourcePlanAssessmentId'],
+      'capabilities': capabilities,
+      'audit': {
+        'assignedTaskCount': assignedTaskIds.length,
+        'coveredTaskCount': evidenceTaskIds.length,
+        'missingTaskIds': missingTaskIds,
+        'submittedEvidenceCount': evidenceRows.length,
+        'canonicalCourseId': course.id,
+        'evaluatedAt': DateTime.now().toUtc().toIso8601String(),
+      },
+    };
+    await _gateway.upsertCapabilityVerification({
+      'student_id': principal.userId,
+      'project_id': projectId,
+      'verification': report,
+      'updated_at': DateTime.now().toUtc().toIso8601String(),
+    });
+    return {
+      'studentId': principal.userId,
+      'projectId': projectId,
+      'verification': report,
+    };
   }
 
   Future<Map<String, dynamic>> _submitProjectTaskEvidence({

@@ -21,6 +21,7 @@ class SupabaseRestGateway {
     'student_learning_plans',
     'student_project_assignments',
     'project_task_evidence',
+    'student_capability_verifications',
     'assessment_attempts',
     'student_project_progress',
   };
@@ -213,6 +214,27 @@ class SupabaseRestGateway {
       headers: {
         ..._userHeaders(accessToken),
         'Prefer': 'return=representation',
+      },
+      body: row,
+    );
+    _requireSuccess(response);
+    return _firstRow(response.body);
+  }
+
+  Future<Map<String, dynamic>?> upsertCapabilityVerification(
+    Map<String, dynamic> row,
+  ) async {
+    final response = await _send(
+      'POST',
+      _tableUri('student_capability_verifications', {
+        'on_conflict': 'student_id',
+      }),
+      headers: {
+        'apikey': _config.serviceRoleKey,
+        'Authorization': 'Bearer ${_config.serviceRoleKey}',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Prefer': 'resolution=merge-duplicates,return=representation',
       },
       body: row,
     );
