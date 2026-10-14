@@ -884,17 +884,38 @@
       "phase": "9",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "35",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/backend/api/tofan_api_server.dart",
+        "lib/backend/api/supabase_rest_gateway.dart",
+        "supabase/migrations/0006_project_task_evidence.sql"
+      ],
+      "test_paths": [
+        "test/backend_api_integration_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #36"
+          "kind": "code",
+          "path": "lib/backend/api/tofan_api_server.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/backend/api/supabase_rest_gateway.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "supabase/migrations/0006_project_task_evidence.sql",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/backend_api_integration_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "جامع الدليل يتحقق خادميًا من أن المهمة جزء من تعيين المشروع القانوني، ويحفظ الدليل بعزل مالك الطالب؛ التحقق النهائي من القدرة الأكاديمية ما زال لاحقًا."
     },
     {
       "id": "37",
@@ -1905,7 +1926,7 @@
           "locator": "flutter test passed locally"
         }
       ],
-      "notes": "أضيف POST/GET project-plan مع اختيار مشروع قانوني وحفظ المهام وعزل الطالب."
+      "notes": "أضيف POST/GET project-plan مع اختيار مشروع قانوني وحفظ المهام وعزل الطالب؛ أضيف الآن مسار أدلة المهام المرتبطة بالتعيين."
     },
     {
       "id": "84",

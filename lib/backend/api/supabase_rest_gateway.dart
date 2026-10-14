@@ -20,6 +20,7 @@ class SupabaseRestGateway {
     'student_learning_state',
     'student_learning_plans',
     'student_project_assignments',
+    'project_task_evidence',
     'assessment_attempts',
     'student_project_progress',
   };
@@ -195,6 +196,23 @@ class SupabaseRestGateway {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Prefer': 'resolution=merge-duplicates,return=representation',
+      },
+      body: row,
+    );
+    _requireSuccess(response);
+    return _firstRow(response.body);
+  }
+
+  Future<Map<String, dynamic>?> insertProjectTaskEvidence(
+    Map<String, dynamic> row, {
+    required String accessToken,
+  }) async {
+    final response = await _send(
+      'POST',
+      _tableUri('project_task_evidence', const {}),
+      headers: {
+        ..._userHeaders(accessToken),
+        'Prefer': 'return=representation',
       },
       body: row,
     );

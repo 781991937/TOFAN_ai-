@@ -484,6 +484,51 @@ class TofanApiServer {
         },
       );
     }
+    if (segments.length == 6 &&
+        segments[0] == 'v1' &&
+        segments[1] == 'projects' &&
+        segments[3] == 'tasks' &&
+        segments[5] == 'evidence') {
+      final projectId = segments[2];
+      final taskId = segments[4];
+      final projectRecord = _catalog.projectById(projectId);
+      if (projectRecord == null) {
+        throw const ApiException(
+          404,
+          'project_not_found',
+          'The project was not found.',
+        );
+      }
+      if (method == 'GET') {
+        final rows = await _gateway.selectRows(
+          table: 'project_task_evidence',
+          accessToken: accessToken,
+          query: {
+            'select': 'evidence_id,project_id,task_id,evidence,submitted_at',
+            'student_id': 'eq.${principal.userId}',
+            'project_id': 'eq.$projectId',
+            'task_id': 'eq.$taskId',
+            'order': 'submitted_at.desc',
+          },
+        );
+        return (
+          200,
+          {
+            'data': {'items': rows},
+          },
+        );
+      }
+      if (method == 'POST') {
+        final evidence = await _submitProjectTaskEvidence(
+          projectId: projectId,
+          taskId: taskId,
+          principal: principal,
+          accessToken: accessToken,
+          body: await _readJson(request),
+        );
+        return (201, {'data': evidence});
+      }
+    }
     if (segments.length == 4 &&
         segments[0] == 'v1' &&
         segments[1] == 'projects' &&
@@ -580,6 +625,99 @@ class TofanApiServer {
     );
   }
 
+  Future<Map<String, dynamic>> _submitProjectTaskEvidence({
+    required String projectId,
+    required String taskId,
+    required ApiPrincipal principal,
+    required String accessToken,
+    required Map<String, dynamic> body,
+  }) async {
+    const evidenceKeys = {'type', 'title', 'description', 'uri', 'checksum'};
+    if (body.keys.toSet().difference(evidenceKeys).isNotEmpty ||
+        !body.keys.toSet().containsAll(const {
+          'type',
+          'title',
+          'description',
+        })) {
+      throw const ApiException(
+        400,
+        'invalid_payload',
+        'The request contains missing or unsupported fields.',
+      );
+    }
+    final type = body['type'];
+    if (type is! String ||
+        !const {'text', 'url', 'test_result', 'artifact'}.contains(type)) {
+      throw const ApiException(
+        400,
+        'invalid_evidence',
+        'Evidence type is not supported.',
+      );
+    }
+    final title = _requiredText(body, 'title', maxLength: 160);
+    final description = _requiredText(body, 'description', maxLength: 4000);
+    final assignments = await _gateway.selectRows(
+      table: 'student_project_assignments',
+      accessToken: accessToken,
+      query: {
+        'select': 'assignment',
+        'student_id': 'eq.${principal.userId}',
+        'limit': '1',
+      },
+    );
+    if (assignments.isEmpty || assignments.first['assignment'] is! Map) {
+      throw const ApiException(
+        409,
+        'project_assignment_required',
+        'A project assignment is required before submitting evidence.',
+      );
+    }
+    final assignment = Map<String, dynamic>.from(
+      assignments.first['assignment'] as Map,
+    );
+    if (assignment['projectId'] != projectId || assignment['tasks'] is! List) {
+      throw const ApiException(
+        403,
+        'task_not_assigned',
+        "The project is not the student's current assignment.",
+      );
+    }
+    final tasks = (assignment['tasks'] as List)
+        .whereType<Map>()
+        .map((task) => Map<String, dynamic>.from(task))
+        .toList(growable: false);
+    if (!tasks.any((task) => task['id'] == taskId)) {
+      throw const ApiException(
+        403,
+        'task_not_assigned',
+        'Evidence can only be submitted for an assigned canonical task.',
+      );
+    }
+    final evidence = {
+      'type': type,
+      'title': title,
+      'description': description,
+      if (body['uri'] case final String uri when uri.trim().isNotEmpty)
+        'uri': uri.trim(),
+      if (body['checksum'] case final String checksum
+          when checksum.trim().isNotEmpty)
+        'checksum': checksum.trim(),
+    };
+    final row = await _gateway.insertProjectTaskEvidence({
+      'student_id': principal.userId,
+      'project_id': projectId,
+      'task_id': taskId,
+      'evidence': evidence,
+    }, accessToken: accessToken);
+    return {
+      'evidenceId': row?['evidence_id'],
+      'projectId': projectId,
+      'taskId': taskId,
+      'evidence': evidence,
+      'submittedAt': row?['submitted_at'],
+    };
+  }
+
   Future<Map<String, dynamic>> _createProjectAssignment({
     required ApiPrincipal principal,
     required String accessToken,
@@ -641,6 +779,7 @@ class TofanApiServer {
         )
         .toList(growable: false);
     final assignment = {
+      'project': _catalog.projectJson(project),
       'projectId': project.id,
       'courseId': selected.course.course.id,
       'title': project.title,
