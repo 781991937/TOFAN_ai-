@@ -194,10 +194,10 @@ Persistent database، production auth/authorization، secure AI gateway، storag
 | 77 | Backend API | 22 | MISSING/PARTIAL | 69–76 |
 | 78 | Internal AI Gateway | 16/22 | PARTIALLY IMPLEMENTED | 37–40 |
 | 79 | Agent Gateway | 22 | MISSING | 41 |
-| 80 | Academic API | 22 | MISSING | 16 |
-| 81 | Student API | 22 | MISSING | 17 |
-| 82 | Learning/Assessment API | 22 | MISSING | 22–30 |
-| 83 | Project API | 22 | MISSING | 31–36 |
+| 80 | Academic API | 22 | PARTIALLY IMPLEMENTED | 16, 16-C |
+| 81 | Student API | 22 | PARTIALLY IMPLEMENTED | 17, 16-C |
+| 82 | Learning/Assessment API | 22 | PARTIALLY IMPLEMENTED | 22–30, 16-C |
+| 83 | Project API | 22 | PARTIALLY IMPLEMENTED | 31–36, 16-C |
 | 84 | Android/Mobile UI | 23 | COMPLETED/BASE | 77 |🟢 | 85 | Web/Desktop UI | 23 | COMPLETED/BASE | 77 |🟢 | 86 | Academic Library UI | 23 | COMPLETED/BASE | 80 |🟢 | 87 | Learning UI | 23 | COMPLETED/BASE | 82 |🟢 | 88 | Assessment UI | 23 | COMPLETED/BASE | 82 |🟢 | 89 | Project UI | 23 | PARTIALLY IMPLEMENTED | 83 |
 | 90 | ABQARI UI | 23 | PARTIALLY IMPLEMENTED | 79 |
 | 91 | Student Dashboard | 23 | COMPLETED/BASE | 81–90 |🟢 | 92 | Administration | 23 | PARTIALLY IMPLEMENTED | 77 |
@@ -700,3 +700,18 @@ KNOWLEDGE + SKILLS + REASONING + PRACTICE + ASSESSMENT + PROJECTS + EVIDENCE + E
 **ما لا تدعيه هذه الطبقة:** الكيان إسقاط ذاكرة/كتالوجي، وليس تخزينًا دائمًا؛ ليست لكل درس أسماء مفاهيم منفصلة عن عنوانه، ولا تضيف روابط مفهوم-إلى-مفهوم أو متطلبات مفاهيمية غير مثبتة، ولا تحول نصوص النتائج القديمة إلى معرفات مختلقة. يلزم لاحقًا تحرير مفاهيم أكاديميًا وربط دقيق على مستوى الدرس والوحدة، وإكمال العلاقات الغنية في البند 11، وحالة إتقان المفهوم للطالب في البنود 17/18/21. لذلك لم يتغير #10 إلى COMPLETED.
 
 **التحقق التكاملي على commit `245e9e0c05bfa24bc5a54e11025b90fbf016f7a9`:** نجح [Flutter quality](https://github.com/781991937/TOFAN_ai-/actions/runs/38295182225) بما يشمل Analyze وTest، ونجحت [Academic Library Approval Gate](https://github.com/781991937/TOFAN_ai-/actions/runs/38295182371) بما يشمل اعتماد المكتبة وتكامل المشروع/المكتبة ومجموعة الاختبارات الكاملة. لا نشر إنتاجي. ظهرت ملاحظتا صيانة بيئة GitHub Actions بشأن Node.js 20 وانتقال `ubuntu-latest` إلى Ubuntu 26؛ لم تؤثرا في نجاح التشغيلين.
+
+
+## 16-C. واجهات API الخلفية — Master Execution Matrix 80–83 — 2026-10-14
+**الحالة: PARTIALLY IMPLEMENTED للبنود 80–83.** أضيف خادم REST وعميل Flutter رقيق داخل المشروع الحالي؛ لا تتغير هوية Supabase Auth ولا يُنشأ فهرس أكاديمي ثانٍ. يبقى #77 (Backend API) جزئيًا، ولا تنتقل الواجهات إلى COMPLETED قبل تحقق Supabase حي وتشغيل التطبيق من خلالها.
+
+- **#80 Academic API:** قراءة المجالات والتخصصات والمفاهيم والمقررات والدروس من `AcademicCatalog` و`AcademicConcept` الموجودين، مع حجب `correctIndex` من أسئلة التقييم في استجابة الدرس.
+- **#81 Student API:** `/students/me` والملف الدراسي المملوك للطالب.
+- **#82 Learning/Assessment API:** قراءة/حفظ/مسح حالة التعلم؛ استلام إجابات التقييم وتصحيحها خادميًا وحفظ المحاولات بإدراج خادمي فقط.
+- **#83 Project API:** قراءة المشاريع الكانونية وحفظ تقدم الطالب بعد التحقق من المهام الفعلية للمشروع.
+- يتحقق الخادم من access token عبر Supabase Auth؛ ويُستمد المفتاح الشخصي من `auth.uid()` المعاد نصيًا. تمر عمليات المستخدم عبر JWT المستخدم لتظل RLS قائمة، بينما يقتصر مفتاح service role على إدراج المحاولة المصححة. تفاصيل العقود والسياسات والتشغيل في [`docs/BACKEND_API_IMPLEMENTATION.md`](BACKEND_API_IMPLEMENTATION.md).
+- أضيف `supabase/migrations/0003_backend_api_resources.sql`. لم يُطبّق هذا الترحيل؛ ولم يُضف أي seed أو محتوى أكاديمي مصطنع.
+
+**التحقق المحلي:** نجحت اختبارات API المستهدفة (**6/6**) والمجموعة الكاملة (`flutter test --no-pub`, **113/113**). نجح التحليل مع الأعلام المطابقة للبوابة غير المانعة؛ سجل 78 ملاحظة على المشروع كله (13 warning و65 info)، ولم يسجل ملاحظات على ملفات API الجديدة. نجحت 8 assertions ساكنة على RLS والمنح والقيود. اختبارات HTTP تستخدم بديلًا محليًا لـSupabase، لا خدمة حقيقية.
+
+**القيود المتبقية:** لم تكن قيم `SUPABASE_URL` أو مفاتيح anon/service-role مهيأة، و`psql` غير مثبت؛ لذا لم يُختبر الاتصال الحقيقي ولا تنفيذ SQL/RLS على PostgreSQL. لم تُوصل الشاشات ومزودات الحالة الحالية بعميل API بعد، ولم يحدث نشر. يجب اختبار الترحيل والتكامل أولًا في staging مصرح بها؛ لا تجرِ تغييرات إنتاجية أو مدمرة ضمن هذا السجل.
