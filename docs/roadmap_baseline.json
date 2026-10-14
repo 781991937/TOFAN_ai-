@@ -482,17 +482,32 @@
       "phase": "10–11",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "18–21",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/backend/api/tofan_api_server.dart",
+        "lib/backend/api/supabase_rest_gateway.dart"
+      ],
+      "test_paths": [
+        "test/backend_api_integration_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #22"
+          "kind": "code",
+          "path": "lib/backend/api/tofan_api_server.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/backend/api/supabase_rest_gateway.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/backend_api_integration_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "التقييم يُصحح على الخادم ضد الكتالوج القانوني ويحفظ محاولة المستخدم؛ staging الحقيقية لم تثبت."
     },
     {
       "id": "23",
@@ -500,17 +515,38 @@
       "phase": "11",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "22",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/backend/api/tofan_api_server.dart",
+        "lib/application/learning/learning_intelligence.dart",
+        "supabase/migrations/0004_learning_gaps_and_plans.sql"
+      ],
+      "test_paths": [
+        "test/backend_api_integration_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #23"
+          "kind": "code",
+          "path": "lib/backend/api/tofan_api_server.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/application/learning/learning_intelligence.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "supabase/migrations/0004_learning_gaps_and_plans.sql",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/backend_api_integration_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "الخادم ينشئ خطة أولوية ويحفظها ويعرضها عبر learning-plan؛ ما زال ربط واجهة التعلم الثرية لاحقًا."
     },
     {
       "id": "24",
@@ -518,17 +554,38 @@
       "phase": "11",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "09,18,19",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/application/learning/assessment_analysis_engine.dart",
+        "lib/backend/api/tofan_api_server.dart"
+      ],
+      "test_paths": [
+        "test/backend_api_integration_test.dart",
+        "test/assessment_analysis_engine_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #24"
+          "kind": "code",
+          "path": "lib/application/learning/assessment_analysis_engine.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/backend/api/tofan_api_server.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/backend_api_integration_test.dart",
+          "locator": "flutter test passed locally"
+        },
+        {
+          "kind": "test",
+          "path": "test/assessment_analysis_engine_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "الفجوات تستخرج من الأسئلة الخاطئة وروابط المفهوم/المهارة الخادمية؛ التحديث التكيفي المستمر لاحق."
     },
     {
       "id": "25",
@@ -536,17 +593,32 @@
       "phase": "11",
       "reference_status": "MISSING/PARTIAL",
       "dependencies": "23–24",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/application/learning/learning_intelligence.dart",
+        "lib/backend/api/tofan_api_server.dart"
+      ],
+      "test_paths": [
+        "test/backend_api_integration_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #25"
+          "kind": "code",
+          "path": "lib/application/learning/learning_intelligence.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/backend/api/tofan_api_server.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/backend_api_integration_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "الخطة تتولد من نتيجة التقييم الحالية؛ إعادة التخطيط متعددة الأحداث لم تُنفذ بعد."
     },
     {
       "id": "26",
@@ -1691,17 +1763,32 @@
       "phase": "22",
       "reference_status": "PARTIALLY IMPLEMENTED",
       "dependencies": "22–30, 16-C",
-      "verification": "NEEDS_VERIFICATION",
-      "code_paths": [],
-      "test_paths": [],
+      "verification": "PARTIALLY_VERIFIED",
+      "code_paths": [
+        "lib/backend/api/tofan_api_server.dart",
+        "lib/backend/api/supabase_rest_gateway.dart"
+      ],
+      "test_paths": [
+        "test/backend_api_integration_test.dart"
+      ],
       "evidence": [
         {
-          "kind": "roadmap_reference",
-          "path": "docs/ROADMAP.md",
-          "locator": "master execution matrix item #82"
+          "kind": "code",
+          "path": "lib/backend/api/tofan_api_server.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "lib/backend/api/supabase_rest_gateway.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "test",
+          "path": "test/backend_api_integration_test.dart",
+          "locator": "flutter test passed locally"
         }
       ],
-      "notes": "لم تُسجل أدلة كود/اختبار/تشغيل بعد؛ لا يُسمح باعتبار هذا البند مكتملًا من الحالة المرجعية وحدها."
+      "notes": "أضيفت استجابة تقييم تتضمن analysis وlearningPlan ومسار GET للخطة المحفوظة."
     },
     {
       "id": "83",

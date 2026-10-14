@@ -18,6 +18,7 @@ class SupabaseRestGateway {
   static const _tables = <String>{
     'student_profiles',
     'student_learning_state',
+    'student_learning_plans',
     'assessment_attempts',
     'student_project_progress',
   };
@@ -154,6 +155,26 @@ class SupabaseRestGateway {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Prefer': 'return=representation',
+      },
+      body: row,
+    );
+    _requireSuccess(response);
+    return _firstRow(response.body);
+  }
+
+  /// Persists a plan derived by the trusted server-side assessment pipeline.
+  Future<Map<String, dynamic>?> upsertDerivedLearningPlan(
+    Map<String, dynamic> row,
+  ) async {
+    final response = await _send(
+      'POST',
+      _tableUri('student_learning_plans', {'on_conflict': 'student_id'}),
+      headers: {
+        'apikey': _config.serviceRoleKey,
+        'Authorization': 'Bearer ${_config.serviceRoleKey}',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Prefer': 'resolution=merge-duplicates,return=representation',
       },
       body: row,
     );

@@ -238,15 +238,36 @@ void main() {
       expect(result['total'], record.assessment.questions.length);
       expect(result['passed'], isTrue);
       expect(result['wrongQuestionIds'], isEmpty);
+      expect(result['analysis'], isA<Map<String, dynamic>>());
+      expect(result['learningPlan'], isA<Map<String, dynamic>>());
+      expect(
+        (result['learningPlan'] as Map<String, dynamic>)['gaps'],
+        isA<Map<String, dynamic>>(),
+      );
       expect(supabase.lastAssessmentInsertApiKey, 'test-server-only-role');
       expect(
         supabase.table('assessment_attempts').single['student_id'],
+        _userId,
+      );
+      expect(
+        supabase.table('student_learning_plans').single['student_id'],
         _userId,
       );
 
       final history = await getApi(route);
       expect(history.statusCode, 200);
       expect((_json(history)['data']['items'] as List), hasLength(1));
+
+      final savedPlan = await getApi('/v1/students/me/learning-plan');
+      expect(savedPlan.statusCode, 200);
+      expect(_json(savedPlan)['data']['studentId'], _userId);
+      expect(_json(savedPlan)['data']['plan'], isA<Map<String, dynamic>>());
+
+      final otherPlan = await getApi(
+        '/v1/students/me/learning-plan',
+        token: 'other-token',
+      );
+      expect(_json(otherPlan)['data']['plan'], isNull);
 
       final duplicatePass = await postApi(route, {'answers': answers});
       expect(duplicatePass.statusCode, 409);

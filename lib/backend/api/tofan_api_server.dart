@@ -10,6 +10,9 @@ import 'academic_catalog_api.dart';
 import 'api_models.dart';
 import 'supabase_rest_gateway.dart';
 import '../../domain/academic/academic_models.dart';
+import '../../domain/learning/learning_models.dart';
+import '../../application/learning/assessment_analysis_engine.dart';
+import '../../application/learning/learning_intelligence.dart';
 
 class TofanApiServer {
   TofanApiServer({
@@ -298,6 +301,30 @@ class TofanApiServer {
           },
         );
       }
+    }
+    if (_isPath(segments, ['v1', 'students', 'me', 'learning-plan']) &&
+        method == 'GET') {
+      final rows = await _gateway.selectRows(
+        table: 'student_learning_plans',
+        accessToken: accessToken,
+        query: {
+          'select': 'plan,source_assessment_id,updated_at',
+          'student_id': 'eq.${principal.userId}',
+          'limit': '1',
+        },
+      );
+      final row = rows.isEmpty ? null : rows.first;
+      return (
+        200,
+        {
+          'data': {
+            'studentId': principal.userId,
+            'plan': row?['plan'],
+            'sourceAssessmentId': row?['source_assessment_id'],
+            'updatedAt': row?['updated_at'],
+          },
+        },
+      );
     }
     if (_isPath(segments, ['v1', 'students', 'me', 'learning-state'])) {
       if (method == 'GET') {
@@ -614,21 +641,72 @@ class TofanApiServer {
       'previous_attempt_id': previous?['attempt_id'],
       'completed_at': completedAt,
     });
-    return _attemptJson(
-      row ??
-          {
-            'attempt_id': attemptId,
-            'assessment_id': assessmentId,
-            'attempt_number': attemptNumber,
-            'score': score,
-            'total': total,
-            'percentage': percentage,
-            'passed': percentage >= 60,
-            'wrong_question_ids': wrongQuestionIds,
-            'previous_attempt_id': previous?['attempt_id'],
-            'completed_at': completedAt,
-          },
+    final attempt =
+        row ??
+        {
+          'attempt_id': attemptId,
+          'assessment_id': assessmentId,
+          'attempt_number': attemptNumber,
+          'score': score,
+          'total': total,
+          'percentage': percentage,
+          'passed': percentage >= 60,
+          'wrong_question_ids': wrongQuestionIds,
+          'previous_attempt_id': previous?['attempt_id'],
+          'completed_at': completedAt,
+        };
+    final result = AssessmentResult(
+      assessmentId: assessmentId,
+      score: score.toDouble(),
+      total: total.toDouble(),
+      completedAt: DateTime.parse(completedAt),
+      wrongQuestionIds: List<String>.unmodifiable(wrongQuestionIds),
+      attemptNumber: attemptNumber,
+      isReassessment: attemptNumber > 1,
+      previousAttemptId: previous?['attempt_id'] as String?,
     );
+    final analysis = const AssessmentAnalysisEngine().analyze(result);
+    final gaps = LearningGapReport(
+      conceptGapIds: analysis.conceptGapIds,
+      skillGapIds: analysis.skillGapIds,
+      prerequisiteCourseIds: record.course.course.prerequisiteCourseIds,
+    );
+    final plan = const LearningIntelligenceEngine().planFor(gaps);
+    final planJson = {
+      'assessmentId': assessmentId,
+      'generatedAt': completedAt,
+      'performance': analysis.performance.name,
+      'percentage': analysis.percentage,
+      'message': analysis.message,
+      'gaps': {
+        'conceptIds': gaps.conceptGapIds,
+        'skillIds': gaps.skillGapIds,
+        'prerequisiteCourseIds': gaps.prerequisiteCourseIds,
+      },
+      'priorityConceptIds': plan.priorityConceptIds,
+      'prioritySkillIds': plan.prioritySkillIds,
+      'prerequisiteCourseIds': plan.prerequisiteCourseIds,
+      'remediationTargets': analysis.remediationTargets,
+    };
+    await _gateway.upsertDerivedLearningPlan({
+      'student_id': principal.userId,
+      'plan': planJson,
+      'source_assessment_id': assessmentId,
+      'updated_at': completedAt,
+    });
+    final response = _attemptJson(attempt);
+    response['analysis'] = {
+      'assessmentId': analysis.assessmentId,
+      'percentage': analysis.percentage,
+      'performance': analysis.performance.name,
+      'conceptGapIds': analysis.conceptGapIds,
+      'skillGapIds': analysis.skillGapIds,
+      'learningOutcomeGapIds': analysis.learningOutcomeGapIds,
+      'remediationTargets': analysis.remediationTargets,
+      'message': analysis.message,
+    };
+    response['learningPlan'] = planJson;
+    return response;
   }
 
   Map<String, dynamic> _attemptJson(Map<String, dynamic> row) => {
