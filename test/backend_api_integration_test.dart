@@ -307,6 +307,33 @@ void main() {
       expect(evidence.statusCode, 200);
       expect((_json(evidence)['data']['items'] as List), hasLength(1));
 
+      final verification = await postApi(
+        '/v1/students/me/capability-verification',
+        {},
+      );
+      expect(verification.statusCode, 200);
+      final report =
+          _json(verification)['data']['verification'] as Map<String, dynamic>;
+      expect(report['status'], 'insufficient_evidence');
+      expect(report['audit'], isA<Map<String, dynamic>>());
+      expect(
+        (report['audit'] as Map<String, dynamic>)['missingTaskIds'],
+        isNotEmpty,
+      );
+      expect(
+        supabase.table('student_capability_verifications').single['student_id'],
+        _userId,
+      );
+
+      final savedVerification = await getApi(
+        '/v1/students/me/capability-verification',
+      );
+      expect(savedVerification.statusCode, 200);
+      expect(
+        _json(savedVerification)['data']['verification'],
+        isA<Map<String, dynamic>>(),
+      );
+
       final invalidTask =
           await postApi('/v1/projects/$projectId/tasks/not-assigned/evidence', {
             'type': 'text',
@@ -330,6 +357,11 @@ void main() {
         token: 'other-token',
       );
       expect((_json(otherEvidence)['data']['items'] as List), isEmpty);
+      final otherVerification = await getApi(
+        '/v1/students/me/capability-verification',
+        token: 'other-token',
+      );
+      expect(_json(otherVerification)['data']['verification'], isNull);
 
       final duplicatePass = await postApi(route, {'answers': answers});
       expect(duplicatePass.statusCode, 409);
