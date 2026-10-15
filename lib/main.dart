@@ -6,7 +6,7 @@ import 'config/supabase_config.dart';
 import 'providers/settings_provider.dart';
 import 'theme/app_theme.dart';
 import 'utils/constants.dart';
-import 'widgets/main_navigation.dart';
+import 'widgets/auth_gate.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +34,7 @@ class TofanAiApp extends ConsumerWidget {
       themeMode: themeMode,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      home: const MainNavigation(),
+      home: const AuthGate(),
     );
   }
 }
