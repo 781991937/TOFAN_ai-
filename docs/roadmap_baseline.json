@@ -890,7 +890,9 @@
         "lib/backend/api/supabase_rest_gateway.dart",
         "supabase/migrations/0006_project_task_evidence.sql",
         "supabase/migrations/0007_capability_verifications.sql",
-        "supabase/migrations/0008_evidence_quality_review.sql"
+        "supabase/migrations/0008_evidence_quality_review.sql",
+        "lib/backend/api/api_models.dart",
+        "supabase/migrations/0009_human_evidence_review.sql"
       ],
       "test_paths": [
         "test/backend_api_integration_test.dart"
@@ -922,12 +924,22 @@
           "locator": "implementation reviewed"
         },
         {
+          "kind": "code",
+          "path": "lib/backend/api/api_models.dart",
+          "locator": "implementation reviewed"
+        },
+        {
+          "kind": "code",
+          "path": "supabase/migrations/0009_human_evidence_review.sql",
+          "locator": "implementation reviewed"
+        },
+        {
           "kind": "test",
           "path": "test/backend_api_integration_test.dart",
           "locator": "flutter test passed locally"
         }
       ],
-      "notes": "التحقق يحلل الأدلة المقبولة فقط مقابل مهام التعيين ومتطلبات القدرة ويصدر verified أو insufficient_evidence مع تقرير تدقيق محفوظ؛ بوابة الجودة تمنع الروابط غير الصالحة والأثر بلا SHA-256 والتكرار، والاعتماد النهائي على مراجعة بشرية ما زال لاحقًا."
+      "notes": "التحقق يحسب الأدلة المقبولة والمراجعة معنويًا فقط؛ قائمة انتظار للمراجعين، صلاحيات reviewer/teacher/admin، قرار approved أو rejected بدرجة وملاحظات وهوية المراجع، مع منع إعادة المراجعة."
     },
     {
       "id": "37",

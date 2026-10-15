@@ -58,11 +58,12 @@ class SupabaseApiConfig {
 }
 
 class ApiPrincipal {
-  const ApiPrincipal({required this.userId, this.email});
+  const ApiPrincipal({required this.userId, this.email, this.role = 'student'});
 
   /// The verified Supabase Auth user id; never supplied by an API request body.
   final String userId;
   final String? email;
+  final String role;
 }
 
 class ApiException implements Exception {

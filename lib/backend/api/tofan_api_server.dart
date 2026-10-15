@@ -112,6 +112,32 @@ class TofanApiServer {
     final segments = request.uri.pathSegments;
     final method = request.method;
 
+    if (_isPath(segments, ['v1', 'reviews', 'evidence']) && method == 'GET') {
+      if (!const {'reviewer', 'teacher', 'admin'}.contains(principal.role)) {
+        throw const ApiException(
+          403,
+          'reviewer_role_required',
+          'Only an authorized reviewer may access the review queue.',
+        );
+      }
+      final rows = await _gateway.selectRowsAsServer(
+        table: 'project_task_evidence',
+        query: {
+          'select':
+              'evidence_id,student_id,project_id,task_id,evidence,quality_score,quality_flags,submitted_at',
+          'quality_status': 'eq.accepted',
+          'human_review_status': 'eq.pending_review',
+          'order': 'submitted_at.asc',
+        },
+      );
+      return (
+        200,
+        {
+          'data': {'items': rows, 'total': rows.length},
+        },
+      );
+    }
+
     if (_isPath(segments, ['v1', 'academic', 'fields']) && method == 'GET') {
       return (
         200,
@@ -522,6 +548,22 @@ class TofanApiServer {
         },
       );
     }
+    if (segments.length == 8 &&
+        segments[0] == 'v1' &&
+        segments[1] == 'projects' &&
+        segments[3] == 'tasks' &&
+        segments[5] == 'evidence' &&
+        segments[7] == 'review' &&
+        method == 'POST') {
+      final review = await _reviewProjectTaskEvidence(
+        projectId: segments[2],
+        taskId: segments[4],
+        evidenceId: segments[6],
+        principal: principal,
+        body: await _readJson(request),
+      );
+      return (200, {'data': review});
+    }
     if (segments.length == 6 &&
         segments[0] == 'v1' &&
         segments[1] == 'projects' &&
@@ -543,7 +585,7 @@ class TofanApiServer {
           accessToken: accessToken,
           query: {
             'select':
-                'evidence_id,project_id,task_id,evidence,quality_status,quality_score,quality_flags,reviewed_at,submitted_at',
+                'evidence_id,project_id,task_id,evidence,quality_status,quality_score,quality_flags,reviewed_at,human_review_status,semantic_score,review_notes,reviewer_id,human_reviewed_at,submitted_at',
             'student_id': 'eq.${principal.userId}',
             'project_id': 'eq.$projectId',
             'task_id': 'eq.$taskId',
@@ -664,6 +706,104 @@ class TofanApiServer {
     );
   }
 
+  Future<Map<String, dynamic>> _reviewProjectTaskEvidence({
+    required String projectId,
+    required String taskId,
+    required String evidenceId,
+    required ApiPrincipal principal,
+    required Map<String, dynamic> body,
+  }) async {
+    if (!const {'reviewer', 'teacher', 'admin'}.contains(principal.role)) {
+      throw const ApiException(
+        403,
+        'reviewer_role_required',
+        'Only an authorized reviewer may approve evidence.',
+      );
+    }
+    _requireKeys(body, const {'decision', 'semanticScore', 'notes'});
+    final decision = body['decision'];
+    final score = body['semanticScore'];
+    if (decision is! String ||
+        !const {'approved', 'rejected'}.contains(decision)) {
+      throw const ApiException(
+        400,
+        'invalid_review_decision',
+        'Review decision must be approved or rejected.',
+      );
+    }
+    if (score is! int || score < 0 || score > 100) {
+      throw const ApiException(
+        400,
+        'invalid_semantic_score',
+        'Semantic score must be an integer between 0 and 100.',
+      );
+    }
+    final notes = _requiredText(body, 'notes', maxLength: 4000);
+    if (decision == 'approved' && score < 70) {
+      throw const ApiException(
+        422,
+        'semantic_score_too_low',
+        'An approved evidence item must have a semantic score of at least 70.',
+      );
+    }
+    final rows = await _gateway.selectRowsAsServer(
+      table: 'project_task_evidence',
+      query: {
+        'select':
+            'evidence_id,project_id,task_id,evidence,quality_status,human_review_status',
+        'evidence_id': 'eq.$evidenceId',
+        'project_id': 'eq.$projectId',
+        'task_id': 'eq.$taskId',
+        'limit': '1',
+      },
+    );
+    if (rows.isEmpty) {
+      throw const ApiException(
+        404,
+        'evidence_not_found',
+        'The evidence item was not found for this project task.',
+      );
+    }
+    final row = rows.first;
+    if (row['quality_status'] != 'accepted') {
+      throw const ApiException(
+        409,
+        'evidence_quality_pending',
+        'Only evidence that passes the automated quality gate can be reviewed.',
+      );
+    }
+    if (row['human_review_status'] != 'pending_review') {
+      throw const ApiException(
+        409,
+        'evidence_already_reviewed',
+        'This evidence item already has a human review decision.',
+      );
+    }
+    final reviewedAt = DateTime.now().toUtc().toIso8601String();
+    final updated = await _gateway.updateProjectTaskEvidenceReview(
+      evidenceId: evidenceId,
+      values: {
+        'human_review_status': decision,
+        'semantic_score': score,
+        'review_notes': notes,
+        'reviewer_id': principal.userId,
+        'human_reviewed_at': reviewedAt,
+      },
+    );
+    return {
+      'evidenceId': evidenceId,
+      'projectId': projectId,
+      'taskId': taskId,
+      'humanReview': {
+        'status': decision,
+        'semanticScore': score,
+        'notes': notes,
+        'reviewerId': principal.userId,
+        'reviewedAt': updated?['human_reviewed_at'] ?? reviewedAt,
+      },
+    };
+  }
+
   Future<Map<String, dynamic>> _verifyAcademicCapability({
     required ApiPrincipal principal,
     required String accessToken,
@@ -708,7 +848,7 @@ class TofanApiServer {
       accessToken: accessToken,
       query: {
         'select':
-            'evidence_id,task_id,evidence,quality_status,quality_score,quality_flags,reviewed_at,submitted_at',
+            'evidence_id,task_id,evidence,quality_status,quality_score,quality_flags,reviewed_at,human_review_status,semantic_score,review_notes,reviewer_id,human_reviewed_at,submitted_at',
         'student_id': 'eq.${principal.userId}',
         'project_id': 'eq.$projectId',
         'order': 'submitted_at.asc',
@@ -716,6 +856,9 @@ class TofanApiServer {
     );
     final acceptedEvidenceRows = evidenceRows
         .where((row) => row['quality_status'] == 'accepted')
+        .toList(growable: false);
+    final approvedEvidenceRows = acceptedEvidenceRows
+        .where((row) => row['human_review_status'] == 'approved')
         .toList(growable: false);
     final assignedTasks = (assignment['tasks'] as List<dynamic>? ?? const [])
         .whereType<Map>()
@@ -726,7 +869,7 @@ class TofanApiServer {
         .whereType<String>()
         .toSet();
     final evidenceTaskIds =
-        acceptedEvidenceRows
+        approvedEvidenceRows
             .map((row) => row['task_id'])
             .whereType<String>()
             .toSet()
@@ -742,7 +885,7 @@ class TofanApiServer {
           .toList(growable: false);
       final requiredEvidenceCount = capability.evidenceRequirements.length;
       final evidenceSufficient =
-          acceptedEvidenceRows.length >=
+          approvedEvidenceRows.length >=
           (requiredEvidenceCount == 0 ? 1 : requiredEvidenceCount);
       final taskCoverage = missingTaskIds.isEmpty && assignedTaskIds.isNotEmpty;
       final verified =
@@ -755,7 +898,7 @@ class TofanApiServer {
         'requiredSkillIds': capability.requiredSkillIds,
         'missingSkillIds': missingSkills,
         'requiredEvidenceCount': requiredEvidenceCount,
-        'submittedEvidenceCount': acceptedEvidenceRows.length,
+        'submittedEvidenceCount': approvedEvidenceRows.length,
         'missingTaskIds': missingTaskIds,
         'reason': verified
             ? 'All assigned tasks and evidence thresholds are covered.'
@@ -780,6 +923,9 @@ class TofanApiServer {
         'missingTaskIds': missingTaskIds,
         'submittedEvidenceCount': acceptedEvidenceRows.length,
         'acceptedEvidenceCount': acceptedEvidenceRows.length,
+        'approvedEvidenceCount': approvedEvidenceRows.length,
+        'pendingHumanReviewCount':
+            acceptedEvidenceRows.length - approvedEvidenceRows.length,
         'rejectedEvidenceCount':
             evidenceRows.length - acceptedEvidenceRows.length,
         'canonicalCourseId': course.id,
@@ -944,7 +1090,9 @@ class TofanApiServer {
     final qualityStatus = qualityFlags.isEmpty ? 'accepted' : 'rejected';
     final qualityScore = qualityFlags.isEmpty ? 100 : 0;
     final reviewedAt = DateTime.now().toUtc().toIso8601String();
+    final evidenceId = _uuid.v4();
     final row = await _gateway.insertProjectTaskEvidence({
+      'evidence_id': evidenceId,
       'student_id': principal.userId,
       'project_id': projectId,
       'task_id': taskId,
@@ -957,7 +1105,7 @@ class TofanApiServer {
       'reviewer': 'server-quality-gate',
     });
     return {
-      'evidenceId': row?['evidence_id'],
+      'evidenceId': row?['evidence_id'] ?? evidenceId,
       'projectId': projectId,
       'taskId': taskId,
       'evidence': evidence,
