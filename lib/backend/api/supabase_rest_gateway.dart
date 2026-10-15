@@ -73,6 +73,11 @@ class SupabaseRestGateway {
     return ApiPrincipal(
       userId: userId,
       email: decoded['email'] is String ? decoded['email'] as String : null,
+      role:
+          decoded['app_metadata'] is Map &&
+              (decoded['app_metadata'] as Map)['role'] is String
+          ? (decoded['app_metadata'] as Map)['role'] as String
+          : 'student',
     );
   }
 
@@ -125,6 +130,35 @@ class SupabaseRestGateway {
     );
     _requireSuccess(response);
     return _firstRow(response.body);
+  }
+
+  Future<List<Map<String, dynamic>>> selectRowsAsServer({
+    required String table,
+    required Map<String, String> query,
+  }) async {
+    _requireTable(table);
+    final response = await _send(
+      'GET',
+      _tableUri(table, query),
+      headers: {
+        'apikey': _config.serviceRoleKey,
+        'Authorization': 'Bearer ${_config.serviceRoleKey}',
+        'Accept': 'application/json',
+      },
+    );
+    _requireSuccess(response);
+    final decoded = _decode(response.body);
+    if (decoded is! List) {
+      throw const ApiException(
+        502,
+        'invalid_data_response',
+        'Supabase returned an invalid data response.',
+      );
+    }
+    return decoded
+        .whereType<Map>()
+        .map((row) => Map<String, dynamic>.from(row))
+        .toList(growable: false);
   }
 
   Future<void> deleteUserRows({
@@ -241,6 +275,26 @@ class SupabaseRestGateway {
         'Prefer': 'resolution=merge-duplicates,return=representation',
       },
       body: row,
+    );
+    _requireSuccess(response);
+    return _firstRow(response.body);
+  }
+
+  Future<Map<String, dynamic>?> updateProjectTaskEvidenceReview({
+    required String evidenceId,
+    required Map<String, dynamic> values,
+  }) async {
+    final response = await _send(
+      'PATCH',
+      _tableUri('project_task_evidence', {'evidence_id': 'eq.$evidenceId'}),
+      headers: {
+        'apikey': _config.serviceRoleKey,
+        'Authorization': 'Bearer ${_config.serviceRoleKey}',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Prefer': 'return=representation',
+      },
+      body: values,
     );
     _requireSuccess(response);
     return _firstRow(response.body);

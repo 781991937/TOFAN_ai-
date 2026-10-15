@@ -306,6 +306,49 @@ void main() {
         _userId,
       );
 
+      final evidenceId =
+          _json(submittedEvidence)['data']['evidenceId'] as String;
+      final studentQueue = await getApi('/v1/reviews/evidence');
+      expect(studentQueue.statusCode, 403);
+      final reviewerQueue = await getApi(
+        '/v1/reviews/evidence',
+        token: 'reviewer-token',
+      );
+      expect(reviewerQueue.statusCode, 200);
+      expect((_json(reviewerQueue)['data']['items'] as List), hasLength(1));
+      final unauthorizedReview = await postApi(
+        '/v1/projects/$projectId/tasks/$taskId/evidence/$evidenceId/review',
+        {
+          'decision': 'approved',
+          'semanticScore': 90,
+          'notes': 'مراجعة معنوية كافية للاختبار.',
+        },
+      );
+      expect(unauthorizedReview.statusCode, 403);
+
+      final humanReview = await postApi(
+        '/v1/projects/$projectId/tasks/$taskId/evidence/$evidenceId/review',
+        {
+          'decision': 'approved',
+          'semanticScore': 90,
+          'notes': 'الدليل يطابق المهمة ويعرض نتيجة قابلة للتتبع.',
+        },
+        token: 'reviewer-token',
+      );
+      expect(humanReview.statusCode, 200);
+      expect(_json(humanReview)['data']['humanReview']['status'], 'approved');
+
+      final duplicateReview = await postApi(
+        '/v1/projects/$projectId/tasks/$taskId/evidence/$evidenceId/review',
+        {
+          'decision': 'approved',
+          'semanticScore': 95,
+          'notes': 'لا يجب تغيير القرار بعد اعتماده.',
+        },
+        token: 'reviewer-token',
+      );
+      expect(duplicateReview.statusCode, 409);
+
       final duplicateEvidence =
           await postApi('/v1/projects/$projectId/tasks/$taskId/evidence', {
             'type': 'test_result',
@@ -456,6 +499,7 @@ class _SupabaseHttpStub {
   final Map<String, String> _tokenUsers = const {
     'user-token': _userId,
     'other-token': _otherUserId,
+    'reviewer-token': '00000000-0000-4000-8000-000000000003',
   };
   final Map<String, String> _lastApiKeyByTable = {};
   HttpServer? server;
@@ -502,7 +546,9 @@ class _SupabaseHttpStub {
           'email': userId == _userId
               ? 'student@example.test'
               : 'other@example.test',
-          'app_metadata': {'role': 'student'},
+          'app_metadata': {
+            'role': token == 'reviewer-token' ? 'reviewer' : 'student',
+          },
         });
       }
       return;
@@ -537,6 +583,7 @@ class _SupabaseHttpStub {
               'assessment_id',
               'project_id',
               'task_id',
+              'evidence_id',
               'content_fingerprint',
               'quality_status',
             ]) {
@@ -564,6 +611,27 @@ class _SupabaseHttpStub {
       return;
     }
 
+    if (request.method == 'PATCH') {
+      if (!isServiceRole) {
+        await _reply(request, 403, {'message': 'server review only'});
+        return;
+      }
+      final evidenceId = request.uri.queryParameters['evidence_id'];
+      final targetId = evidenceId?.startsWith('eq.') == true
+          ? evidenceId!.substring(3)
+          : null;
+      final index = rows.indexWhere((row) => row['evidence_id'] == targetId);
+      if (index < 0) {
+        await _reply(request, 404, {'message': 'evidence not found'});
+        return;
+      }
+      final decoded = jsonDecode(await utf8.decoder.bind(request).join());
+      final values = Map<String, dynamic>.from(decoded as Map);
+      rows[index] = {...rows[index], ...values};
+      await _reply(request, 200, [rows[index]]);
+      return;
+    }
+
     if (request.method == 'POST') {
       final decoded = jsonDecode(await utf8.decoder.bind(request).join());
       if (decoded is! Map) {
@@ -571,6 +639,9 @@ class _SupabaseHttpStub {
         return;
       }
       final row = Map<String, dynamic>.from(decoded);
+      if (tableName == 'project_task_evidence') {
+        row['human_review_status'] ??= 'pending_review';
+      }
       if (tableName == 'assessment_attempts') {
         if (row.containsKey('percentage') || row.containsKey('passed')) {
           await _reply(request, 400, {
