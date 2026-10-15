@@ -1,10 +1,10 @@
+export '../application/abqari/persistent_experience_memory.dart';
 import 'planning_engine.dart';
 import 'project_engine.dart';
 import 'abqari_agent.dart';
 import 'abqari_models.dart';
 
-export 'abqari_models.dart';
-export 'academic_knowledge_engine.dart';
+export 'abqari_models.dart';export 'academic_knowledge_engine.dart';
 export 'knowledge_graph.dart';
 export 'learning_gap_engine.dart';
 export 'project_engine.dart';
