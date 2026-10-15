@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 
@@ -541,7 +542,8 @@ class TofanApiServer {
           table: 'project_task_evidence',
           accessToken: accessToken,
           query: {
-            'select': 'evidence_id,project_id,task_id,evidence,submitted_at',
+            'select':
+                'evidence_id,project_id,task_id,evidence,quality_status,quality_score,quality_flags,reviewed_at,submitted_at',
             'student_id': 'eq.${principal.userId}',
             'project_id': 'eq.$projectId',
             'task_id': 'eq.$taskId',
@@ -705,12 +707,16 @@ class TofanApiServer {
       table: 'project_task_evidence',
       accessToken: accessToken,
       query: {
-        'select': 'evidence_id,task_id,evidence,submitted_at',
+        'select':
+            'evidence_id,task_id,evidence,quality_status,quality_score,quality_flags,reviewed_at,submitted_at',
         'student_id': 'eq.${principal.userId}',
         'project_id': 'eq.$projectId',
         'order': 'submitted_at.asc',
       },
     );
+    final acceptedEvidenceRows = evidenceRows
+        .where((row) => row['quality_status'] == 'accepted')
+        .toList(growable: false);
     final assignedTasks = (assignment['tasks'] as List<dynamic>? ?? const [])
         .whereType<Map>()
         .map((task) => Map<String, dynamic>.from(task))
@@ -720,7 +726,10 @@ class TofanApiServer {
         .whereType<String>()
         .toSet();
     final evidenceTaskIds =
-        evidenceRows.map((row) => row['task_id']).whereType<String>().toSet()
+        acceptedEvidenceRows
+            .map((row) => row['task_id'])
+            .whereType<String>()
+            .toSet()
           ..removeWhere((taskId) => !assignedTaskIds.contains(taskId));
     final missingTaskIds = assignedTaskIds.difference(evidenceTaskIds).toList()
       ..sort();
@@ -733,7 +742,7 @@ class TofanApiServer {
           .toList(growable: false);
       final requiredEvidenceCount = capability.evidenceRequirements.length;
       final evidenceSufficient =
-          evidenceRows.length >=
+          acceptedEvidenceRows.length >=
           (requiredEvidenceCount == 0 ? 1 : requiredEvidenceCount);
       final taskCoverage = missingTaskIds.isEmpty && assignedTaskIds.isNotEmpty;
       final verified =
@@ -746,7 +755,7 @@ class TofanApiServer {
         'requiredSkillIds': capability.requiredSkillIds,
         'missingSkillIds': missingSkills,
         'requiredEvidenceCount': requiredEvidenceCount,
-        'submittedEvidenceCount': evidenceRows.length,
+        'submittedEvidenceCount': acceptedEvidenceRows.length,
         'missingTaskIds': missingTaskIds,
         'reason': verified
             ? 'All assigned tasks and evidence thresholds are covered.'
@@ -769,7 +778,10 @@ class TofanApiServer {
         'assignedTaskCount': assignedTaskIds.length,
         'coveredTaskCount': evidenceTaskIds.length,
         'missingTaskIds': missingTaskIds,
-        'submittedEvidenceCount': evidenceRows.length,
+        'submittedEvidenceCount': acceptedEvidenceRows.length,
+        'acceptedEvidenceCount': acceptedEvidenceRows.length,
+        'rejectedEvidenceCount':
+            evidenceRows.length - acceptedEvidenceRows.length,
         'canonicalCourseId': course.id,
         'evaluatedAt': DateTime.now().toUtc().toIso8601String(),
       },
@@ -818,6 +830,47 @@ class TofanApiServer {
     }
     final title = _requiredText(body, 'title', maxLength: 160);
     final description = _requiredText(body, 'description', maxLength: 4000);
+    final uri = body['uri'] is String ? (body['uri'] as String).trim() : null;
+    final checksum = body['checksum'] is String
+        ? (body['checksum'] as String).trim().toLowerCase()
+        : null;
+    final qualityFlags = <String>[];
+    if (type == 'url' || type == 'artifact') {
+      if (uri == null || uri.isEmpty) {
+        qualityFlags.add('uri_required');
+      } else {
+        final parsed = Uri.tryParse(uri);
+        if (parsed == null ||
+            !const {'http', 'https'}.contains(parsed.scheme) ||
+            parsed.host.isEmpty) {
+          qualityFlags.add('uri_invalid');
+        }
+      }
+    } else if (uri != null && uri.isNotEmpty) {
+      final parsed = Uri.tryParse(uri);
+      if (parsed == null ||
+          !const {'http', 'https'}.contains(parsed.scheme) ||
+          parsed.host.isEmpty) {
+        qualityFlags.add('uri_invalid');
+      }
+    }
+    if (type == 'artifact' &&
+        (checksum == null || !RegExp(r'^[0-9a-f]{64}$').hasMatch(checksum))) {
+      qualityFlags.add('sha256_checksum_required');
+    }
+    if (checksum != null &&
+        checksum.isNotEmpty &&
+        !RegExp(r'^[0-9a-f]{64}$').hasMatch(checksum)) {
+      qualityFlags.add('checksum_invalid');
+    }
+    final normalized = jsonEncode({
+      'type': type,
+      'title': title.toLowerCase(),
+      'description': description.toLowerCase(),
+      'uri': uri,
+      'checksum': checksum,
+    });
+    final fingerprint = sha256.convert(utf8.encode(normalized)).toString();
     final assignments = await _gateway.selectRows(
       table: 'student_project_assignments',
       accessToken: accessToken,
@@ -855,27 +908,66 @@ class TofanApiServer {
         'Evidence can only be submitted for an assigned canonical task.',
       );
     }
+    final duplicateRows = await _gateway.selectRows(
+      table: 'project_task_evidence',
+      accessToken: accessToken,
+      query: {
+        'select': 'evidence_id',
+        'student_id': 'eq.${principal.userId}',
+        'project_id': 'eq.$projectId',
+        'task_id': 'eq.$taskId',
+        'content_fingerprint': 'eq.$fingerprint',
+        'limit': '1',
+      },
+    );
+    if (duplicateRows.isNotEmpty) {
+      throw const ApiException(
+        409,
+        'duplicate_evidence',
+        'The same evidence has already been submitted for this task.',
+      );
+    }
+    if (qualityFlags.isNotEmpty) {
+      throw ApiException(
+        422,
+        'evidence_quality_failed',
+        'Evidence failed the quality gate: ${qualityFlags.join(', ')}.',
+      );
+    }
     final evidence = {
       'type': type,
       'title': title,
       'description': description,
-      if (body['uri'] case final String uri when uri.trim().isNotEmpty)
-        'uri': uri.trim(),
-      if (body['checksum'] case final String checksum
-          when checksum.trim().isNotEmpty)
-        'checksum': checksum.trim(),
+      if (uri != null && uri.isNotEmpty) 'uri': uri,
+      if (checksum != null && checksum.isNotEmpty) 'checksum': checksum,
     };
+    final qualityStatus = qualityFlags.isEmpty ? 'accepted' : 'rejected';
+    final qualityScore = qualityFlags.isEmpty ? 100 : 0;
+    final reviewedAt = DateTime.now().toUtc().toIso8601String();
     final row = await _gateway.insertProjectTaskEvidence({
       'student_id': principal.userId,
       'project_id': projectId,
       'task_id': taskId,
       'evidence': evidence,
-    }, accessToken: accessToken);
+      'content_fingerprint': fingerprint,
+      'quality_status': qualityStatus,
+      'quality_score': qualityScore,
+      'quality_flags': qualityFlags,
+      'reviewed_at': reviewedAt,
+      'reviewer': 'server-quality-gate',
+    });
     return {
       'evidenceId': row?['evidence_id'],
       'projectId': projectId,
       'taskId': taskId,
       'evidence': evidence,
+      'quality': {
+        'status': qualityStatus,
+        'score': qualityScore,
+        'flags': qualityFlags,
+        'reviewedAt': reviewedAt,
+        'reviewer': 'server-quality-gate',
+      },
       'submittedAt': row?['submitted_at'],
     };
   }
