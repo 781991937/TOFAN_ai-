@@ -24,13 +24,13 @@ final authenticationGatewayProvider = Provider<AuthenticationGateway>((ref) {
 
 final agentGatewayProvider = Provider<AgentGateway>((ref) {
   return AgentGateway(
-    ownerAuthority: SupabaseConfig.ownerActorId.isEmpty
-        ? const OwnerAuthority()
-        : OwnerAuthority(ownerActorId: SupabaseConfig.ownerActorId),
+    // Fail closed: a client build-time value is not trusted proof of owner
+    // authority. Re-enable owner-only operations only after a server-backed
+    // owner authorization flow is implemented and verified.
+    ownerAuthority: const OwnerAuthority(),
     auditRepository: ref.read(auditRepositoryProvider),
   );
 });
-
 
 final studentLearningRepositoryProvider = Provider<StudentLearningRepository>((ref) {
   return SupabaseStudentLearningRepository();
