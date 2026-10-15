@@ -889,7 +889,8 @@
         "lib/backend/api/tofan_api_server.dart",
         "lib/backend/api/supabase_rest_gateway.dart",
         "supabase/migrations/0006_project_task_evidence.sql",
-        "supabase/migrations/0007_capability_verifications.sql"
+        "supabase/migrations/0007_capability_verifications.sql",
+        "supabase/migrations/0008_evidence_quality_review.sql"
       ],
       "test_paths": [
         "test/backend_api_integration_test.dart"
@@ -916,12 +917,17 @@
           "locator": "implementation reviewed"
         },
         {
+          "kind": "code",
+          "path": "supabase/migrations/0008_evidence_quality_review.sql",
+          "locator": "implementation reviewed"
+        },
+        {
           "kind": "test",
           "path": "test/backend_api_integration_test.dart",
           "locator": "flutter test passed locally"
         }
       ],
-      "notes": "التحقق يحلل الأدلة مقابل مهام التعيين ومتطلبات القدرة ويصدر verified أو insufficient_evidence مع تقرير تدقيق محفوظ؛ الاعتماد النهائي على مراجعة جودة الدليل ما زال لاحقًا."
+      "notes": "التحقق يحلل الأدلة المقبولة فقط مقابل مهام التعيين ومتطلبات القدرة ويصدر verified أو insufficient_evidence مع تقرير تدقيق محفوظ؛ بوابة الجودة تمنع الروابط غير الصالحة والأثر بلا SHA-256 والتكرار، والاعتماد النهائي على مراجعة بشرية ما زال لاحقًا."
     },
     {
       "id": "37",
@@ -1905,7 +1911,8 @@
       "code_paths": [
         "lib/backend/api/tofan_api_server.dart",
         "lib/backend/api/supabase_rest_gateway.dart",
-        "supabase/migrations/0005_student_project_assignments.sql"
+        "supabase/migrations/0005_student_project_assignments.sql",
+        "supabase/migrations/0008_evidence_quality_review.sql"
       ],
       "test_paths": [
         "test/backend_api_integration_test.dart"
@@ -1927,12 +1934,17 @@
           "locator": "implementation reviewed"
         },
         {
+          "kind": "code",
+          "path": "supabase/migrations/0008_evidence_quality_review.sql",
+          "locator": "implementation reviewed"
+        },
+        {
           "kind": "test",
           "path": "test/backend_api_integration_test.dart",
           "locator": "flutter test passed locally"
         }
       ],
-      "notes": "أضيف POST/GET project-plan مع اختيار مشروع قانوني وحفظ المهام وعزل الطالب؛ أضيف الآن مسار أدلة المهام المرتبطة بالتعيين."
+      "notes": "أضيف POST/GET project-plan مع اختيار مشروع قانوني وحفظ المهام وعزل الطالب، وجمع دليل ببوابة جودة خادمية وبصمة تمنع التكرار."
     },
     {
       "id": "84",

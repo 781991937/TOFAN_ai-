@@ -204,15 +204,19 @@ class SupabaseRestGateway {
     return _firstRow(response.body);
   }
 
+  /// Evidence quality fields are server-owned; clients may read evidence but
+  /// can never insert an accepted/reviewed row directly through PostgREST.
   Future<Map<String, dynamic>?> insertProjectTaskEvidence(
-    Map<String, dynamic> row, {
-    required String accessToken,
-  }) async {
+    Map<String, dynamic> row,
+  ) async {
     final response = await _send(
       'POST',
       _tableUri('project_task_evidence', const {}),
       headers: {
-        ..._userHeaders(accessToken),
+        'apikey': _config.serviceRoleKey,
+        'Authorization': 'Bearer ${_config.serviceRoleKey}',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
         'Prefer': 'return=representation',
       },
       body: row,

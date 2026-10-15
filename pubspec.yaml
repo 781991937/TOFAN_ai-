@@ -17,6 +17,7 @@ dependencies:
   path_provider: ^2.1.5
   flutter_secure_storage: ^10.3.1
   http: ^1.6.0
+  crypto: ^3.0.6
   dio: ^5.10.0
   google_fonts: ^6.3.2
   flutter_dotenv: ^6.0.1

@@ -296,10 +296,32 @@ void main() {
           });
       expect(submittedEvidence.statusCode, 201);
       expect(_json(submittedEvidence)['data']['taskId'], taskId);
+      expect(_json(submittedEvidence)['data']['quality']['status'], 'accepted');
+      expect(
+        supabase.lastApiKeyByTable['project_task_evidence'],
+        'test-server-only-role',
+      );
       expect(
         supabase.table('project_task_evidence').single['student_id'],
         _userId,
       );
+
+      final duplicateEvidence =
+          await postApi('/v1/projects/$projectId/tasks/$taskId/evidence', {
+            'type': 'test_result',
+            'title': 'نتيجة اختبار المهمة',
+            'description': 'تم تشغيل الاختبار وتسجيل النتيجة بنجاح.',
+            'uri': 'https://example.test/evidence/1',
+          });
+      expect(duplicateEvidence.statusCode, 409);
+
+      final fakeArtifact =
+          await postApi('/v1/projects/$projectId/tasks/$taskId/evidence', {
+            'type': 'artifact',
+            'title': 'ملف مزعوم',
+            'description': 'دليل بلا رابط أو بصمة SHA-256.',
+          });
+      expect(fakeArtifact.statusCode, 422);
 
       final evidence = await getApi(
         '/v1/projects/$projectId/tasks/$taskId/evidence',
@@ -442,6 +464,9 @@ class _SupabaseHttpStub {
   String? get lastAssessmentInsertApiKey =>
       _lastApiKeyByTable['assessment_attempts'];
 
+  Map<String, String> get lastApiKeyByTable =>
+      Map.unmodifiable(_lastApiKeyByTable);
+
   Future<void> start() async {
     server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     server!.listen((request) => _handle(request));
@@ -494,7 +519,8 @@ class _SupabaseHttpStub {
       await _reply(request, 401, {'message': 'unauthorized'});
       return;
     }
-    if (tableName == 'assessment_attempts' &&
+    if ((tableName == 'assessment_attempts' ||
+            tableName == 'project_task_evidence') &&
         request.method == 'POST' &&
         !isServiceRole) {
       await _reply(request, 403, {'message': 'server grading only'});
@@ -510,6 +536,9 @@ class _SupabaseHttpStub {
               'student_id',
               'assessment_id',
               'project_id',
+              'task_id',
+              'content_fingerprint',
+              'quality_status',
             ]) {
               final filter = request.uri.queryParameters[key];
               if (filter != null &&
