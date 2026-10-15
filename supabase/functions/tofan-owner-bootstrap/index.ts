@@ -39,7 +39,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
   }
 
   const authorization = req.headers.get("authorization") ?? "";
-  const match = authorization.match(/^Bearer\\s+(.+)$/i);
+  const match = authorization.match(/^Bearer\s+(.+)$/i);
   if (!match) return reply(401, { error: "authentication_required" });
 
   const authClient = createClient(supabaseUrl, anonKey, {
