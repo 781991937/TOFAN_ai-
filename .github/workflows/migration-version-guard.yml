@@ -1,0 +1,39 @@
+name: Migration Version Guard
+
+on:
+  pull_request:
+    paths:
+      - "supabase/migrations/**"
+      - "tool/check_migration_version_uniqueness.py"
+      - "tool/tests/**"
+      - ".github/workflows/migration-version-guard.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "supabase/migrations/**"
+      - "tool/check_migration_version_uniqueness.py"
+      - "tool/tests/**"
+      - ".github/workflows/migration-version-guard.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  migration-version-guard:
+    name: Validate migration filename versions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test migration version guard
+        run: PYTHONPATH=. python3 -m unittest discover -s tool/tests -p 'test_*.py'
+
+      - name: Reject duplicate or malformed migration versions
+        run: python3 tool/check_migration_version_uniqueness.py
