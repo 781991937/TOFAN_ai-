@@ -8,6 +8,10 @@ export function extractBearerToken(header: string | null): string | null {
   return match?.[1] ?? null;
 }
 
+export function isExpectedBootstrapUser(actualUserId: string, expectedUserId: string): boolean {
+  return expectedUserId.length > 0 && actualUserId === expectedUserId;
+}
+
 export function isBootstrapSecretBody(
   body: unknown,
 ): body is { bootstrapSecret: string } {
