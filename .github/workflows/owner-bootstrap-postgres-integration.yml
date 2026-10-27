@@ -96,11 +96,11 @@ jobs:
             exit 1
           fi
           psql -v ON_ERROR_STOP=1 <<'SQL'
-          do $
+          do $body$
           begin
             if (select count(*) from private.tofan_owner_registry) <> 1 then raise exception 'concurrent claims created other than one owner'; end if;
             if (select count(*) from private.tofan_owner_bootstrap_audit where outcome = 'owner_assigned') <> 1 then raise exception 'concurrent claims created other than one successful audit'; end if;
             if (select armed from private.tofan_owner_bootstrap_state where singleton) is distinct from false then raise exception 'concurrent claim did not consume bootstrap state'; end if;
-          end $;
+          end $body$;
           SQL
           echo "PASS: concurrent owner claims serialized to exactly one owner."
