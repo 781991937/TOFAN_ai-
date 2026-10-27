@@ -1,0 +1,146 @@
+name: Owner Bootstrap PostgreSQL Integration
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  postgres-migration-integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: test-only-password
+          POSTGRES_DB: tofan_test
+        ports:
+          - 5432:5432
+        options: --health-cmd "pg_isready -U postgres -d tofan_test" --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: test-only-password
+      PGDATABASE: tofan_test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check migration, privileges, one-time claim, and replay denial
+        shell: bash
+        run: |
+          set -euo pipefail
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          create role anon nologin;
+          create role authenticated nologin;
+          create role service_role nologin bypassrls;
+          create schema auth;
+          create table auth.users (id uuid primary key, email text unique);
+          insert into auth.users (id, email) values
+            ('11111111-1111-4111-8111-111111111111', 'owner-one@example.invalid'),
+            ('22222222-2222-4222-8222-222222222222', 'owner-two@example.invalid');
+          SQL
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261015193000_tofan_owner_bootstrap_server_gate.sql
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          do $body$
+          begin
+            if (select armed from private.tofan_owner_bootstrap_state where singleton) is distinct from false then
+              raise exception 'bootstrap must start disarmed';
+            end if;
+            if exists (select 1 from private.tofan_owner_registry) then
+              raise exception 'migration must not assign an owner';
+            end if;
+          end $body$;
+          SQL
+          if psql -v ON_ERROR_STOP=1 -c "set role anon; select public.consume_tofan_owner_bootstrap('11111111-1111-4111-8111-111111111111');" >/tmp/anon.log 2>&1; then
+            echo "FAIL: anon executed privileged RPC"; cat /tmp/anon.log; exit 1
+          fi
+          if psql -v ON_ERROR_STOP=1 -c "set role authenticated; select public.consume_tofan_owner_bootstrap('11111111-1111-4111-8111-111111111111');" >/tmp/auth.log 2>&1; then
+            echo "FAIL: authenticated executed privileged RPC"; cat /tmp/auth.log; exit 1
+          fi
+
+          unarmed="$(psql -X -q -A -t -v ON_ERROR_STOP=1 -c "set role service_role; select public.consume_tofan_owner_bootstrap('11111111-1111-4111-8111-111111111111');" | tr -d '[:space:]')"
+          if [[ "$unarmed" != "f" ]]; then
+            echo "FAIL: unarmed bootstrap returned '$unarmed', expected false"; exit 1
+          fi
+          null_user="$(psql -X -q -A -t -v ON_ERROR_STOP=1 -c "set role service_role; select public.consume_tofan_owner_bootstrap(null);" | tr -d '[:space:]')"
+          if [[ "$null_user" != "f" ]]; then
+            echo "FAIL: null user claim returned '$null_user', expected false"; exit 1
+          fi
+
+          psql -v ON_ERROR_STOP=1 -c "update private.tofan_owner_bootstrap_state set armed = true where singleton"
+          first_claim="$(psql -X -q -A -t -v ON_ERROR_STOP=1 -c "set role service_role; select public.consume_tofan_owner_bootstrap('11111111-1111-4111-8111-111111111111');" | tr -d '[:space:]')"
+          second_claim="$(psql -X -q -A -t -v ON_ERROR_STOP=1 -c "set role service_role; select public.consume_tofan_owner_bootstrap('22222222-2222-4222-8222-222222222222');" | tr -d '[:space:]')"
+          replay_claim="$(psql -X -q -A -t -v ON_ERROR_STOP=1 -c "set role service_role; select public.consume_tofan_owner_bootstrap('11111111-1111-4111-8111-111111111111');" | tr -d '[:space:]')"
+          if [[ "$first_claim" != "t" ]]; then
+            echo "FAIL: first authorized claim returned '$first_claim', expected true"; exit 1
+          fi
+          if [[ "$second_claim" != "f" ]]; then
+            echo "FAIL: second user's claim returned '$second_claim', expected false"; exit 1
+          fi
+          if [[ "$replay_claim" != "f" ]]; then
+            echo "FAIL: replay claim returned '$replay_claim', expected false"; exit 1
+          fi
+
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          do $body$
+          begin
+            if (select count(*) from private.tofan_owner_registry) <> 1 then raise exception 'expected one owner'; end if;
+            if (select armed from private.tofan_owner_bootstrap_state where singleton) is distinct from false then raise exception 'expected disarmed state'; end if;
+            if (select consumed_by from private.tofan_owner_bootstrap_state where singleton) <> '11111111-1111-4111-8111-111111111111'::uuid then raise exception 'unexpected consumed_by'; end if;
+            if (select count(*) from private.tofan_owner_bootstrap_audit where outcome = 'owner_assigned') <> 1 then raise exception 'expected one success audit'; end if;
+          end $body$;
+          SQL
+          echo "PASS: migration, grants, explicit claim outcomes, replay denial, and audit checks passed."
+
+      - name: Verify existing owner prevents a second assignment
+        shell: bash
+        run: |
+          set -euo pipefail
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          truncate table private.tofan_owner_bootstrap_audit, private.tofan_owner_registry, private.tofan_owner_bootstrap_state restart identity;
+          insert into private.tofan_owner_bootstrap_state(singleton, armed) values (true, true);
+          insert into private.tofan_owner_registry(singleton, owner_user_id, assigned_via)
+          values (true, '11111111-1111-4111-8111-111111111111', 'one_time_server_bootstrap');
+          SQL
+          result="$(psql -X -q -A -t -v ON_ERROR_STOP=1 -c "set role service_role; select public.consume_tofan_owner_bootstrap('22222222-2222-4222-8222-222222222222');" | tr -d '[:space:]')"
+          if [[ "$result" != "f" ]]; then
+            echo "FAIL: second owner claim returned '$result', expected false"; exit 1
+          fi
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          do $body$
+          begin
+            if (select count(*) from private.tofan_owner_registry) <> 1 then raise exception 'existing owner was modified'; end if;
+            if (select count(*) from private.tofan_owner_bootstrap_audit where outcome = 'owner_assigned') <> 0 then raise exception 'second owner generated success audit'; end if;
+          end $body$;
+          SQL
+          echo "PASS: existing owner cannot be replaced or duplicated."
+
+      - name: Verify concurrent claims produce exactly one owner
+        shell: bash
+        run: |
+          set -euo pipefail
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          truncate table private.tofan_owner_bootstrap_audit, private.tofan_owner_registry, private.tofan_owner_bootstrap_state restart identity;
+          insert into private.tofan_owner_bootstrap_state(singleton, armed) values (true, true);
+          SQL
+          (psql -X -q -A -t -v ON_ERROR_STOP=1 -c "set role service_role; select public.consume_tofan_owner_bootstrap('11111111-1111-4111-8111-111111111111');" | tail -n 1 | tr -d '[:space:]' > /tmp/claim-one.out) &
+          pid_one=$!
+          (psql -X -q -A -t -v ON_ERROR_STOP=1 -c "set role service_role; select public.consume_tofan_owner_bootstrap('22222222-2222-4222-8222-222222222222');" | tail -n 1 | tr -d '[:space:]' > /tmp/claim-two.out) &
+          pid_two=$!
+          wait "$pid_one"
+          wait "$pid_two"
+          one="$(cat /tmp/claim-one.out)"
+          two="$(cat /tmp/claim-two.out)"
+          if [[ "$one:$two" != "t:f" && "$one:$two" != "f:t" ]]; then
+            echo "FAIL: concurrent claim results were '$one' and '$two'"
+            exit 1
+          fi
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          do $body$
+          begin
+            if (select count(*) from private.tofan_owner_registry) <> 1 then raise exception 'concurrent claims created other than one owner'; end if;
+            if (select count(*) from private.tofan_owner_bootstrap_audit where outcome = 'owner_assigned') <> 1 then raise exception 'concurrent claims created other than one successful audit'; end if;
+            if (select armed from private.tofan_owner_bootstrap_state where singleton) is distinct from false then raise exception 'concurrent claim did not consume bootstrap state'; end if;
+          end $body$;
+          SQL
+          echo "PASS: concurrent owner claims serialized to exactly one owner."

@@ -1,0 +1,5 @@
+# Keep the owner bootstrap endpoint behind Supabase's JWT gateway check.
+# The function additionally validates the access token with Auth and binds it
+# to TOFAN_OWNER_BOOTSTRAP_USER_ID before checking the server-only secret.
+[functions.tofan-owner-bootstrap]
+verify_jwt = true
