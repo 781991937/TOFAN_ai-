@@ -3,6 +3,7 @@ import {
   extractBearerToken,
   hasStrongBootstrapSecret,
   isBootstrapSecretBody,
+  isExpectedBootstrapUser,
 } from "./security.ts";
 
 Deno.test("bootstrap secret minimum length is enforced", () => {
@@ -31,6 +32,20 @@ Deno.test("bootstrap body validation rejects malformed bodies", () => {
     if (isBootstrapSecretBody(body)) {
       throw new Error("malformed body was accepted");
     }
+  }
+});
+
+Deno.test("bootstrap is bound to the exact operator-approved Auth user", () => {
+  const intended = "11111111-1111-4111-8111-111111111111";
+  const other = "22222222-2222-4222-8222-222222222222";
+  if (!isExpectedBootstrapUser(intended, intended)) {
+    throw new Error("intended Auth user should be accepted");
+  }
+  if (isExpectedBootstrapUser(other, intended)) {
+    throw new Error("another authenticated user must be rejected");
+  }
+  if (isExpectedBootstrapUser(intended, "")) {
+    throw new Error("missing expected user configuration must fail closed");
   }
 });
 
