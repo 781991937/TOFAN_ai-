@@ -1,4 +1,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import {
+  constantTimeSecretMatch,
+  extractBearerToken,
+  hasStrongBootstrapSecret,
+  isBootstrapSecretBody,
+} from "./security.ts";
 
 const jsonHeaders = { "content-type": "application/json; charset=utf-8" };
 
@@ -6,19 +12,6 @@ function reply(status: number, body: Record<string, unknown>): Response {
   return new Response(JSON.stringify(body), { status, headers: jsonHeaders });
 }
 
-async function digest(value: string): Promise<Uint8Array> {
-  return new Uint8Array(
-    await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value)),
-  );
-}
-
-async function constantTimeEqual(a: string, b: string): Promise<boolean> {
-  // Hash first so the comparison loop always processes fixed-length values.
-  const [left, right] = await Promise.all([digest(a), digest(b)]);
-  let difference = 0;
-  for (let i = 0; i < left.length; i++) difference |= left[i] ^ right[i];
-  return difference === 0;
-}
 
 Deno.serve(async (req: Request): Promise<Response> => {
   if (req.method !== "POST") {
@@ -33,20 +26,19 @@ Deno.serve(async (req: Request): Promise<Response> => {
   // Fail closed when any required server-only configuration is missing or weak.
   if (
     !supabaseUrl || !anonKey || !serviceRoleKey ||
-    bootstrapSecret.length < 32
+    !hasStrongBootstrapSecret(bootstrapSecret)
   ) {
     return reply(503, { error: "owner_bootstrap_not_configured" });
   }
 
-  const authorization = req.headers.get("authorization") ?? "";
-  const match = authorization.match(/^Bearer\s+(.+)$/i);
-  if (!match) return reply(401, { error: "authentication_required" });
+  const accessToken = extractBearerToken(req.headers.get("authorization"));
+  if (!accessToken) return reply(401, { error: "authentication_required" });
 
   const authClient = createClient(supabaseUrl, anonKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
   const { data: userData, error: userError } = await authClient.auth.getUser(
-    match[1],
+    accessToken,
   );
   if (userError || !userData.user) {
     return reply(401, { error: "invalid_authentication" });
@@ -58,18 +50,14 @@ Deno.serve(async (req: Request): Promise<Response> => {
   } catch {
     return reply(400, { error: "invalid_json" });
   }
-  if (
-    typeof body !== "object" || body === null ||
-    !("bootstrapSecret" in body) ||
-    typeof (body as { bootstrapSecret: unknown }).bootstrapSecret !== "string"
-  ) {
+  if (!isBootstrapSecretBody(body)) {
     return reply(400, { error: "invalid_request" });
   }
 
-  const suppliedSecret = (body as { bootstrapSecret: string }).bootstrapSecret;
+  const suppliedSecret = body.bootstrapSecret;
   if (
-    suppliedSecret.length < 32 ||
-    !(await constantTimeEqual(suppliedSecret, bootstrapSecret))
+    !hasStrongBootstrapSecret(suppliedSecret) ||
+    !(await constantTimeSecretMatch(suppliedSecret, bootstrapSecret))
   ) {
     // Never log or return either secret.
     return reply(403, { error: "bootstrap_rejected" });
