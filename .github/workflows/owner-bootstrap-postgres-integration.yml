@@ -75,3 +75,32 @@ jobs:
           end $$;
           SQL
           echo "PASS: isolated PostgreSQL migration and one-time owner bootstrap checks passed."
+
+      - name: Verify concurrent claims produce exactly one owner
+        run: |
+          set -euo pipefail
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          truncate table private.tofan_owner_bootstrap_audit, private.tofan_owner_registry, private.tofan_owner_bootstrap_state restart identity;
+          insert into private.tofan_owner_bootstrap_state(singleton, armed) values (true, true);
+          SQL
+          (psql -X -A -t -v ON_ERROR_STOP=1 -c "set role service_role; select public.consume_tofan_owner_bootstrap('11111111-1111-4111-8111-111111111111');" | tail -n 1 | tr -d '[:space:]' > /tmp/claim-one.out) &
+          pid_one=$!
+          (psql -X -A -t -v ON_ERROR_STOP=1 -c "set role service_role; select public.consume_tofan_owner_bootstrap('22222222-2222-4222-8222-222222222222');" | tail -n 1 | tr -d '[:space:]' > /tmp/claim-two.out) &
+          pid_two=$!
+          wait "$pid_one"
+          wait "$pid_two"
+          one="$(cat /tmp/claim-one.out)"
+          two="$(cat /tmp/claim-two.out)"
+          if [ "$one:$two" != "t:f" ] && [ "$one:$two" != "f:t" ]; then
+            echo "FAIL: concurrent claim results were '$one' and '$two'"
+            exit 1
+          fi
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          do $
+          begin
+            if (select count(*) from private.tofan_owner_registry) <> 1 then raise exception 'concurrent claims created other than one owner'; end if;
+            if (select count(*) from private.tofan_owner_bootstrap_audit where outcome = 'owner_assigned') <> 1 then raise exception 'concurrent claims created other than one successful audit'; end if;
+            if (select armed from private.tofan_owner_bootstrap_state where singleton) is distinct from false then raise exception 'concurrent claim did not consume bootstrap state'; end if;
+          end $;
+          SQL
+          echo "PASS: concurrent owner claims serialized to exactly one owner."
