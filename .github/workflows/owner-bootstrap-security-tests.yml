@@ -25,5 +25,5 @@ jobs:
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - name: Run owner bootstrap validation tests
-        run: deno test --no-check supabase/functions/tofan-owner-bootstrap/security_test.ts
+      - name: Run owner bootstrap validation tests with type checking
+        run: deno test supabase/functions/tofan-owner-bootstrap/security_test.ts
