@@ -1,0 +1,184 @@
+name: Owner Bootstrap PostgreSQL Integration
+
+on:
+  pull_request:
+    paths:
+      - "supabase/migrations/20261015193000_tofan_owner_bootstrap_server_gate.sql"
+      - ".github/workflows/owner-bootstrap-postgres-integration.yml"
+  push:
+    branches:
+      - "security/owner-bootstrap-test-hardening-20261027"
+    paths:
+      - "supabase/migrations/20261015193000_tofan_owner_bootstrap_server_gate.sql"
+      - ".github/workflows/owner-bootstrap-postgres-integration.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  postgres-migration-integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: test-only-password
+          POSTGRES_DB: tofan_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d tofan_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: test-only-password
+      PGDATABASE: tofan_test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create isolated Supabase-like roles and Auth fixture
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          create role anon nologin;
+          create role authenticated nologin;
+          create role service_role nologin bypassrls;
+          create schema auth;
+          create table auth.users (
+            id uuid primary key,
+            email text unique
+          );
+          insert into auth.users (id, email) values
+            ('11111111-1111-4111-8111-111111111111', 'owner-one@example.invalid'),
+            ('22222222-2222-4222-8222-222222222222', 'owner-two@example.invalid');
+          SQL
+
+      - name: Apply owner bootstrap migration to disposable PostgreSQL
+        run: |
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261015193000_tofan_owner_bootstrap_server_gate.sql
+
+      - name: Verify disabled default, one-time claim, replay denial, and grants
+        run: |
+          set -euo pipefail
+
+          # The migration must start disarmed and must not assign an owner.
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          do $$
+          begin
+            if (select armed from private.tofan_owner_bootstrap_state where singleton) is distinct from false then
+              raise exception 'bootstrap must start disarmed';
+            end if;
+            if exists (select 1 from private.tofan_owner_registry) then
+              raise exception 'migration must not assign an owner';
+            end if;
+          end $$;
+          SQL
+
+          # Public clients must not be able to execute the privileged RPC.
+          if psql -v ON_ERROR_STOP=1 -c "set role anon; select public.consume_tofan_owner_bootstrap('11111111-1111-4111-8111-111111111111');" >/tmp/anon-rpc.log 2>&1; then
+            echo "FAIL: anon unexpectedly executed owner bootstrap RPC"
+            cat /tmp/anon-rpc.log
+            exit 1
+          fi
+          if psql -v ON_ERROR_STOP=1 -c "set role authenticated; select public.consume_tofan_owner_bootstrap('11111111-1111-4111-8111-111111111111');" >/tmp/auth-rpc.log 2>&1; then
+            echo "FAIL: authenticated unexpectedly executed owner bootstrap RPC"
+            cat /tmp/auth-rpc.log
+            exit 1
+          fi
+
+          # Unarmed calls must fail closed. Then explicitly arm only this disposable test DB.
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          set role service_role;
+          do $$
+          begin
+            if public.consume_tofan_owner_bootstrap('11111111-1111-4111-8111-111111111111') is distinct from false then
+              raise exception 'unarmed bootstrap call should return false';
+            end if;
+          end $$;
+          reset role;
+          update private.tofan_owner_bootstrap_state set armed = true where singleton = true;
+          SQL
+
+          # One claim succeeds; replay and a second claimant must fail.
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          set role service_role;
+          do $$
+          begin
+            if public.consume_tofan_owner_bootstrap('11111111-1111-4111-8111-111111111111') is distinct from true then
+              raise exception 'first owner claim should succeed';
+            end if;
+            if public.consume_tofan_owner_bootstrap('22222222-2222-4222-8222-222222222222') is distinct from false then
+              raise exception 'second owner claim should be rejected';
+            end if;
+            if public.consume_tofan_owner_bootstrap('11111111-1111-4111-8111-111111111111') is distinct from false then
+              raise exception 'replay should be rejected';
+            end if;
+          end $$;
+          reset role;
+          do $$
+          begin
+            if (select count(*) from private.tofan_owner_registry) <> 1 then
+              raise exception 'expected exactly one owner row';
+            end if;
+            if (select owner_user_id from private.tofan_owner_registry where singleton) <> '11111111-1111-4111-8111-111111111111'::uuid then
+              raise exception 'unexpected owner ID';
+            end if;
+            if (select armed from private.tofan_owner_bootstrap_state where singleton) is distinct from false then
+              raise exception 'bootstrap should be disarmed after consumption';
+            end if;
+            if (select consumed_by from private.tofan_owner_bootstrap_state where singleton) <> '11111111-1111-4111-8111-111111111111'::uuid then
+              raise exception 'consumed_by does not match assigned owner';
+            end if;
+            if (select count(*) from private.tofan_owner_bootstrap_audit where outcome = 'owner_assigned') <> 1 then
+              raise exception 'expected exactly one successful audit event';
+            end if;
+          end $$;
+          SQL
+
+      - name: Verify concurrent claims serialize to one owner
+        run: |
+          set -euo pipefail
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          truncate table private.tofan_owner_bootstrap_audit, private.tofan_owner_registry, private.tofan_owner_bootstrap_state restart identity;
+          insert into private.tofan_owner_bootstrap_state(singleton, armed) values (true, true);
+          SQL
+
+          (psql -X -A -t -v ON_ERROR_STOP=1 -c "set role service_role; select public.consume_tofan_owner_bootstrap('11111111-1111-4111-8111-111111111111');" | tail -n 1 | tr -d '[:space:]' > /tmp/claim-one.out) &
+          pid_one=$!
+          (psql -X -A -t -v ON_ERROR_STOP=1 -c "set role service_role; select public.consume_tofan_owner_bootstrap('22222222-2222-4222-8222-222222222222');" | tail -n 1 | tr -d '[:space:]' > /tmp/claim-two.out) &
+          pid_two=$!
+          wait "$pid_one"
+          wait "$pid_two"
+
+          result_one="$(cat /tmp/claim-one.out)"
+          result_two="$(cat /tmp/claim-two.out)"
+          if [ "$result_one" = "t" ] && [ "$result_two" = "f" ]; then
+            :
+          elif [ "$result_one" = "f" ] && [ "$result_two" = "t" ]; then
+            :
+          else
+            echo "FAIL: expected exactly one concurrent claim to succeed; got '$result_one' and '$result_two'"
+            exit 1
+          fi
+
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          do $$
+          begin
+            if (select count(*) from private.tofan_owner_registry) <> 1 then
+              raise exception 'concurrency test expected exactly one owner';
+            end if;
+            if (select count(*) from private.tofan_owner_bootstrap_audit where outcome = 'owner_assigned') <> 1 then
+              raise exception 'concurrency test expected exactly one successful audit event';
+            end if;
+            if (select armed from private.tofan_owner_bootstrap_state where singleton) is distinct from false then
+              raise exception 'concurrency test expected consumed state';
+            end if;
+          end $$;
+          SQL
+
+      - name: Report isolated database test success
+        run: echo "PASS: migration, disabled default, privilege boundary, one-time claim, replay, and concurrent-claim tests passed on disposable PostgreSQL 17."
