@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
@@ -253,6 +252,15 @@ class TofanApiGatewayServer {
         'The request body is not valid JSON.',
       ));
     } catch (_) {
+      _audit({
+        'event': 'owner_command_execution_failed',
+        'commandId': ServerOwnerCommandGate.academicLibrarySearch,
+        'ownerUserId': principal?.userId,
+        'decision': 'deny',
+        'reasonCode': 'internal_error',
+        'correlationId': _uuid.v4(),
+        'timestamp': DateTime.now().toUtc().toIso8601String(),
+      });
       await _write(request, 500, _error(
         'internal_error',
         'The server could not complete the owner command.',
@@ -385,8 +393,10 @@ class TofanApiGatewayServer {
           request.response.headers.set(name, value);
         }
       });
-      request.response.contentLength = bytes.length;
-      request.response.add(bytes);
+      if (response.statusCode != 204 && response.statusCode != 304) {
+        request.response.contentLength = bytes.length;
+        request.response.add(bytes);
+      }
       await request.response.close();
     } catch (_) {
       await _write(request, 502, _error(
