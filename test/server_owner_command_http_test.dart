@@ -17,6 +17,7 @@ const _route = '/v1/owner/commands/academic-library-search';
 
 void main() {
   late http.Client authClient;
+  late http.Client apiUpstreamClient;
   late http.Client client;
   late TofanApiGatewayServer api;
   late HttpServer server;
@@ -25,46 +26,8 @@ void main() {
 
   Future<void> startApi({String ownerUserId = _ownerId}) async {
     audit = <Map<String, Object?>>[];
-    authClient = MockClient((request) async {
-      if (request.url.path != '/auth/v1/user') {
-        return http.Response('{}', 404);
-      }
-      final authorization = request.headers['authorization'];
-      final token = authorization?.replaceFirst('Bearer ', '');
-      if (token == 'invalid-token') {
-        return http.Response('{"message":"invalid token"}', 401);
-      }
-      if (token == 'owner-token') {
-        return http.Response(jsonEncode({
-          'id': _ownerId,
-          'email': 'owner@example.test',
-          'app_metadata': {'role': 'owner'},
-          'user_metadata': {'role': 'student'},
-        }), 200, headers: {'content-type': 'application/json'});
-      }
-      if (token == 'student-token') {
-        return http.Response(jsonEncode({
-          'id': _studentId,
-          'email': 'student@example.test',
-          'app_metadata': {'role': 'student'},
-          'user_metadata': {'role': 'owner'},
-        }), 200, headers: {'content-type': 'application/json'});
-      }
-      if (token == 'wrong-owner-token') {
-        return http.Response(jsonEncode({
-          'id': _studentId,
-          'email': 'other-owner@example.test',
-          'app_metadata': {'role': 'owner'},
-        }), 200, headers: {'content-type': 'application/json'});
-      }
-      if (token == 'malformed-identity-token') {
-        return http.Response(jsonEncode({
-          'id': 'not-a-uuid',
-          'app_metadata': {'role': 'owner'},
-        }), 200, headers: {'content-type': 'application/json'});
-      }
-      return http.Response('{"message":"invalid token"}', 401);
-    });
+    authClient = MockClient(_authResponse);
+    apiUpstreamClient = MockClient(_authResponse);
     api = TofanApiGatewayServer(
       config: SupabaseApiConfig(
         projectUrl: Uri.parse('https://project.example.test'),
@@ -73,6 +36,7 @@ void main() {
         ownerUserId: ownerUserId,
       ),
       authClient: authClient,
+      apiUpstreamClient: apiUpstreamClient,
       auditWriter: (event) => audit.add(Map<String, Object?>.from(event)),
     );
     server = await api.start(port: 0);
@@ -99,7 +63,19 @@ void main() {
   tearDown(() async {
     client.close();
     await api.close();
-    authClient.close();
+  });
+
+  test('existing health and student API routes remain available through the gateway', () async {
+    final health = await client.get(baseUri.resolve('/health'));
+    expect(health.statusCode, 200);
+    expect((jsonDecode(health.body) as Map)['data']['status'], 'ok');
+
+    final student = await client.get(
+      baseUri.resolve('/v1/students/me'),
+      headers: {'Authorization': 'Bearer student-token'},
+    );
+    expect(student.statusCode, 200);
+    expect((jsonDecode(student.body) as Map)['data']['studentId'], _studentId);
   });
 
   test('verified owner can execute the fixed academic search command', () async {
@@ -170,7 +146,6 @@ void main() {
   test('missing owner configuration fails closed with 503', () async {
     client.close();
     await api.close();
-    authClient.close();
     await startApi(ownerUserId: '');
     final response = await postCommand({
       'domainId': 'ai-data',
@@ -314,4 +289,45 @@ void main() {
       isFalse,
     );
   });
+}
+
+Future<http.Response> _authResponse(http.Request request) async {
+  if (request.url.path != '/auth/v1/user') {
+    return http.Response('{}', 404);
+  }
+  final authorization = request.headers['authorization'];
+  final token = authorization?.replaceFirst('Bearer ', '');
+  if (token == 'invalid-token') {
+    return http.Response('{"message":"invalid token"}', 401);
+  }
+  if (token == 'owner-token') {
+    return http.Response(jsonEncode({
+      'id': _ownerId,
+      'email': 'owner@example.test',
+      'app_metadata': {'role': 'owner'},
+      'user_metadata': {'role': 'student'},
+    }), 200, headers: {'content-type': 'application/json'});
+  }
+  if (token == 'student-token') {
+    return http.Response(jsonEncode({
+      'id': _studentId,
+      'email': 'student@example.test',
+      'app_metadata': {'role': 'student'},
+      'user_metadata': {'role': 'owner'},
+    }), 200, headers: {'content-type': 'application/json'});
+  }
+  if (token == 'wrong-owner-token') {
+    return http.Response(jsonEncode({
+      'id': _studentId,
+      'email': 'other-owner@example.test',
+      'app_metadata': {'role': 'owner'},
+    }), 200, headers: {'content-type': 'application/json'});
+  }
+  if (token == 'malformed-identity-token') {
+    return http.Response(jsonEncode({
+      'id': 'not-a-uuid',
+      'app_metadata': {'role': 'owner'},
+    }), 200, headers: {'content-type': 'application/json'});
+  }
+  return http.Response('{"message":"invalid token"}', 401);
 }
