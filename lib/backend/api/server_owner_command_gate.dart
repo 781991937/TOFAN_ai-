@@ -59,15 +59,8 @@ class ServerOwnerCommandGate {
   static const String academicLibrarySearch = 'academic_library.search';
   static const Duration grantLifetime = Duration(seconds: 30);
 
-  static const Set<String> _allowedDomainIds = {
-    'core-computing',
-    'ai-data',
-    'systems-networking',
-    'software-engineering',
-    'interactive-computing',
-    'security',
-    'society-profession',
-  };
+  static final Set<String> _allowedDomainIds =
+      AcademicLibrarySecurityCatalog.domains.map((domain) => domain.id).toSet();
 
   final OwnerAuthorizationPolicy _ownerPolicy;
   final void Function(Map<String, Object?> event) _auditWriter;
