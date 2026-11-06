@@ -1,6 +1,7 @@
 import '../data/academic/academic_catalog.dart';
 import '../data/academic/academic_knowledge_unit_catalog.dart';
 import '../data/academic/academic_library_security_catalog.dart';
+import '../data/academic/academic_library_security.dart';
 import 'abqari_models.dart';
 
 class AcademicKnowledgeEngine {
@@ -16,9 +17,13 @@ class AcademicKnowledgeEngine {
     required String domainId,
     int limit = 20,
   }) {
-    final domain = AcademicLibrarySecurityCatalog.domains
-        .where((item) => item.id == domainId)
-        .firstOrNull;
+    LibrarySecurityDomain? domain;
+    for (final candidate in AcademicLibrarySecurityCatalog.domains) {
+      if (candidate.id == domainId) {
+        domain = candidate;
+        break;
+      }
+    }
     if (domain == null) return const [];
     if (limit < 1 || limit > 20) {
       throw ArgumentError.value(limit, 'limit', 'Must be between 1 and 20.');
