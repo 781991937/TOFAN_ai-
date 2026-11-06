@@ -29,6 +29,7 @@ class TofanApiGatewayServer {
          config: config,
          allowedOrigins: allowedOrigins,
        ),
+       _ownerPolicy = OwnerAuthorizationPolicy(ownerUserId: config.ownerUserId),
        _ownerGate = ServerOwnerCommandGate(
          ownerPolicy: OwnerAuthorizationPolicy(ownerUserId: config.ownerUserId),
          auditWriter: auditWriter,
@@ -41,6 +42,7 @@ class TofanApiGatewayServer {
   final void Function(Map<String, Object?> event)? _auditWriter;
   final SupabaseRestGateway _gateway;
   final TofanApiServer _innerApi;
+  final OwnerAuthorizationPolicy _ownerPolicy;
   final ServerOwnerCommandGate _ownerGate;
   final AcademicKnowledgeEngine _knowledgeEngine = const AcademicKnowledgeEngine();
   final Uuid _uuid = const Uuid();
@@ -119,6 +121,9 @@ class TofanApiGatewayServer {
       }
       final token = _extractBearer(request);
       principal = await _gateway.authenticate(token);
+      // Configuration and owner identity are checked before parsing caller
+      // input, so an unconfigured owner boundary always fails closed.
+      _ownerPolicy.requireOwner(principal);
       final body = await _readJson(request);
       if (body.keys.toSet().difference(const {'domainId', 'query', 'limit'}).isNotEmpty ||
           !body.keys.toSet().containsAll(const {'domainId', 'query'})) {
@@ -148,8 +153,7 @@ class TofanApiGatewayServer {
           'query must contain between 2 and 200 characters.',
         );
       }
-      final rawLimit = body['limit'];
-      final limit = rawLimit == null ? 20 : rawLimit;
+      final limit = body.containsKey('limit') ? body['limit'] : 20;
       if (limit is! int || limit < 1 || limit > 20) {
         throw const ApiException(
           400,
