@@ -22,7 +22,8 @@ class TofanApiGatewayServer {
     http.Client? authClient,
     Set<String> allowedOrigins = const {},
     void Function(Map<String, Object?> event)? auditWriter,
-  }) : _gateway = SupabaseRestGateway(config: config, client: authClient),
+  }) : _auditWriter = auditWriter,
+       _gateway = SupabaseRestGateway(config: config, client: authClient),
        _innerApi = TofanApiServer(
          config: config,
          allowedOrigins: allowedOrigins,
@@ -36,6 +37,7 @@ class TofanApiGatewayServer {
   static const _ownerRoute = '/v1/owner/commands/academic-library-search';
   static const _maxBodyBytes = 16 * 1024;
 
+  final void Function(Map<String, Object?> event)? _auditWriter;
   final SupabaseRestGateway _gateway;
   final TofanApiServer _innerApi;
   final ServerOwnerCommandGate _ownerGate;
@@ -91,7 +93,7 @@ class TofanApiGatewayServer {
     }
 
     if (request.uri.path == _ownerRoute) {
-      if (request.method != 'POST') {
+      if (request.method != 'POST' && request.method != 'OPTIONS') {
         await _write(request, 405, _error(
           'method_not_allowed',
           'This owner command requires POST.',
@@ -220,22 +222,16 @@ class TofanApiGatewayServer {
   }
 
   void _audit(Map<String, Object?> event) {
-    // ServerOwnerCommandGate uses the same injected writer. The default sink
-    // is stdout; production must forward stdout to a retained log service.
-    // This event deliberately excludes the bearer token and raw search query.
-    // The gate writer is invoked by its grant operation; execution events are
-    // emitted separately here to distinguish authorization from execution.
-    _executionAuditWriter?.call(event);
+    // Execution events exclude the bearer token and raw search query.
+    // The default sink is stdout; production must forward stdout to a retained
+    // log service before these events can be treated as durable audit records.
+    final writer = _auditWriter;
+    if (writer != null) {
+      writer(event);
+    } else {
+      stdout.writeln(jsonEncode(event));
+    }
   }
-
-  void Function(Map<String, Object?> event)? get _executionAuditWriter =>
-      _auditWriter;
-
-  // Kept as a field through the constructor initializer below.
-  void Function(Map<String, Object?> event)? get _auditWriter =>
-      _providedAuditWriter;
-
-  late final void Function(Map<String, Object?> event)? _providedAuditWriter;
 
   Map<String, dynamic> _knowledgeItemJson(AbqariKnowledgeItem item) => {
     'id': item.id,
