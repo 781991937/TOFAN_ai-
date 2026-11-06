@@ -5,12 +5,15 @@ class SupabaseApiConfig {
     required this.projectUrl,
     required this.anonKey,
     required this.serviceRoleKey,
+    this.ownerUserId = '',
     this.requestTimeout = const Duration(seconds: 10),
   });
 
   final Uri projectUrl;
   final String anonKey;
   final String serviceRoleKey;
+  /// Optional at process startup; owner-only commands fail closed when absent.
+  final String ownerUserId;
   final Duration requestTimeout;
 
   factory SupabaseApiConfig.fromEnvironment([
@@ -20,6 +23,7 @@ class SupabaseApiConfig {
     final url = values['SUPABASE_URL']?.trim() ?? '';
     final anonKey = values['SUPABASE_ANON_KEY']?.trim() ?? '';
     final serviceRoleKey = values['SUPABASE_SERVICE_ROLE_KEY']?.trim() ?? '';
+    final ownerUserId = values['OWNER_USER_ID']?.trim() ?? '';
 
     if (url.isEmpty || anonKey.isEmpty || serviceRoleKey.isEmpty) {
       throw StateError(
@@ -32,6 +36,7 @@ class SupabaseApiConfig {
       projectUrl: Uri.parse(url),
       anonKey: anonKey,
       serviceRoleKey: serviceRoleKey,
+      ownerUserId: ownerUserId,
     ).validated();
   }
 
