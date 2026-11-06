@@ -295,7 +295,8 @@ Future<http.Response> _authResponse(http.Request request) async {
   if (request.url.path != '/auth/v1/user') {
     return http.Response('{}', 404);
   }
-  final authorization = request.headers['authorization'];
+  final authorization =
+      request.headers['Authorization'] ?? request.headers['authorization'];
   final token = authorization?.replaceFirst('Bearer ', '');
   if (token == 'invalid-token') {
     return http.Response('{"message":"invalid token"}', 401);
