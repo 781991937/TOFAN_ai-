@@ -20,12 +20,14 @@ class TofanApiGatewayServer {
   TofanApiGatewayServer({
     required SupabaseApiConfig config,
     http.Client? authClient,
+    http.Client? apiUpstreamClient,
     Set<String> allowedOrigins = const {},
     void Function(Map<String, Object?> event)? auditWriter,
   }) : _auditWriter = auditWriter,
        _gateway = SupabaseRestGateway(config: config, client: authClient),
        _innerApi = TofanApiServer(
          config: config,
+         upstreamClient: apiUpstreamClient,
          allowedOrigins: allowedOrigins,
        ),
        _ownerPolicy = OwnerAuthorizationPolicy(ownerUserId: config.ownerUserId),
