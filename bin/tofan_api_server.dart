@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:tofan_ai/backend/api/api_models.dart';
-import 'package:tofan_ai/backend/api/tofan_api_server.dart';
+import 'package:tofan_ai/backend/api/tofan_api_gateway_server.dart';
 
 Future<void> main() async {
-  TofanApiServer? api;
+  TofanApiGatewayServer? api;
   try {
     final environment = Platform.environment;
     final config = SupabaseApiConfig.fromEnvironment(environment);
@@ -28,7 +28,10 @@ Future<void> main() async {
         .map((origin) => origin.trim())
         .where((origin) => origin.isNotEmpty)
         .toSet();
-    api = TofanApiServer(config: config, allowedOrigins: allowedOrigins);
+    api = TofanApiGatewayServer(
+      config: config,
+      allowedOrigins: allowedOrigins,
+    );
     final server = await api.start(bindAddress: addresses.first, port: port);
     stdout.writeln(
       'TOFAN API listening on ${server.address.address}:${server.port}',
