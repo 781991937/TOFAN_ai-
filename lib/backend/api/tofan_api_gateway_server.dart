@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 
 import '../../abqari/academic_knowledge_engine.dart';
 import '../../abqari/abqari_models.dart';
@@ -42,6 +43,7 @@ class TofanApiGatewayServer {
   final TofanApiServer _innerApi;
   final ServerOwnerCommandGate _ownerGate;
   final AcademicKnowledgeEngine _knowledgeEngine = const AcademicKnowledgeEngine();
+  final Uuid _uuid = const Uuid();
   final Set<String> _allowedOrigins;
   final http.Client _proxyClient = http.Client();
   HttpServer? _server;
@@ -108,13 +110,15 @@ class TofanApiGatewayServer {
   }
 
   Future<void> _handleOwnerSearch(HttpRequest request) async {
+    ApiPrincipal? principal;
+    var gateAttempted = false;
     try {
       if (request.method == 'OPTIONS') {
         await _write(request, 204, const {}, preflight: true);
         return;
       }
       final token = _extractBearer(request);
-      final principal = await _gateway.authenticate(token);
+      principal = await _gateway.authenticate(token);
       final body = await _readJson(request);
       if (body.keys.toSet().difference(const {'domainId', 'query', 'limit'}).isNotEmpty ||
           !body.keys.toSet().containsAll(const {'domainId', 'query'})) {
@@ -154,6 +158,7 @@ class TofanApiGatewayServer {
         );
       }
 
+      gateAttempted = true;
       final grant = _ownerGate.issueAcademicSearchGrant(
         principal: principal,
         domainId: domainId,
@@ -162,6 +167,16 @@ class TofanApiGatewayServer {
         grant: grant,
         domainId: domainId,
       )) {
+        _audit({
+          'event': 'owner_command_grant_consumption_denied',
+          'commandId': ServerOwnerCommandGate.academicLibrarySearch,
+          'ownerUserId': principal.userId,
+          'resourceScope': 'academic_library/$domainId',
+          'decision': 'deny',
+          'reasonCode': 'owner_command_grant_invalid',
+          'correlationId': grant.correlationId,
+          'timestamp': DateTime.now().toUtc().toIso8601String(),
+        });
         throw const ApiException(
           403,
           'owner_command_grant_invalid',
@@ -207,8 +222,28 @@ class TofanApiGatewayServer {
         rethrow;
       }
     } on ApiException catch (error) {
+      if (!gateAttempted) {
+        _audit({
+          'event': 'owner_command_request_denied',
+          'commandId': ServerOwnerCommandGate.academicLibrarySearch,
+          'ownerUserId': principal?.userId,
+          'decision': 'deny',
+          'reasonCode': error.code,
+          'correlationId': _uuid.v4(),
+          'timestamp': DateTime.now().toUtc().toIso8601String(),
+        });
+      }
       await _write(request, error.statusCode, _error(error.code, error.message));
     } on FormatException {
+      _audit({
+        'event': 'owner_command_request_denied',
+        'commandId': ServerOwnerCommandGate.academicLibrarySearch,
+        'ownerUserId': principal?.userId,
+        'decision': 'deny',
+        'reasonCode': 'invalid_json',
+        'correlationId': _uuid.v4(),
+        'timestamp': DateTime.now().toUtc().toIso8601String(),
+      });
       await _write(request, 400, _error(
         'invalid_json',
         'The request body is not valid JSON.',
