@@ -50,6 +50,19 @@ void main() {
           'user_metadata': {'role': 'owner'},
         }), 200, headers: {'content-type': 'application/json'});
       }
+      if (token == 'wrong-owner-token') {
+        return http.Response(jsonEncode({
+          'id': _studentId,
+          'email': 'other-owner@example.test',
+          'app_metadata': {'role': 'owner'},
+        }), 200, headers: {'content-type': 'application/json'});
+      }
+      if (token == 'malformed-identity-token') {
+        return http.Response(jsonEncode({
+          'id': 'not-a-uuid',
+          'app_metadata': {'role': 'owner'},
+        }), 200, headers: {'content-type': 'application/json'});
+      }
       return http.Response('{"message":"invalid token"}', 401);
     });
     api = TofanApiGatewayServer(
@@ -124,6 +137,20 @@ void main() {
     expect(response.statusCode, 403);
     expect(jsonDecode(response.body)['error']['code'], 'owner_required');
     expect(audit.any((event) => event['decision'] == 'deny'), isTrue);
+  });
+
+  test('wrong owner identity and malformed Auth identity are rejected', () async {
+    final wrongOwner = await postCommand({
+      'domainId': 'ai-data',
+      'query': 'الذكاء الاصطناعي',
+    }, token: 'wrong-owner-token');
+    expect(wrongOwner.statusCode, 403);
+
+    final malformedIdentity = await postCommand({
+      'domainId': 'ai-data',
+      'query': 'الذكاء الاصطناعي',
+    }, token: 'malformed-identity-token');
+    expect(malformedIdentity.statusCode, 502);
   });
 
   test('missing bearer and invalid token are rejected before search', () async {
@@ -233,6 +260,34 @@ void main() {
         grant: expired,
         domainId: 'ai-data',
         now: issuedAt.add(const Duration(seconds: 31)),
+      ),
+      isFalse,
+    );
+
+    final wrongScope = gate.issueAcademicSearchGrant(
+      principal: const ApiPrincipal(userId: _ownerId, role: 'owner'),
+      domainId: 'ai-data',
+      now: issuedAt,
+    );
+    expect(
+      gate.consumeAcademicSearchGrant(
+        grant: wrongScope,
+        domainId: 'security',
+        now: issuedAt.add(const Duration(seconds: 1)),
+      ),
+      isFalse,
+    );
+
+    final wrongCommand = gate.issueAcademicSearchGrant(
+      principal: const ApiPrincipal(userId: _ownerId, role: 'owner'),
+      domainId: 'ai-data',
+      now: issuedAt,
+    );
+    expect(
+      wrongCommand.consume(
+        commandId: 'owner.arbitrary-command',
+        domainId: 'ai-data',
+        now: issuedAt.add(const Duration(seconds: 1)),
       ),
       isFalse,
     );
